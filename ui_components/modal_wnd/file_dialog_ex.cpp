@@ -80,9 +80,9 @@ void CFileDialogEx::SetFilter(LPCTSTR lpszFilter)
 void CFileDialogEx::SetFilter(std::map<LPCTSTR,LPCTSTR>& filters)
 {
 	std::map<LPCTSTR,LPCTSTR>::iterator it = filters.begin();
-	const size_t size = filters.size()*100;
+	const int size = filters.size()*100;
 	wchar_t* filterstring= new wchar_t[size];
-	size_t offset = 0;
+	int offset = 0;
 	for(;it != filters.end();it++)
 	{
 		_tcscpy(filterstring + offset,it->first);
@@ -167,7 +167,7 @@ void CFileDialogEx::SyncShowModal()
 		BOOL ret = ::GetOpenFileName(&m_stOFN);
 		if ( (m_stOFN.Flags & OFN_ALLOWMULTISELECT) > 0)
 		{
-			size_t get_length = 0;
+			uint32_t get_length = 0;
 			std::wstring file_directory = m_stOFN.lpstrFile;
 			get_length = file_directory.size()+1;
 			std::wstring file_name = m_stOFN.lpstrFile + get_length;
