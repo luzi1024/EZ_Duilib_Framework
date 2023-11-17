@@ -940,10 +940,10 @@ bool Control::ButtonUp(EventArgs& msg)
 
 void Control::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if ( strName == _T("class") ) {
+	if ( strName == ATTR_CTR_class) {
 		SetClass(strValue);
 	}
-	else if( strName == _T("halign") ) {
+	else if( strName == ATTR_CTR_halign) {
 		if (strValue == _T("left")) {
 			SetHorAlignType(kHorAlignLeft);
 		}
@@ -957,7 +957,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			ASSERT(FALSE);
 		}
 	}
-	else if( strName == _T("valign") ) {
+	else if( strName == ATTR_CTR_valign) {
 		if (strValue == _T("top")) {
 			SetVerAlignType(kVerAlignTop);
 		}
@@ -971,7 +971,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			ASSERT(FALSE);
 		}
 	}
-	else if( strName == _T("margin") ) {
+	else if( strName == ATTR_CTR_margin) {
         UiRect rcMargin;
         LPTSTR pstr = NULL;
         rcMargin.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
@@ -980,12 +980,12 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
         rcMargin.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
         SetMargin(rcMargin);
     }
-    else if( strName == _T("bkcolor") || strName == _T("bkcolor1") ) {
+    else if( strName == ATTR_CTR_bkcolor || strName == ATTR_CTR_bkcolor1) {
 		LPCTSTR pValue = strValue.c_str();
         while( *pValue > _T('\0') && *pValue <= _T(' ') ) pValue = ::CharNext(pValue);
         SetBkColor(pValue);
     }
-	else if (strName == _T("bordersize")) {
+	else if (strName == ATTR_CTR_bordersize) {
 		std::wstring nValue = strValue;
 		if (nValue.find(',') == std::wstring::npos) {
 			SetBorderSize(_ttoi(strValue.c_str()));
@@ -1002,14 +1002,14 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			SetBorderSize(rcBorder);
 		}
 	}
-    else if( strName == _T("borderround") ) {
+    else if( strName == ATTR_CTR_borderround) {
         CSize cxyRound;
         LPTSTR pstr = NULL;
         cxyRound.cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
         cxyRound.cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);     
         SetBorderRound(cxyRound);
     }
-	else if( strName == _T("width") ) {
+	else if( strName == ATTR_CTR_width) {
 		if ( strValue == _T("stretch") ) {
 			SetFixedWidth(DUI_LENGTH_STRETCH);
 		}
@@ -1021,7 +1021,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			SetFixedWidth(_ttoi(strValue.c_str()));
 		}
 	}
-	else if( strName == _T("height") ) {
+	else if( strName == ATTR_CTR_height) {
 		if ( strValue == _T("stretch") ) {
 			SetFixedHeight(DUI_LENGTH_STRETCH);
 		}
@@ -1033,7 +1033,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			SetFixedHeight(_ttoi(strValue.c_str()));
 		}
 	}
-	else if( strName == _T("maxwidth") ) {
+	else if( strName == ATTR_CTR_maxwidth) {
 		if ( strValue == _T("stretch") ) {
 			SetMaxWidth(DUI_LENGTH_STRETCH);
 		}
@@ -1045,7 +1045,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			SetMaxWidth(_ttoi(strValue.c_str()));
 		}
 	}
-	else if( strName == _T("maxheight") ) {
+	else if( strName == ATTR_CTR_maxheight) {
 		if ( strValue == _T("stretch") ) {
 			SetMaxHeight(DUI_LENGTH_STRETCH);
 		}
@@ -1057,14 +1057,14 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			SetMaxHeight(_ttoi(strValue.c_str()));
 		}
 	}
-	else if( strName == _T("state") ) {
+	else if( strName == ATTR_CTR_state) {
 		if( strValue == _T("normal") ) SetState(kControlStateNormal);
 		else if( strValue == _T("hot") ) SetState(kControlStateHot);
 		else if( strValue == _T("pushed") ) SetState(kControlStatePushed);
 		else if( strValue == _T("disabled") ) SetState(kControlStateDisabled);
 		else ASSERT(FALSE);
 	}
-	else if( strName == _T("cursortype") ) {
+	else if( strName == ATTR_CTR_cursortype) {
 		if (strValue == _T("arrow")) {
 			SetCursorType(kCursorArrow);
 		}
@@ -1078,7 +1078,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 			ASSERT(FALSE);
 		}
 	}
-	else if (strName == _T("renderoffset")) {
+	else if (strName == ATTR_CTR_renderoffset) {
 		CPoint renderOffset;
 		LPTSTR pstr = NULL;
 		renderOffset.x = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);
@@ -1087,51 +1087,53 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 		DpiManager::GetInstance()->ScalePoint(renderOffset);
 		SetRenderOffset(renderOffset);
 	}
-	else if (strName == _T("normalcolor"))	SetStateColor(kControlStateNormal, strValue);
-	else if (strName == _T("hotcolor"))	SetStateColor(kControlStateHot, strValue);
-	else if (strName == _T("pushedcolor"))	SetStateColor(kControlStatePushed, strValue);
-	else if (strName == _T("disabledcolor"))	SetStateColor(kControlStateDisabled, strValue);
-	else if (strName == _T("bordercolor")) SetBorderColor(strValue);
-	else if (strName == _T("leftbordersize")) SetLeftBorderSize(_ttoi(strValue.c_str()));
-	else if (strName == _T("topbordersize")) SetTopBorderSize(_ttoi(strValue.c_str()));
-	else if (strName == _T("rightbordersize")) SetRightBorderSize(_ttoi(strValue.c_str()));
-	else if (strName == _T("bottombordersize")) SetBottomBorderSize(_ttoi(strValue.c_str()));
-	else if (strName == _T("bkimage")) SetBkImage(strValue);
-	else if (strName == _T("minwidth")) SetMinWidth(_ttoi(strValue.c_str()));
-	else if (strName == _T("minheight")) SetMinHeight(_ttoi(strValue.c_str()));
-	else if (strName == _T("name")) SetName(strValue);
-	else if (strName == _T("tooltiptext")) SetToolTipText(strValue);
-	else if (strName == _T("tooltiptextid")) SetToolTipTextId(strValue);
-	else if (strName == _T("dataid")) SetDataID(strValue);
-	else if (strName == _T("enabled")) SetEnabled(strValue == _T("true"));
-	else if (strName == _T("mouse")) SetMouseEnabled(strValue == _T("true"));
-	else if (strName == _T("keyboard")) SetKeyboardEnabled(strValue == _T("true"));
-	else if (strName == _T("visible")) SetVisible_(strValue == _T("true"));
-	else if (strName == _T("fadevisible")) SetVisible(strValue == _T("true"));
-	else if (strName == _T("float")) SetFloat(strValue == _T("true"));
-	else if (strName == _T("menu")) SetContextMenuUsed(strValue == _T("true"));
-	else if (strName == _T("cache")) SetUseCache(strValue == _T("true"));
-	else if (strName == _T("nofocus")) SetNoFocus();
-	else if (strName == _T("alpha")) SetAlpha(_ttoi(strValue.c_str()));
-	else if (strName == _T("normalimage") ) SetStateImage(kControlStateNormal, strValue);
-	else if (strName == _T("hotimage") ) SetStateImage(kControlStateHot, strValue);
-	else if (strName == _T("pushedimage") ) SetStateImage(kControlStatePushed, strValue);
-	else if (strName == _T("disabledimage") ) SetStateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("forenormalimage") ) SetForeStateImage(kControlStateNormal, strValue);
-	else if (strName == _T("forehotimage") ) SetForeStateImage(kControlStateHot, strValue);
-	else if (strName == _T("forepushedimage") ) SetForeStateImage(kControlStatePushed, strValue);
-	else if (strName == _T("foredisabledimage") ) SetForeStateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("fadealpha")) m_animationManager.SetFadeAlpha(strValue == _T("true"));
-	else if (strName == _T("fadehot")) m_animationManager.SetFadeHot(strValue == _T("true"));
-	else if (strName == _T("fadewidth")) m_animationManager.SetFadeWidth(strValue == _T("true"));
-	else if (strName == _T("fadeheight")) m_animationManager.SetFadeHeight(strValue == _T("true"));
-	else if (strName == _T("fadeinoutxfromleft")) m_animationManager.SetFadeInOutX(strValue == _T("true"), false);
-	else if (strName == _T("fadeinoutxfromright")) m_animationManager.SetFadeInOutX(strValue == _T("true"), true);
-	else if (strName == _T("fadeinoutyfromtop")) m_animationManager.SetFadeInOutY(strValue == _T("true"), false);
-	else if (strName == _T("fadeinoutyfrombottom")) m_animationManager.SetFadeInOutY(strValue == _T("true"), true);
-	else if (strName == _T("receivepointer")) SetReceivePointerMsg(strValue == _T("true"));
+	else if (strName == ATTR_CTR_normalcolor)	SetStateColor(kControlStateNormal, strValue);
+	else if (strName == ATTR_CTR_hotcolor)	SetStateColor(kControlStateHot, strValue);
+	else if (strName == ATTR_CTR_pushedcolor)	SetStateColor(kControlStatePushed, strValue);
+	else if (strName == ATTR_CTR_disabledcolor)	SetStateColor(kControlStateDisabled, strValue);
+	else if (strName == ATTR_CTR_bordercolor) SetBorderColor(strValue);
+	else if (strName == ATTR_CTR_leftbordersize) SetLeftBorderSize(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_topbordersize) SetTopBorderSize(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_rightbordersize) SetRightBorderSize(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_bottombordersize) SetBottomBorderSize(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_bkimage) SetBkImage(strValue);
+	else if (strName == ATTR_CTR_minwidth) SetMinWidth(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_minheight) SetMinHeight(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_name) SetName(strValue);
+	else if (strName == ATTR_CTR_tooltiptext) SetToolTipText(strValue);
+	else if (strName == ATTR_CTR_tooltiptextid) SetToolTipTextId(strValue);
+	else if (strName == ATTR_CTR_dataid) SetDataID(strValue);
+	else if (strName == ATTR_CTR_enabled) SetEnabled(strValue == _T("true"));
+	else if (strName == ATTR_CTR_mouse) SetMouseEnabled(strValue == _T("true"));
+	else if (strName == ATTR_CTR_keyboard) SetKeyboardEnabled(strValue == _T("true"));
+	else if (strName == ATTR_CTR_visible) SetVisible_(strValue == _T("true"));
+	else if (strName == ATTR_CTR_fadevisible) SetVisible(strValue == _T("true"));
+	else if (strName == ATTR_CTR_float) SetFloat(strValue == _T("true"));
+	else if (strName == ATTR_CTR_menu) SetContextMenuUsed(strValue == _T("true"));
+	else if (strName == ATTR_CTR_cache) SetUseCache(strValue == _T("true"));
+	else if (strName == ATTR_CTR_nofocus) SetNoFocus();
+	else if (strName == ATTR_CTR_alpha) SetAlpha(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_CTR_normalimage) SetStateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_CTR_hotimage) SetStateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_CTR_pushedimage) SetStateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_CTR_disabledimage) SetStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_CTR_forenormalimage) SetForeStateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_CTR_forehotimage) SetForeStateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_CTR_forepushedimage) SetForeStateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_CTR_foredisabledimage) SetForeStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_CTR_fadealpha) m_animationManager.SetFadeAlpha(strValue == _T("true"));
+	else if (strName == ATTR_CTR_fadehot) m_animationManager.SetFadeHot(strValue == _T("true"));
+	else if (strName == ATTR_CTR_fadewidth) m_animationManager.SetFadeWidth(strValue == _T("true"));
+	else if (strName == ATTR_CTR_fadeheight) m_animationManager.SetFadeHeight(strValue == _T("true"));
+	else if (strName == ATTR_CTR_fadeinoutxfromleft) m_animationManager.SetFadeInOutX(strValue == _T("true"), false);
+	else if (strName == ATTR_CTR_fadeinoutxfromright) m_animationManager.SetFadeInOutX(strValue == _T("true"), true);
+	else if (strName == ATTR_CTR_fadeinoutyfromtop) m_animationManager.SetFadeInOutY(strValue == _T("true"), false);
+	else if (strName == ATTR_CTR_fadeinoutyfrombottom) m_animationManager.SetFadeInOutY(strValue == _T("true"), true);
+	else if (strName == ATTR_CTR_receivepointer) SetReceivePointerMsg(strValue == _T("true"));
     else
     {
+		std::wstring ws = _T("无效的属性:") + strName;
+		MessageBox(NULL, ws.c_str(), _T("设置属性错误"), MB_ICONERROR | MB_OK);
         ASSERT(FALSE);
     }
 }

@@ -194,9 +194,9 @@ void Combo::Activate()
 
 void Combo::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if (strName == _T("dropbox")) SetDropBoxAttributeList(strValue);
-	else if (strName == _T("vscrollbar")) {}
-	else if (strName == _T("dropboxsize"))
+	if (strName == ATTR_COMBO_dropbox) SetDropBoxAttributeList(strValue);
+	else if (strName == ATTR_COMBO_vscrollbar) {}
+	else if (strName == ATTR_COMBO_dropboxsize)
 	{
 		CSize szDropBoxSize;
 		LPTSTR pstr = NULL;
@@ -204,7 +204,7 @@ void Combo::SetAttribute(const std::wstring& strName, const std::wstring& strVal
 		szDropBoxSize.cy = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 		SetDropBoxSize(szDropBoxSize);
 	}
-	else if (strName == _T("popuptop")) SetPopupTop(strValue == _T("true"));
+	else if (strName == ATTR_COMBO_popuptop) SetPopupTop(strValue == _T("true"));
 	else Box::SetAttribute(strName, strValue);
 }
 

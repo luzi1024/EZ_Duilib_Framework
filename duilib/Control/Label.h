@@ -254,7 +254,7 @@ CSize LabelTemplate<InheritType>::EstimateText(CSize szAvailable, bool& bReEstim
 template<typename InheritType>
 void LabelTemplate<InheritType>::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if (strName == _T("align")) {
+	if (strName == ATTR_LABEL_align) {
 		if (strValue.find(_T("left")) != std::wstring::npos) {
 			m_uTextStyle &= ~(DT_CENTER | DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 			m_uTextStyle |= DT_LEFT;
@@ -280,20 +280,20 @@ void LabelTemplate<InheritType>::SetAttribute(const std::wstring& strName, const
 			m_uTextStyle |= (DT_BOTTOM | DT_SINGLELINE);
 		}
 	}
-	else if (strName == _T("endellipsis")) {
+	else if (strName == ATTR_LABEL_endellipsis) {
 		if (strValue == _T("true")) m_uTextStyle |= DT_END_ELLIPSIS;
 		else m_uTextStyle &= ~DT_END_ELLIPSIS;
 	}
-	else if (strName == _T("linelimit")) SetLineLimit(strValue == _T("true"));
-	else if (strName == _T("singleline")) SetSingleLine(strValue == _T("true"));
-	else if (strName == _T("text")) SetText(strValue);
-	else if (strName == _T("textid")) SetTextId(strValue);
-	else if (strName == _T("font")) SetFont(strValue);
-	else if (strName == _T("normaltextcolor")) SetStateTextColor(kControlStateNormal, strValue);
-	else if (strName == _T("hottextcolor"))	SetStateTextColor(kControlStateHot, strValue);
-	else if (strName == _T("pushedtextcolor"))	SetStateTextColor(kControlStatePushed, strValue);
-	else if (strName == _T("disabledtextcolor"))	SetStateTextColor(kControlStateDisabled, strValue);
-	else if (strName == _T("textpadding")) {
+	else if (strName == ATTR_LABEL_linelimit) SetLineLimit(strValue == _T("true"));
+	else if (strName == ATTR_LABEL_singleline) SetSingleLine(strValue == _T("true"));
+	else if (strName == ATTR_LABEL_text) SetText(strValue);
+	else if (strName == ATTR_LABEL_textid) SetTextId(strValue);
+	else if (strName == ATTR_LABEL_font) SetFont(strValue);
+	else if (strName == ATTR_LABEL_normaltextcolor) SetStateTextColor(kControlStateNormal, strValue);
+	else if (strName == ATTR_LABEL_hottextcolor)	SetStateTextColor(kControlStateHot, strValue);
+	else if (strName == ATTR_LABEL_pushedtextcolor)	SetStateTextColor(kControlStatePushed, strValue);
+	else if (strName == ATTR_LABEL_disabledtextcolor)	SetStateTextColor(kControlStateDisabled, strValue);
+	else if (strName == ATTR_LABEL_textpadding) {
 		UiRect rcTextPadding;
 		LPTSTR pstr = NULL;
 		rcTextPadding.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);

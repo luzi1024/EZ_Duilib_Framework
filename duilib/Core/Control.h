@@ -778,6 +778,14 @@ public:
 	virtual void ClearImageCache();
 
 	/**
+	 * @brief 监听控件指定事件
+	 * @param[in] ev 事件类型
+	 * @param[in] callback 事件处理的回调函数，请参考 EventCallback 声明
+	 * @return 无
+	 */
+	void AttachEvents(EventType ev, const EventCallback& callback) { OnEvent[ev] += callback; }
+
+	/**
 	 * @brief 监听控件所有事件
 	 * @param[in] callback 事件处理的回调函数，请参考 EventCallback 声明
 	 * @return 无

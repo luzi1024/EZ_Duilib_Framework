@@ -68,7 +68,9 @@ Window::Window() :
 	m_strWindowResourcePath(),
 	m_aTranslateAccelerator(),
 	m_heightPercent(0),
-	m_closeFlag()
+	m_closeFlag(),
+	m_bFakeModal(false),
+	m_cbFakeModel(nullptr)
 {
 	LOGFONT lf = { 0 };
 	::GetObject(::GetStockObject(DEFAULT_GUI_FONT), sizeof(LOGFONT), &lf);
@@ -215,7 +217,10 @@ void Window::Close(UINT nRet)
 		ASSERT(::IsWindow(parent_hwnd));
 		::EnableWindow(parent_hwnd, TRUE);
 		::SetFocus(parent_hwnd);
+		if (m_cbFakeModel)
+			m_cbFakeModel(this, nRet);
 		m_bFakeModal = false;
+		m_cbFakeModel = nullptr;
 	}
 	ASSERT(::IsWindow(m_hWnd));
 	if (!::IsWindow(m_hWnd)) return;
@@ -239,16 +244,41 @@ void Window::ShowWindow(bool bShow /*= true*/, bool bTakeFocus /*= false*/)
     ::ShowWindow(m_hWnd, bShow ? (bTakeFocus ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE) : SW_HIDE);
 }
 
-void Window::ShowModalFake(HWND parent_hwnd)
+void Window::ShowModalFake(std::function<void(Window* self, UINT ret)> cb)
 {
 	ASSERT(::IsWindow(m_hWnd));
-	ASSERT(::IsWindow(parent_hwnd));
 	auto p_hwnd = GetWindowOwner(m_hWnd);
 	ASSERT(::IsWindow(p_hwnd));
-	ASSERT(p_hwnd == parent_hwnd);
-	::EnableWindow(parent_hwnd, FALSE);
+	::EnableWindow(p_hwnd, FALSE);
 	ShowWindow();
 	m_bFakeModal = true;
+	m_cbFakeModel = cb;
+}
+
+UINT Window::ShowModal()
+{
+	ASSERT(::IsWindow(m_hWnd));
+	UINT nRet = 0;
+	HWND hWndParent = GetWindowOwner(m_hWnd);
+	::ShowWindow(m_hWnd, SW_SHOWNORMAL);
+	::EnableWindow(hWndParent, FALSE);
+	MSG msg = { 0 };
+	while (::IsWindow(m_hWnd) && ::GetMessage(&msg, NULL, 0, 0)) {
+		if (msg.message == WM_CLOSE && msg.hwnd == m_hWnd) {
+			nRet = msg.wParam;
+			::EnableWindow(hWndParent, TRUE);
+			::SetFocus(hWndParent);
+		}
+		//if (!CPaintManagerUI::TranslateMessage(&msg)) {
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		//}
+		if (msg.message == WM_QUIT) break;
+	}
+	::EnableWindow(hWndParent, TRUE);
+	::SetFocus(hWndParent);
+	if (msg.message == WM_QUIT) ::PostQuitMessage(msg.wParam);
+	return nRet;
 }
 
 void Window::CenterWindow()
@@ -1619,6 +1649,7 @@ Control* Window::FindControl(POINT pt) const
 	return m_pRoot->FindControl(__FindControlFromPoint, &pt, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
 }
 
+#if 0
 Control* Window::FindControl(const std::wstring& strName) const
 {
 	ASSERT(m_pRoot);
@@ -1630,6 +1661,7 @@ Control* Window::FindControl(const std::wstring& strName) const
 
 	return pFindedControl;
 }
+#endif 
 
 Control* Window::FindSubControlByPoint(Control* pParent, POINT pt) const
 {

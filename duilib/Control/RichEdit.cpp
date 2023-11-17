@@ -2633,7 +2633,7 @@ void RichEdit::PaintChild(IRenderContext* pRender, const UiRect& rcPaint)
 
 void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if (strName == _T("vscrollbar")) {
+	if (strName == ATTR_RICHEDIT_vscrollbar) {
 		if (strValue == _T("true")) {
 			m_lTwhStyle |= ES_DISABLENOSCROLL | WS_VSCROLL;
 			EnableScrollBar(true, GetHorizontalScrollBar() != NULL);
@@ -2644,11 +2644,11 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 			EnableScrollBar(false, GetHorizontalScrollBar() != NULL);
 		}
 	}
-	else if (strName == _T("autovscroll")) {
+	else if (strName == ATTR_RICHEDIT_autovscroll) {
 		if (strValue == _T("true")) m_lTwhStyle |= ES_AUTOVSCROLL;
 		else if (strValue == _T("false")) m_lTwhStyle &= ~ES_AUTOVSCROLL;
 	}
-	else if (strName == _T("hscrollbar")) {
+	else if (strName == ATTR_RICHEDIT_hscrollbar) {
 		if (strValue == _T("true")) {
 			m_lTwhStyle |= ES_DISABLENOSCROLL | WS_HSCROLL;
 			EnableScrollBar(GetVerticalScrollBar() != NULL, true);
@@ -2659,15 +2659,15 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 			EnableScrollBar(GetVerticalScrollBar() != NULL, false);
 		}
 	}
-	else if (strName == _T("autohscroll")) {
+	else if (strName == ATTR_RICHEDIT_autohscroll) {
 		if (strValue == _T("true")) m_lTwhStyle |= ES_AUTOHSCROLL;
 		else if (strValue == _T("false")) m_lTwhStyle &= ~ES_AUTOHSCROLL;
 	}
-	else if (strName == _T("multiline")) {
+	else if (strName == ATTR_RICHEDIT_multiline) {
 		if (strValue == _T("false")) m_lTwhStyle &= ~ES_MULTILINE;
 		else if (strValue == _T("true")) m_lTwhStyle |= ES_MULTILINE;
 	}
-	else if (strName == _T("readonly")) {
+	else if (strName == ATTR_RICHEDIT_readonly) {
 		if (strValue == _T("true")) {
 			m_lTwhStyle |= ES_READONLY;
 			m_bReadOnly = true;
@@ -2677,7 +2677,7 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 			m_bReadOnly = false;
 		}
 	}
-	else if (strName == _T("password")) {
+	else if (strName == ATTR_RICHEDIT_password) {
 		if (strValue == _T("true")) {
 			m_lTwhStyle |= ES_PASSWORD;
 			m_bPassword = true;
@@ -2687,7 +2687,7 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 			m_bPassword = false;
 		}
 	}
-	else if (strName == _T("number")) {
+	else if (strName == ATTR_RICHEDIT_number) {
 		if (strValue == _T("true")) {
 			m_lTwhStyle |= ES_NUMBER;
 			m_bNumberOnly = true;
@@ -2697,7 +2697,7 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 			m_bNumberOnly = false;
 		}
 	}
-	else if (strName == _T("align")) {
+	else if (strName == ATTR_RICHEDIT_align) {
 		if (strValue.find(_T("left")) != std::wstring::npos) {
 			m_lTwhStyle &= ~(ES_CENTER | ES_RIGHT);
 			m_lTwhStyle |= ES_LEFT;
@@ -2720,44 +2720,44 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 			m_textVerAlignType = kVerAlignBottom;
 		}
 	}
-	else if (strName == _T("normaltextcolor")) {
+	else if (strName == ATTR_RICHEDIT_normaltextcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		m_sTextColor = pValue;
 		if (m_bEnabled)
 			SetTextColor(m_sTextColor);
 	}
-	else if (strName == L"disabledtextcolor") {
+	else if (strName == ATTR_RICHEDIT_disabledtextcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		m_sDisabledTextColor = pValue;
 		if (!m_bEnabled)
 			SetTextColor(m_sDisabledTextColor);
 	}
-	else if (strName == L"caretcolor") {
+	else if (strName == ATTR_RICHEDIT_caretcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		SetCaretColor(pValue);
 	}
-	else if (strName == _T("promptmode")) {
+	else if (strName == ATTR_RICHEDIT_promptmode) {
 		if (strValue == _T("true"))
 			m_bAllowPrompt = true;
 	}
-	else if (strName == _T("promptcolor")) {
+	else if (strName == ATTR_RICHEDIT_promptcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		m_sPromptColor = pValue;
 	}
-	else if (strName == _T("prompttext")) SetPromptText(strValue);
-	else if (strName == _T("prompttextid")) SetPromptTextId(strValue);
-	else if (strName == _T("focusedimage")) SetFocusedImage(strValue);
-	else if (strName == _T("font")) SetFont(strValue);
-	else if (strName == _T("text")) SetText(strValue.c_str());
-	else if (strName == _T("textid")) SetTextId(strValue.c_str());
-	else if (strName == _T("wanttab")) SetWantTab(strValue == _T("true"));
-	else if (strName == _T("wantreturnmsg")) SetNeedReturnMsg(strValue == _T("true"));
-	else if (strName == _T("returnmsgwantctrl")) SetReturnMsgWantCtrl(strValue == _T("true"));
-	else if (strName == _T("rich")) SetRich(strValue == _T("true"));
+	else if (strName == ATTR_RICHEDIT_prompttext) SetPromptText(strValue);
+	else if (strName == ATTR_RICHEDIT_prompttextid) SetPromptTextId(strValue);
+	else if (strName == ATTR_RICHEDIT_focusedimage) SetFocusedImage(strValue);
+	else if (strName == ATTR_RICHEDIT_font) SetFont(strValue);
+	else if (strName == ATTR_RICHEDIT_text) SetText(strValue.c_str());
+	else if (strName == ATTR_RICHEDIT_textid) SetTextId(strValue.c_str());
+	else if (strName == ATTR_RICHEDIT_wanttab) SetWantTab(strValue == _T("true"));
+	else if (strName == ATTR_RICHEDIT_wantreturnmsg) SetNeedReturnMsg(strValue == _T("true"));
+	else if (strName == ATTR_RICHEDIT_returnmsgwantctrl) SetReturnMsgWantCtrl(strValue == _T("true"));
+	else if (strName == ATTR_RICHEDIT_rich) SetRich(strValue == _T("true"));
 	else Box::SetAttribute(strName, strValue);
 }
 

@@ -16,7 +16,7 @@ ListBox::ListBox(Layout* pLayout) :
 
 void ListBox::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if( strName == _T("scrollselect") ) {
+	if( strName == ATTR_LISTBOX_scrollselect) {
 		SetScrollSelect(strValue == _T("true"));
 	}
 	else {

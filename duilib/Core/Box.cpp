@@ -91,7 +91,7 @@ CSize Layout::SetFloatPos(Control* pControl, UiRect rcContainer)
 bool Layout::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
 	bool hasAttribute = true;
-	if( strName == _T("padding") ) {
+	if( strName == ATTR_LAYOUT_padding) {
 		UiRect rcPadding;
 		LPTSTR pstr = NULL;
 		rcPadding.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
@@ -100,7 +100,7 @@ bool Layout::SetAttribute(const std::wstring& strName, const std::wstring& strVa
 		rcPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
 		SetPadding(rcPadding);
 	}
-	else if( strName == _T("childmargin") ) {
+	else if( strName == ATTR_LAYOUT_childmargin) {
 		SetChildMargin(_ttoi(strValue.c_str()));
 	}
 	else {
@@ -227,7 +227,7 @@ void Box::SetAttribute(const std::wstring& strName, const std::wstring& strValue
 	if (m_pLayout->SetAttribute(strName, strValue))	{
 
 	}
-	else if( strName == _T("mousechild") ) SetMouseChildEnabled(strValue == _T("true"));
+	else if( strName == ATTR_BOX_mousechild) SetMouseChildEnabled(strValue == _T("true"));
 	else Control::SetAttribute(strName, strValue);
 }
 
@@ -783,21 +783,21 @@ ScrollableBox::ScrollableBox(const ScrollableBox& r):
 
 void ScrollableBox::SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue)
 {
-	if( pstrName == _T("vscrollbar") ) {
+	if( pstrName == ATTR_SLBOX_vscrollbar) {
 		EnableScrollBar(pstrValue == _T("true"), GetHorizontalScrollBar() != NULL);
 	}
-	else if( pstrName == _T("vscrollbarstyle") ) {
+	else if( pstrName == ATTR_SLBOX_vscrollbarstyle) {
 		EnableScrollBar(true, GetHorizontalScrollBar() != NULL);
 		if( GetVerticalScrollBar() ) GetVerticalScrollBar()->ApplyAttributeList(pstrValue);
 	}
-	else if( pstrName == _T("hscrollbar") ) {
+	else if( pstrName == ATTR_SLBOX_hscrollbar) {
 		EnableScrollBar(GetVerticalScrollBar() != NULL, pstrValue == _T("true"));
 	}
-	else if( pstrName == _T("hscrollbarstyle") ) {
+	else if( pstrName == ATTR_SLBOX_hscrollbarstyle) {
 		EnableScrollBar(GetVerticalScrollBar() != NULL, true);
 		if( GetHorizontalScrollBar() ) GetHorizontalScrollBar()->ApplyAttributeList(pstrValue);
 	}
-	else if( pstrName == _T("scrollbarpadding") ) {
+	else if( pstrName == ATTR_SLBOX_scrollbarpadding) {
 		UiRect rcScrollbarPadding;
 		LPTSTR pstr = NULL;
 		rcScrollbarPadding.left = _tcstol(pstrValue.c_str(), &pstr, 10);  ASSERT(pstr);    
@@ -806,11 +806,11 @@ void ScrollableBox::SetAttribute(const std::wstring& pstrName, const std::wstrin
 		rcScrollbarPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
 		SetScrollBarPadding(rcScrollbarPadding);
 	}
-	else if( pstrName == _T("vscrollunit") ) SetVerScrollUnitPixels(_ttoi(pstrValue.c_str()));
-    else if (pstrName == _T("hscrollunit")) SetHorScrollUnitPixels(_ttoi(pstrValue.c_str()));
-	else if( pstrName == _T("scrollbarfloat") ) SetScrollBarFloat(pstrValue == _T("true"));
-	else if( pstrName == _T("defaultdisplayscrollbar") ) SetDefaultDisplayScrollbar(pstrValue == _T("true"));
-	else if( pstrName == _T("holdend") ) SetHoldEnd(pstrValue == _T("true"));
+	else if( pstrName == ATTR_SLBOX_vscrollunit) SetVerScrollUnitPixels(_ttoi(pstrValue.c_str()));
+    else if (pstrName == ATTR_SLBOX_hscrollunit) SetHorScrollUnitPixels(_ttoi(pstrValue.c_str()));
+	else if( pstrName == ATTR_SLBOX_scrollbarfloat) SetScrollBarFloat(pstrValue == _T("true"));
+	else if( pstrName == ATTR_SLBOX_defaultdisplayscrollbar) SetDefaultDisplayScrollbar(pstrValue == _T("true"));
+	else if( pstrName == ATTR_SLBOX_holdend) SetHoldEnd(pstrValue == _T("true"));
 	else Box::SetAttribute(pstrName, pstrValue);
 }
 

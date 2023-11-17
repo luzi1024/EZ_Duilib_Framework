@@ -459,34 +459,34 @@ void ScrollBar::HandleMessage(EventArgs& event)
 
 void ScrollBar::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if (strName == _T("button1normalimage")) SetButton1StateImage(kControlStateNormal, strValue);
-	else if (strName == _T("button1hotimage")) SetButton1StateImage(kControlStateHot, strValue);
-	else if (strName == _T("button1pushedimage")) SetButton1StateImage(kControlStatePushed, strValue);
-	else if (strName == _T("button1disabledimage")) SetButton1StateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("button2normalimage")) SetButton2StateImage(kControlStateNormal, strValue);
-	else if (strName == _T("button2hotimage")) SetButton2StateImage(kControlStateHot, strValue);
-	else if (strName == _T("button2pushedimage")) SetButton2StateImage(kControlStatePushed, strValue);
-	else if (strName == _T("button2disabledimage")) SetButton2StateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("thumbnormalimage")) SetThumbStateImage(kControlStateNormal, strValue);
-	else if (strName == _T("thumbhotimage")) SetThumbStateImage(kControlStateHot, strValue);
-	else if (strName == _T("thumbpushedimage")) SetThumbStateImage(kControlStatePushed, strValue);
-	else if (strName == _T("thumbdisabledimage")) SetThumbStateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("railnormalimage")) SetRailStateImage(kControlStateNormal, strValue);
-	else if (strName == _T("railhotimage")) SetRailStateImage(kControlStateHot, strValue);
-	else if (strName == _T("railpushedimage")) SetRailStateImage(kControlStatePushed, strValue);
-	else if (strName == _T("raildisabledimage")) SetRailStateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("bknormalimage")) SetBkStateImage(kControlStateNormal, strValue);
-	else if (strName == _T("bkhotimage")) SetBkStateImage(kControlStateHot, strValue);
-	else if (strName == _T("bkpushedimage")) SetBkStateImage(kControlStatePushed, strValue);
-	else if (strName == _T("bkdisabledimage")) SetBkStateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("hor")) SetHorizontal(strValue == _T("true"));
-	else if (strName == _T("linesize")) SetLineSize(_ttoi(strValue.c_str()));
-	else if (strName == _T("thumbminlength")) SetThumbMinLength(_ttoi(strValue.c_str()));
-	else if (strName == _T("range")) SetScrollRange(_ttoi(strValue.c_str()));
-	else if (strName == _T("value")) SetScrollPos(_ttoi(strValue.c_str()));
-	else if (strName == _T("showbutton1")) SetShowButton1(strValue == _T("true"));
-	else if (strName == _T("showbutton2")) SetShowButton2(strValue == _T("true"));
-	else if (strName == _T("autohidescroll")) SetAutoHideScroll(strValue == _T("true"));
+	if (strName == ATTR_SCROLBAR_button1normalimage) SetButton1StateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_SCROLBAR_button1hotimage) SetButton1StateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_SCROLBAR_button1pushedimage) SetButton1StateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_SCROLBAR_button1disabledimage) SetButton1StateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_SCROLBAR_button2normalimage) SetButton2StateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_SCROLBAR_button2hotimage) SetButton2StateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_SCROLBAR_button2pushedimage) SetButton2StateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_SCROLBAR_button2disabledimage) SetButton2StateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_SCROLBAR_thumbnormalimage) SetThumbStateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_SCROLBAR_thumbhotimage) SetThumbStateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_SCROLBAR_thumbpushedimage) SetThumbStateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_SCROLBAR_thumbdisabledimage) SetThumbStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_SCROLBAR_railnormalimage) SetRailStateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_SCROLBAR_railhotimage) SetRailStateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_SCROLBAR_railpushedimage) SetRailStateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_SCROLBAR_raildisabledimage) SetRailStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_SCROLBAR_bknormalimage) SetBkStateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_SCROLBAR_bkhotimage) SetBkStateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_SCROLBAR_bkpushedimage) SetBkStateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_SCROLBAR_bkdisabledimage) SetBkStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_SCROLBAR_hor) SetHorizontal(strValue == _T("true"));
+	else if (strName == ATTR_SCROLBAR_linesize) SetLineSize(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_SCROLBAR_thumbminlength) SetThumbMinLength(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_SCROLBAR_range) SetScrollRange(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_SCROLBAR_value) SetScrollPos(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_SCROLBAR_showbutton1) SetShowButton1(strValue == _T("true"));
+	else if (strName == ATTR_SCROLBAR_showbutton2) SetShowButton2(strValue == _T("true"));
+	else if (strName == ATTR_SCROLBAR_autohidescroll) SetAutoHideScroll(strValue == _T("true"));
 	else Control::SetAttribute(strName, strValue);
 }
 

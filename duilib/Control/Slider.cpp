@@ -107,19 +107,19 @@ void Slider::HandleMessage(EventArgs& event)
 
 void Slider::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if (strName == _T("step")) SetChangeStep(_ttoi(strValue.c_str()));
-	else if (strName == _T("thumbnormalimage")) SetThumbStateImage(kControlStateNormal, strValue);
-	else if (strName == _T("thumbhotimage")) SetThumbStateImage(kControlStateHot, strValue);
-	else if (strName == _T("thumbpushedimage")) SetThumbStateImage(kControlStatePushed, strValue);
-	else if (strName == _T("thumbdisabledimage")) SetThumbStateImage(kControlStateDisabled, strValue);
-	else if (strName == _T("thumbsize")) {
+	if (strName == ATTR_SLIDER_step) SetChangeStep(_ttoi(strValue.c_str()));
+	else if (strName == ATTR_SLIDER_thumbnormalimage) SetThumbStateImage(kControlStateNormal, strValue);
+	else if (strName == ATTR_SLIDER_thumbhotimage) SetThumbStateImage(kControlStateHot, strValue);
+	else if (strName == ATTR_SLIDER_thumbpushedimage) SetThumbStateImage(kControlStatePushed, strValue);
+	else if (strName == ATTR_SLIDER_thumbdisabledimage) SetThumbStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_SLIDER_thumbsize) {
 		CSize szXY;
 		LPTSTR pstr = NULL;
 		szXY.cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);
 		szXY.cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
 		SetThumbSize(szXY);
 	}
-	else if (strName == _T("progressbarpadding")) {
+	else if (strName == ATTR_SLIDER_progressbarpadding) {
 		UiRect rcPadding;
 		LPTSTR pstr = NULL;
 		rcPadding.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);

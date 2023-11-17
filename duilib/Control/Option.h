@@ -61,7 +61,7 @@ void OptionTemplate<InheritType>::SetWindow(Window* pManager, Box* pParent, bool
 template<typename InheritType>
 void OptionTemplate<InheritType>::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
 {
-	if (strName == _T("group")) SetGroup(strValue);
+	if (strName == ATTR_OPTION_group) SetGroup(strValue);
 	else __super::SetAttribute(strName, strValue);
 }
 

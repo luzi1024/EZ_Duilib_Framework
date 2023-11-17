@@ -19,21 +19,21 @@ CircleProgress::CircleProgress() :
 
 void CircleProgress::SetAttribute(const std::wstring& srName, const std::wstring& strValue)
 {
-	if (srName == _T("circular")) SetCircular(strValue == _T("true"));
-	else if (srName == _T("circlewidth")) SetCircleWidth(_ttoi(strValue.c_str()));
-	else if (srName == _T("indicator")) SetIndicator(strValue);
-	else if (srName == _T("clockwise")) SetClockwiseRotation(strValue == _T("true"));
-	else if (srName == _T("bgcolor")) {
+	if (srName == ATTR_CPROGRESS_circular) SetCircular(strValue == _T("true"));
+	else if (srName == ATTR_CPROGRESS_circlewidth) SetCircleWidth(_ttoi(strValue.c_str()));
+	else if (srName == ATTR_CPROGRESS_indicator) SetIndicator(strValue);
+	else if (srName == ATTR_CPROGRESS_clockwise) SetClockwiseRotation(strValue == _T("true"));
+	else if (srName == ATTR_CPROGRESS_bgcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		SetBackgroudColor(pValue);
 	}
-	else if (srName == _T("fgcolor")) {
+	else if (srName == ATTR_CPROGRESS_fgcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		SetForegroudColor(pValue);
 	}
-	else if (srName == _T("gradientcolor")) {
+	else if (srName == ATTR_CPROGRESS_gradientcolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		SetCircleGradientColor(pValue);

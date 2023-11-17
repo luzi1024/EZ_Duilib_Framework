@@ -130,10 +130,10 @@ public:
 
 	/**
 	 * @brief 关闭窗口
-	 * @param[in] 关闭消息
+	 * @param[in] 关闭消息 默认改为0
 	 * @return 无
 	 */
-	virtual void Close(UINT nRet = IDOK);
+	virtual void Close(UINT nRet = 0/*IDOK*/);
 
 	/**
 	 * @brief 显示或隐藏窗口
@@ -148,7 +148,14 @@ public:
 	 * @param[in] parent_hwnd 父窗口句柄
 	 * @return 无
 	 */
-	void ShowModalFake(HWND parent_hwnd);
+	void ShowModalFake(std::function<void(Window* self, UINT ret)> cb = nullptr);
+
+	/**
+	 * @brief 显示模态对话框
+	 * @param[in] parent_hwnd 父窗口句柄
+	 * @return 无
+	 */
+	UINT ShowModal();
 
 	/**
 	 * @brief 居中窗口，支持扩展屏幕
@@ -731,7 +738,17 @@ public:
 	 * @param[in] strName 控件名称
 	 * @return 返回控件指针
 	 */
-	Control* FindControl(const std::wstring& strName) const;
+	//Control* FindControl(const std::wstring& strName) const;
+	template<typename T = Control>
+	T* FindControl(const std::wstring& strName) const
+	{
+		ASSERT(m_pRoot);
+		auto it = m_mNameHash.find(strName);
+		if (it == m_mNameHash.end())
+			return nullptr;
+		T* pFindedControl = dynamic_cast<T*>(it->second);
+		return pFindedControl;
+	}
 
 	/**
 	 * @brief 根据坐标查找子控件
@@ -941,7 +958,8 @@ protected:
 	
 	Shadow m_shadow;
 
-	bool m_bFakeModal = false;
+	bool m_bFakeModal;
+	std::function<void(Window* self, UINT ret)> m_cbFakeModel;
 };
 
 } // namespace ui

@@ -20,13 +20,13 @@ Progress::Progress() :
 
 void Progress::SetAttribute(const std::wstring& srName, const std::wstring& strValue)
 {
-	if (srName == _T("hor")) SetHorizontal(strValue == _T("true"));
-	else if (srName == _T("min")) SetMinValue(_ttoi(strValue.c_str()));
-	else if (srName == _T("max")) SetMaxValue(_ttoi(strValue.c_str()));
-	else if (srName == _T("value")) SetValue(_ttoi(strValue.c_str()));
-	else if (srName == _T("progressimage")) SetProgressImage(strValue);
-	else if (srName == _T("isstretchfore")) SetStretchForeImage(strValue == _T("true"));
-	else if (srName == _T("progresscolor")) {
+	if (srName == ATTR_PROGRESS_hor) SetHorizontal(strValue == _T("true"));
+	else if (srName == ATTR_PROGRESS_min) SetMinValue(_ttoi(strValue.c_str()));
+	else if (srName == ATTR_PROGRESS_max) SetMaxValue(_ttoi(strValue.c_str()));
+	else if (srName == ATTR_PROGRESS_value) SetValue(_ttoi(strValue.c_str()));
+	else if (srName == ATTR_PROGRESS_progressimage) SetProgressImage(strValue);
+	else if (srName == ATTR_PROGRESS_isstretchfore) SetStretchForeImage(strValue == _T("true"));
+	else if (srName == ATTR_PROGRESS_progresscolor) {
 		LPCTSTR pValue = strValue.c_str();
 		while (*pValue > _T('\0') && *pValue <= _T(' ')) pValue = ::CharNext(pValue);
 		SetProgressColor(pValue);
