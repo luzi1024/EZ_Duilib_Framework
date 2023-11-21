@@ -149,16 +149,14 @@ private:
 	};
 };
 
-#if 0
-// Á´½Ó´íÎó ËùÒÔ×¢ÊÍµô
 template<>
-void MessageLoopProxy::PostTaskAndReplyRelay<void(), void()>::Run()
+inline void MessageLoopProxy::PostTaskAndReplyRelay<void(), void()>::Run()
 {
 	std_task_();
 	origin_loop_->PostTask(
 		nbase::Bind(&PostTaskAndReplyRelay::RunReplyAndSelfDestruct, this));
 }
-#endif
+
 }  // namespace nbase
 
 #endif  // BASE_MESSAGE_LOOP_PROXY_H_
