@@ -291,7 +291,7 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	SetWindowResourcePath(GetSkinFolder());
 
 	WindowBuilder builder;
-	std::wstring strSkinFile = GetWindowResourcePath() + GetSkinFile();
+	std::wstring strSkinFile = IsSkinJit() ? GetSkinFile() : GetWindowResourcePath() + GetSkinFile();
 
 	auto callback = nbase::Bind(&WindowImplBase::CreateControl, this, std::placeholders::_1);
 	auto pRoot = (Box*)builder.Create(strSkinFile.c_str(), callback, this);

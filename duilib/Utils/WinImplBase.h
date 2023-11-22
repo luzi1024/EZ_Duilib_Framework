@@ -330,6 +330,11 @@ protected:
 	 */
 	virtual std::wstring GetWindowClassName(void) const = 0 ;
 
+	/**
+	 * @brief 重载实现jit创建逻辑 (New)
+	 * @return 是否使用jit数据
+	 */
+	virtual bool IsSkinJit() { return false; };
 private:
 	/**
 	 * @brief 收到窗口创建消息时被调用，请使用 InitWindow 接口来实现自定义需求

@@ -87,6 +87,7 @@
 #include "Utils/OnScreenKeyboardManager.h"
 #include "Utils/Shadow.h"
 #include "Utils/Msgbox.h"
+#include "Utils/WindowJit.h"
 
 #include "Animation/AnimationPlayer.h"
 #include "Animation/AnimationManager.h"

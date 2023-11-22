@@ -361,6 +361,7 @@
     <ClCompile Include="Control\Slider.cpp" />
     <ClCompile Include="Control\TreeView.cpp" />
     <ClCompile Include="Utils\UnZip.cpp" />
+    <ClCompile Include="Utils\WindowJit.cpp" />
     <ClCompile Include="Utils\WinImplBase.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -399,6 +400,7 @@
     <ClInclude Include="Utils\UnZip.h" />
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Utils\VersionHelpers.h" />
+    <ClInclude Include="Utils\WindowJit.h" />
     <ClInclude Include="Utils\WinImplBase.h" />
     <ClInclude Include="Core\Window.h" />
     <ClInclude Include="Core\Box.h" />
