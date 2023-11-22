@@ -107,6 +107,14 @@ Control::~Control()
 	}
 }
 
+bool Control::RemoveSelf()
+{
+	ui::Box* pParent = this->GetParent();
+	if (pParent == nullptr)
+		return false;
+	return pParent->Remove(this);
+}
+
 std::wstring Control::GetBkColor() const
 {
 	return m_strBkColor;
@@ -1133,7 +1141,7 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
     else
     {
 		std::wstring ws = _T("无效的属性:") + strName;
-		MessageBox(NULL, ws.c_str(), _T("设置属性错误"), MB_ICONERROR | MB_OK);
+		::MessageBox(NULL, ws.c_str(), _T("设置属性错误"), MB_ICONERROR | MB_OK);
         ASSERT(FALSE);
     }
 }

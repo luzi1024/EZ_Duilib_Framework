@@ -341,6 +341,7 @@
     <ClCompile Include="UIlib.cpp" />
     <ClCompile Include="Utils\ApiWrapper.cpp" />
     <ClCompile Include="Utils\DpiManager.cpp" />
+    <ClCompile Include="Utils\Msgbox.cpp" />
     <ClCompile Include="Utils\MultiLangSupport.cpp" />
     <ClCompile Include="Utils\OnScreenKeyboardManager.cpp" />
     <ClCompile Include="Utils\Shadow.cpp" />
@@ -388,6 +389,7 @@
     <ClInclude Include="Utils\ApiWrapper.h" />
     <ClInclude Include="Utils\DpiManager.h" />
     <ClInclude Include="Utils\Macros.h" />
+    <ClInclude Include="Utils\Msgbox.h" />
     <ClInclude Include="Utils\MultiLangSupport.h" />
     <ClInclude Include="Utils\OnScreenKeyboardManager.h" />
     <ClInclude Include="Utils\Shadow.h" />

@@ -86,6 +86,7 @@
 #include "Utils/TimerManager.h"
 #include "Utils/OnScreenKeyboardManager.h"
 #include "Utils/Shadow.h"
+#include "Utils/Msgbox.h"
 
 #include "Animation/AnimationPlayer.h"
 #include "Animation/AnimationManager.h"

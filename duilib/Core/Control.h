@@ -26,7 +26,20 @@ public:
 	Control& operator=(const Control& r) = delete;
     virtual ~Control();
 
-    /// 图形相关
+	/// 自身相关
+	/**
+	 * @brief 移除当前节点 (New)
+	 * @return 成功返回true，失败返回false
+	 */
+	bool RemoveSelf();
+
+	/**
+	 * @brief 设置正文,子类实现 (New)
+	 * @return 无
+	 */
+	virtual void SetText(const std::wstring& strText) {};
+
+    /// 图形相关	
 	/**
 	 * @brief 获取背景颜色
 	 * @return 返回背景颜色的字符串，该值在 global.xml 中定义
@@ -778,12 +791,12 @@ public:
 	virtual void ClearImageCache();
 
 	/**
-	 * @brief 监听控件指定事件
+	 * @brief 监听控件指定事件 (New)
 	 * @param[in] ev 事件类型
 	 * @param[in] callback 事件处理的回调函数，请参考 EventCallback 声明
 	 * @return 无
 	 */
-	void AttachEvents(EventType ev, const EventCallback& callback) { OnEvent[ev] += callback; }
+	void AttachEvent(EventType ev, const EventCallback& callback) { OnEvent[ev] += callback; }
 
 	/**
 	 * @brief 监听控件所有事件

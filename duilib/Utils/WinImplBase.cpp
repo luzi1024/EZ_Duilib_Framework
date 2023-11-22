@@ -300,7 +300,7 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	if (pRoot == NULL) {
 		TCHAR szErrMsg[MAX_PATH] = { 0 };
 		_stprintf_s(szErrMsg, L"Failed to load xml file %s", strSkinFile.c_str());
-		MessageBox(NULL, szErrMsg, _T("Duilib"), MB_OK | MB_ICONERROR);
+		::MessageBox(NULL, szErrMsg, _T("Duilib"), MB_OK | MB_ICONERROR);
 		return -1;
 	}
 	
