@@ -40,6 +40,10 @@ public:
 	// find all tokens splitted by one of the characters in 'delimitor'
 	static std::list<std::string> Split(const std::string& input, const std::string& delimitor);
 	static std::list<std::wstring> Split(const std::wstring& input, const std::wstring& delimitor);
+
+	//
+	static bool StartWith(const std::wstring& str, const std::wstring& head);
+	static bool EndWith(const std::wstring& str, const std::wstring& tail);
 };
 
 }

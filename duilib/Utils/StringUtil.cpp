@@ -495,4 +495,14 @@ std::list<std::wstring> StringHelper::Split(const std::wstring& input, const std
 	return output;
 }
 
+bool StringHelper::StartWith(const std::wstring& str, const std::wstring& head)
+{
+	return str.compare(0, head.size(), head) == 0;
+}
+
+bool StringHelper::EndWith(const std::wstring& str, const std::wstring& tail)
+{
+	return str.compare(str.size() - tail.size(), tail.size(), tail) == 0;
+}
+
 } // namespace nbase

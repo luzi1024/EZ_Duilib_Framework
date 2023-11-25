@@ -249,6 +249,21 @@ EventType StringToEnum(const std::wstring& messageType);
 #define  DUI_CTR_PROGRESS                        (_T("Progress"))
 #define  DUI_CTR_CIRCLEPROGRESS                  (_T("CircleProgress"))
 #define  DUI_CTR_SCROLLBAR                       (_T("ScrollBar"))
+//定义Window及Global属性 ///////////////////////////////////////////////////////////////////////////
+// Window
+#define ATTR_WINDOW_size					(_T("size"))
+#define ATTR_WINDOW_heightpercent			(_T("heightpercent"))
+#define ATTR_WINDOW_sizebox					(_T("sizebox"))
+#define ATTR_WINDOW_caption					(_T("caption"))
+#define ATTR_WINDOW_textid					(_T("textid"))
+#define ATTR_WINDOW_roundcorner				(_T("roundcorner"))  // #BUG不起作用
+#define ATTR_WINDOW_mininfo					(_T("mininfo"))
+#define ATTR_WINDOW_maxinfo					(_T("maxinfo"))
+#define ATTR_WINDOW_shadowattached			(_T("shadowattached"))
+#define ATTR_WINDOW_shadowimage				(_T("shadowimage"))
+#define ATTR_WINDOW_shadowcorner			(_T("shadowcorner"))
+#define ATTR_WINDOW_alphafixcorner			(_T("alphafixcorner"))
+#define ATTR_WINDOW_custom_shadow			(_T("custom_shadow"))
 
 //定义所有控件属性 ///////////////////////////////////////////////////////////////////////////
 // Control

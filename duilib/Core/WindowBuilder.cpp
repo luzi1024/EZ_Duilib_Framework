@@ -92,13 +92,13 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 				for( int i = 0; i < nAttributes; i++ ) {
 					strName = root.GetAttributeName(i);
 					strValue = root.GetAttributeValue(i);
-					if( strName == _T("size") ) {
+					if( strName == ATTR_WINDOW_size) {
 						LPTSTR pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);	ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);	ASSERT(pstr); 
 						pManager->SetInitSize(cx, cy);
 					} 
-					else if( strName == _T("heightpercent") ) {
+					else if( strName == ATTR_WINDOW_heightpercent) {
 						double lfHeightPercent = _ttof(strValue.c_str());
 						pManager->SetHeightPercent(lfHeightPercent);
 
@@ -118,7 +118,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						CSize xy = pManager->GetInitSize();
 						pManager->SetInitSize(xy.cx, nWindowHeight, false, false);
 					}
-					else if( strName == _T("sizebox") ) {
+					else if( strName == ATTR_WINDOW_sizebox) {
 						UiRect rcSizeBox;
 						LPTSTR pstr = NULL;
 						rcSizeBox.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
@@ -127,7 +127,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						rcSizeBox.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);    
 						pManager->SetSizeBox(rcSizeBox);
 					}
-					else if( strName == _T("caption") ) {
+					else if( strName == ATTR_WINDOW_caption) {
 						UiRect rcCaption;
 						LPTSTR pstr = NULL;
 						rcCaption.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
@@ -136,34 +136,34 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						rcCaption.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 						pManager->SetCaptionRect(rcCaption);
 					}
-					else if( strName == _T("textid") ) {
+					else if( strName == ATTR_WINDOW_textid) {
 						pManager->SetTextId(strValue);
 					}
-					else if( strName == _T("roundcorner") ) {
+					else if( strName == ATTR_WINDOW_roundcorner) {
 						LPTSTR pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
 						pManager->SetRoundCorner(cx, cy);
 					} 
-					else if( strName == _T("mininfo") ) {
+					else if( strName == ATTR_WINDOW_mininfo) {
 						LPTSTR pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
 						pManager->SetMinInfo(cx, cy);
 					}
-					else if( strName == _T("maxinfo") ) {
+					else if( strName == ATTR_WINDOW_maxinfo) {
 						LPTSTR pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
 						pManager->SetMaxInfo(cx, cy);
 					}
-					else if( strName == _T("shadowattached") ) {
+					else if( strName == ATTR_WINDOW_shadowattached) {
 						pManager->SetShadowAttached(strValue == _T("true"));
 					}
-					else if (strName == _T("shadowimage")) {
+					else if (strName == ATTR_WINDOW_shadowimage) {
 						pManager->SetShadowImage(strValue);
 					}
-					else if (strName == _T("shadowcorner")) {
+					else if (strName == ATTR_WINDOW_shadowcorner) {
 						UiRect rc;
 						LPTSTR pstr = NULL;
 						rc.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);
@@ -172,7 +172,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						rc.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 						pManager->SetShadowCorner(rc);
 					}
-					else if (strName == _T("alphafixcorner") || strName == _T("custom_shadow")) {
+					else if (strName == ATTR_WINDOW_alphafixcorner || strName == ATTR_WINDOW_custom_shadow) {
 						UiRect rc;
 						LPTSTR pstr = NULL;
 						rc.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);
