@@ -239,15 +239,12 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 						lDrawWidth -= lDestRight - rcDest.right;
 						lDestRight = rcDest.right;
 					}
-					rcDest.left = rcDest.left + lWidth * i;
-					rcDest.top = rcDest.top + lHeight * j;
-					rcDest.right = rcDest.left + lDestRight - lDestLeft;
-					rcDest.bottom = rcDest.top + lDestBottom - lDestTop;
+					UiRect rcPieceDest(lDestLeft, lDestTop, lDestRight, lDestBottom);
 					rcSource.left = rcImageSource.left + rcCorners.left;
 					rcSource.top = rcImageSource.top + rcCorners.top;
 					rcSource.right = rcSource.left + lDrawWidth;
 					rcSource.bottom = rcSource.top + lDrawHeight;
-					DrawFunction(m_hDC, m_bTransparent, rcDest, hCloneDC, rcSource, bAlphaChannel, uFade);
+					DrawFunction(m_hDC, m_bTransparent, rcPieceDest, hCloneDC, rcSource, bAlphaChannel, uFade);
 				}
 			}
 		}
@@ -262,15 +259,12 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 					lDrawWidth -= lDestRight - rcDest.right;
 					lDestRight = rcDest.right;
 				}
-				rcDest.left = lDestLeft;
-				rcDest.top = rcDest.top;
-				rcDest.right = lDestRight;
-				rcDest.bottom = rcDest.top + rcDest.bottom;
-				rcSource.left = rcImageSource.left + rcCorners.left;
-				rcSource.top = rcImageSource.top + rcCorners.top;
+				UiRect rcPieceDest(lDestLeft, rcDest.top, lDestRight, rcDest.bottom);
+				rcSource.left += rcImageSource.left;
+				rcSource.top += rcImageSource.top;
 				rcSource.right = rcSource.left + lDrawWidth;
 				rcSource.bottom = rcImageSource.bottom - rcCorners.bottom;
-				DrawFunction(m_hDC, m_bTransparent, rcDest, hCloneDC, rcSource, bAlphaChannel, uFade);
+				DrawFunction(m_hDC, m_bTransparent, rcPieceDest, hCloneDC, rcSource, bAlphaChannel, uFade);
 			}
 		}
 		else { // ytiled
@@ -284,15 +278,12 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 					lDrawHeight -= lDestBottom - rcDest.bottom;
 					lDestBottom = rcDest.bottom;
 				}
-				rcDest.left = rcDest.left;
-				rcDest.top = rcDest.top + lHeight * i;
-				rcDest.right = rcDest.left + rcDest.right;
-				rcDest.bottom = rcDest.top + lDestBottom - lDestTop;
+				UiRect rcPieceDest(rcDest.left, lDestTop, rcDest.right, lDestBottom);
 				rcSource.left = rcImageSource.left + rcCorners.left;
 				rcSource.top = rcImageSource.top + rcCorners.top;
 				rcSource.right = rcImageSource.right - rcCorners.right;
 				rcSource.bottom = rcSource.top + lDrawHeight;
-				DrawFunction(m_hDC, m_bTransparent, rcDest, hCloneDC, rcSource, bAlphaChannel, uFade);
+				DrawFunction(m_hDC, m_bTransparent, rcPieceDest, hCloneDC, rcSource, bAlphaChannel, uFade);
 			}
 		}
 	}
