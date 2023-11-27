@@ -658,10 +658,10 @@ CSize Control::EstimateSize(CSize szAvailable)
 			auto imageAttribute = image->imageAttribute;
 			if (imageAttribute.rcSource.left != DUI_NOSET_VALUE && imageAttribute.rcSource.top != DUI_NOSET_VALUE
 				&& imageAttribute.rcSource.right != DUI_NOSET_VALUE && imageAttribute.rcSource.bottom != DUI_NOSET_VALUE) {
-				if ((GetFixedWidth() != imageAttribute.rcSource.right - imageAttribute.rcSource.left)) {
+				if ((GetFixedWidth() <= 0)) {
 					SetFixedWidth(imageAttribute.rcSource.right - imageAttribute.rcSource.left);
 				}
-				if ((GetFixedHeight() != imageAttribute.rcSource.bottom - imageAttribute.rcSource.top)) {
+				if ((GetFixedHeight() <= 0)) {
 					SetFixedHeight(imageAttribute.rcSource.bottom - imageAttribute.rcSource.top);
 				}
 				return m_cxyFixed;
