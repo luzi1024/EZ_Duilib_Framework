@@ -163,5 +163,7 @@
 	<!--svg按钮-->
 	<Class name="svg_button_normal" normalimage="svggroupid='g-button-normal' corner='7,7,7,7' " hotimage="svggroupid='g-button-focused' corner='7,7,7,7'" pushedimage="svggroupid='g-button-pressed' corner='7,7,7,7'" width="80" height="30" text="按钮"/> 
 	<Class name="svg_ebutton_normal" normalimage="svggroupid='g-ebutton-normal' corner='4,4,4,4'" hotimage="svggroupid='g-ebutton-focused' corner='4,4,4,4'" pushedimage="svggroupid='g-ebutton-pressed' corner='4,4,4,4'" width="80" height="30" text="按钮"/> 
-
+ 
+   <!--默认样式-->
+   <Class name="_default_Button" class="svg_ebutton_normal"/>
 </Global>

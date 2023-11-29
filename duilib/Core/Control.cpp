@@ -1150,7 +1150,15 @@ void Control::SetClass(const std::wstring& strClass)
 {
 	std::list<std::wstring> splitList = StringHelper::Split(strClass, L" ");
 	for (auto it = splitList.begin(); it != splitList.end(); it++) {
-		std::wstring pDefaultAttributes = GlobalManager::GetClassAttributes((*it));
+		std::wstring pDefaultAttributes;
+		if (*it == _T("default"))
+		{
+			std::wstring strDefault = StringHelper::Printf(_T("_%s_%s"), it->c_str(), GetControlClass().c_str());
+			pDefaultAttributes = GlobalManager::GetClassAttributes(strDefault);
+		}
+		else
+			pDefaultAttributes = GlobalManager::GetClassAttributes((*it));
+		
 		if (pDefaultAttributes.empty() && m_pWindow) {
 			pDefaultAttributes = m_pWindow->GetClassAttributes(*it);
 		}

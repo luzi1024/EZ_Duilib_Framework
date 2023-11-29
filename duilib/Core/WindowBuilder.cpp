@@ -243,8 +243,11 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						else if( strName == _T("value") ) {
 							strAttribute.append(strValue);
 						}
-						else if (strName == _T("_value")) {
+						else if ( strName == _T("_value") ) {
 							strAttribute.append(StringHelper::Printf(L" value=\"%s\"",strValue.c_str()));
+						}
+						else if ( strName == _T("class") ) {
+							strAttribute.append(GlobalManager::GetClassAttributes(strValue));
 						}
 						else {
 							strAttribute.append(StringHelper::Printf(L" %s=\"%s\"",
@@ -327,7 +330,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 			else {
 				int nAttributes = node.GetAttributeCount();
 				for( int i = 0; i < nAttributes; i++ ) {
-					ASSERT(i == 0 || _tcscmp(node.GetAttributeName(i), _T("class")) != 0);	//class必须是第一个属性
+					ASSERT(i == 0 || _tcscmp(node.GetAttributeName(i), ATTR_CTR_class) != 0);	//class必须是第一个属性
 					pUserDefinedBox->SetAttribute(node.GetAttributeName(i), node.GetAttributeValue(i));
 				}
 				
@@ -479,7 +482,11 @@ Control* WindowBuilder::CreateControlByClass(const std::wstring& strControlClass
 	};
 	const auto& itFun = _funcCreate.find(strControlClass);
 	if (itFun != _funcCreate.end())
+	{
 		pControl = itFun->second();
+		pControl->m_strControlClass = strControlClass;
+	}
+		
 	return pControl;
 }
 

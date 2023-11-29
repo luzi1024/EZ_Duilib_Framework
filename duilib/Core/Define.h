@@ -267,7 +267,7 @@ EventType StringToEnum(const std::wstring& messageType);
 
 //定义所有控件属性 ///////////////////////////////////////////////////////////////////////////
 // Control
-#define ATTR_CTR_class						(_T("class"))
+#define ATTR_CTR_class						(_T("class"))			// 设置为default将使用默认样式
 #define ATTR_CTR_halign						(_T("halign"))
 #define ATTR_CTR_valign						(_T("valign"))
 #define ATTR_CTR_margin						(_T("margin"))

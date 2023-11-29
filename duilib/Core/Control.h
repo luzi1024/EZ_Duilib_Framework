@@ -28,6 +28,12 @@ public:
 
 	/// 自身相关
 	/**
+	 * @brief 返回节点类型 (New)
+	 * @return 返回节点类型字符串
+	 */
+	const auto& GetControlClass() const { return m_strControlClass; };
+
+	/**
 	 * @brief 移除当前节点 (New)
 	 * @return 成功返回true，失败返回false
 	 */
@@ -935,6 +941,7 @@ protected:
 	std::wstring m_sToolTipTextId;
 	std::wstring m_sUserData;
 	std::wstring m_strBkColor;
+	std::wstring m_strControlClass;
 	StateColorMap m_colorMap;
 	Image m_bkImage;
 	StateImageMap m_imageMap;
