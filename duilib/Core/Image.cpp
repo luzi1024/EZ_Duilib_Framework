@@ -1,5 +1,12 @@
 #include "StdAfx.h"
 #include "Image.h"
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#ifndef __STDC_LIB_EXT1__
+#define __STDC_LIB_EXT1__
+#endif
+#include "lulusvg\3rdparty\stb\stb_image_write.h"
+#endif
 
 namespace ui 
 {
@@ -63,13 +70,32 @@ int ImageInfo::GetInterval(int nIndex)
 	return interval;
 }
 
-std::unique_ptr<ImageInfo> ImageInfo::LoadImage(const std::wstring& strImageFullPath)
+std::unique_ptr<ImageInfo> ImageInfo::LoadImage(const std::wstring& strImageFullPath, std::wstring sGroupID, double dScale)
 {
+	if (StringHelper::EndWith(strImageFullPath, _T(".svg")))
+	{
+		std::string st;
+		StringHelper::UnicodeToMBCS(strImageFullPath, st);
+		if (sGroupID.empty())
+		{
+			auto document = lunasvg::Document::loadFromFile(st);
+			auto pIStream = RenderImageGroup(document, dScale);
+			if (pIStream == nullptr)
+				return nullptr;
+			std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromStream(pIStream));
+			return LoadImageByBitmap(gdiplusBitmap, strImageFullPath, sGroupID);
+		}
+		else
+		{
+			auto tb = lunasvg::ITreeBuilder::parseFromFile(st);
+			return LoadImageGroup(tb, sGroupID, dScale);
+		}
+	}
 	std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromFile(strImageFullPath.c_str()));
-	return LoadImageByBitmap(gdiplusBitmap, strImageFullPath);
+	return LoadImageByBitmap(gdiplusBitmap, strImageFullPath, sGroupID);
 }
 
-std::unique_ptr<ImageInfo> ImageInfo::LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath)
+std::unique_ptr<ImageInfo> ImageInfo::LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath, std::wstring sGroupID, double dScale)
 {
 	if (hGlobal == NULL)
 	{
@@ -86,10 +112,28 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImage(HGLOBAL hGlobal, const std::wstr
 	std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromStream(stream));
 	stream->Release();
 	GlobalUnlock(hGlobal);
-	return LoadImageByBitmap(gdiplusBitmap, imageFullPath);
+	return LoadImageByBitmap(gdiplusBitmap, imageFullPath, sGroupID);
 }
 
-std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const std::wstring& strImageFullPath)
+std::unique_ptr<ui::ImageInfo> ImageInfo::LoadImageGroup(std::unique_ptr<lunasvg::ITreeBuilder>& tb, const std::wstring& sGroupID, double dScale)
+{
+	if (!tb)
+	{
+		ASSERT(FALSE);
+		return nullptr;
+	}
+	std::string sgid;
+	StringHelper::UnicodeToMBCS(sGroupID, sgid);
+	auto document = tb->buildClip(sgid);
+	auto pIStream = RenderImageGroup(document, dScale);
+	if (pIStream == nullptr)
+		return nullptr;
+	// 显示
+	std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromStream(pIStream));
+	return LoadImageByBitmap(gdiplusBitmap, _T(""), sGroupID);
+}
+
+std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const std::wstring& strImageFullPath, std::wstring  sGroup)
 {
 	Gdiplus::Status status;
 	status = pGdiplusBitmap->GetLastStatus();
@@ -134,6 +178,7 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus:
 	imageInfo->nX = pGdiplusBitmap->GetWidth();
 	imageInfo->nY = pGdiplusBitmap->GetHeight();
 	imageInfo->sImageFullPath = strImageFullPath;
+	imageInfo->sImageGroupID = sGroup;
 	Gdiplus::PixelFormat format = pGdiplusBitmap->GetPixelFormat();
 	imageInfo->SetAlpha((format & PixelFormatAlpha) != 0);
 
@@ -173,6 +218,38 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus:
 	return imageInfo;
 }
 
+IStream* ImageInfo::RenderImageGroup(std::unique_ptr<lunasvg::Document>& document, double dScale /*= 1.0*/)
+{
+	if (!document)
+	{
+		ASSERT(FALSE);
+		return nullptr;
+	}
+	if (dScale < 1e-4)
+	{
+		// #待处理,需要传入控件尺寸后计算比例系数.
+		dScale = 1.0;
+	}
+	auto dScrHeight = document->height();
+	auto dScrWidth  = document->width();
+	auto bitmap = document->renderToBitmap(dScrHeight * dScale, dScrWidth * dScale);
+	if (!bitmap.valid())
+	{
+		ASSERT(FALSE);
+		return nullptr;
+	}
+	bitmap.convertToRGBA();
+	IStream* pIStream = 0;
+	stbi_write_png_to_func([](void* context, void* data, int size) {
+		IStream** ps = (IStream**)context;
+		HGLOBAL hMem = ::GlobalAlloc(GMEM_FIXED, size);
+		BYTE* pMem = (BYTE*)::GlobalLock(hMem);
+		memcpy(pMem, data, size);
+		::CreateStreamOnHGlobal(hMem, FALSE, ps);
+		}, &pIStream, bitmap.width(), bitmap.height(), 4, bitmap.data(), 0);
+	return pIStream;
+}
+
 ImageAttribute::ImageAttribute()
 {
 	Init();
@@ -189,6 +266,8 @@ void ImageAttribute::Init()
 	rcSource.left = rcSource.top = rcSource.right = rcSource.bottom = DUI_NOSET_VALUE;
 	rcCorner.left = rcCorner.top = rcCorner.right = rcCorner.bottom = 0;
 	nPlayCount = -1;
+	sSvgGroupID.clear();
+	dSvgScale = 1.0;
 }
 
 void ImageAttribute::SetImageString(const std::wstring& strImageString)
@@ -205,7 +284,7 @@ void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const std::
 	std::wstring sValue;
 	LPTSTR pstr = NULL;
 	bool bScaleDest = true;
-
+	bool bHasFile = false;
 	LPCTSTR pStrImage = strImageString.c_str();
 	while (*pStrImage != _T('\0')) {
 		sItem.clear();
@@ -229,13 +308,14 @@ void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const std::
 		}
 		if (*pStrImage++ != _T('\'')) break;
 		if (!sValue.empty()) {
-			if (sItem == _T("file") || sItem == _T("res")) {
+			if (sItem == ATTR__IMAGE_file || sItem == ATTR__IMAGE_res) {
 				imageAttribute.sImageName = sValue;
+				bHasFile = true;
 			}
-			else if (sItem == _T("destscale")) {
+			else if (sItem == ATTR__IMAGE_destscale) {
 				bScaleDest = (_tcscmp(sValue.c_str(), _T("true")) == 0);
 			}
-			else if (sItem == _T("dest")) {
+			else if (sItem == ATTR__IMAGE_dest) {
 				imageAttribute.rcDest.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
 				imageAttribute.rcDest.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
 				imageAttribute.rcDest.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
@@ -244,33 +324,46 @@ void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const std::
 				if (bScaleDest)
 					DpiManager::GetInstance()->ScaleRect(imageAttribute.rcDest);
 			}
-			else if (sItem == _T("source")) {
+			else if (sItem == ATTR__IMAGE_source) {
 				imageAttribute.rcSource.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
 				imageAttribute.rcSource.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
 				imageAttribute.rcSource.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
 				imageAttribute.rcSource.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 			}
-			else if (sItem == _T("corner")) {
+			else if (sItem == ATTR__IMAGE_corner) {
 				imageAttribute.rcCorner.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
 				imageAttribute.rcCorner.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
 				imageAttribute.rcCorner.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
 				imageAttribute.rcCorner.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
 			}
-			else if (sItem == _T("fade")) {
+			else if (sItem == ATTR__IMAGE_fade) {
 				imageAttribute.bFade = (BYTE)_tcstoul(sValue.c_str(), &pstr, 10);
 			}
-			else if (sItem == _T("xtiled")) {
+			else if (sItem == ATTR__IMAGE_xtiled) {
 				imageAttribute.bTiledX = (_tcscmp(sValue.c_str(), _T("true")) == 0);
 			}
-			else if (sItem == _T("ytiled")) {
+			else if (sItem == ATTR__IMAGE_ytiled) {
 				imageAttribute.bTiledY = (_tcscmp(sValue.c_str(), _T("true")) == 0);
 			}
-			else if (sItem == _T("playcount"))
+			else if (sItem == ATTR__IMAGE_playcount)
 			{
 				imageAttribute.nPlayCount = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
 			}
+			else if (sItem == ATTR__IMAGE_svggroupid)
+			{
+				imageAttribute.sSvgGroupID = sValue;
+			}
+			else if (sItem == ATTR__IMAGE_svgscale)
+			{
+				imageAttribute.dSvgScale = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
+			}
 		}
 		if (*pStrImage++ != _T(' ')) break;
+	}
+	// svg允许缺省文件名
+	if (!bHasFile && !imageAttribute.sSvgGroupID.empty())
+	{
+		imageAttribute.sImageName = GLOBAL_VSGFILE_KEY;
 	}
 }
 
@@ -372,11 +465,11 @@ bool StateImage::PaintStatusImage(IRenderContext* pRender, ControlStateType stat
 		int nHotAlpha = m_pControl->GetHotAlpha();
 		if (bFadeHot) {
 			if (stateType == kControlStateNormal || stateType == kControlStateHot) {
-				std::wstring strNormalImagePath = m_stateImageMap[kControlStateNormal].imageAttribute.sImageName;
-				std::wstring strHotImagePath = m_stateImageMap[kControlStateHot].imageAttribute.sImageName;
+				std::wstring strNormalImageKey = m_stateImageMap[kControlStateNormal].imageAttribute.ImgKey();
+				std::wstring strHotImageKey = m_stateImageMap[kControlStateHot].imageAttribute.ImgKey();
 
-				if (strNormalImagePath.empty() || strHotImagePath.empty()
-					|| strNormalImagePath != strHotImagePath
+				if (strNormalImageKey.empty() || strHotImageKey.empty()
+					|| strNormalImageKey != strHotImageKey
 					|| !m_stateImageMap[kControlStateNormal].imageAttribute.rcSource.Equal(m_stateImageMap[kControlStateHot].imageAttribute.rcSource)) {
 
 					m_pControl->DrawImage(pRender, m_stateImageMap[kControlStateNormal], sImageModify);

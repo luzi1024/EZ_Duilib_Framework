@@ -274,6 +274,9 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						GlobalManager::AddTextColor(strColorName, strColor);
 					}
 				}
+				else{
+					::MessageBox(nullptr, std::wstring(_T("无效的全局节点:") + strClass).c_str(), _T("错误"), MB_ICONERROR);
+				}
 			}
 		}
 		else if ( strClass == _T("Window") )

@@ -33,6 +33,7 @@ std::unique_ptr<IRenderFactory> GlobalManager::m_renderFactory;
 static ULONG_PTR g_gdiplusToken;
 static Gdiplus::GdiplusStartupInput g_gdiplusStartupInput;
 static HZIP g_hzip = NULL;
+static std::unique_ptr<lunasvg::ITreeBuilder> g_svgTreeBuilder;
 
 void GlobalManager::Startup(const std::wstring& strResourcePath, const CreateControlCallback& callback, bool bAdaptDpi, const std::wstring& theme, const std::wstring& language)
 {
@@ -90,6 +91,11 @@ std::wstring GlobalManager::GetResourcePath()
 	return m_pStrResourcePath;
 }
 
+std::wstring GlobalManager::GetResourceSvgFile()
+{
+	return GetResourcePath() + _T("style.svg");
+}
+
 void GlobalManager::SetCurrentPath(const std::wstring& strPath)
 {
 	::SetCurrentDirectory(strPath.c_str());
@@ -108,6 +114,12 @@ void GlobalManager::LoadGlobalResource()
 	ui::WindowBuilder dialog_builder;
 	ui::Window paint_manager;
 	dialog_builder.Create(L"global.xml", CreateControlCallback(), &paint_manager);
+	//
+	std::string sFileA;
+	StringHelper::UnicodeToMBCS(GetResourceSvgFile(), sFileA);
+	g_svgTreeBuilder = lunasvg::ITreeBuilder::parseFromFile(sFileA);
+	if (!g_svgTreeBuilder)
+		::MessageBox(NULL, _T("加载svg样式表失败."), _T("错误"), MB_ICONERROR | MB_OK);
 }
 
 void GlobalManager::ReloadSkin(const std::wstring& resourcePath)
@@ -208,9 +220,9 @@ void GlobalManager::RemoveAllTextColors()
 	m_mapTextColor.clear();
 }
 
-std::shared_ptr<ImageInfo> GlobalManager::IsImageCached(const std::wstring& strImagePath)
+std::shared_ptr<ImageInfo> GlobalManager::IsImageCached(const std::wstring& strImagePath, const std::wstring& sGroupID)
 {
-	std::wstring imageFullPath = StringHelper::ReparsePath(strImagePath);
+	std::wstring imageFullPath = StringHelper::ReparsePath(strImagePath) + sGroupID;
 	std::shared_ptr<ImageInfo> sharedImage;
 	auto it = m_mImageHash.find(imageFullPath);
 	if (it != m_mImageHash.end()) {
@@ -222,6 +234,7 @@ std::shared_ptr<ImageInfo> GlobalManager::IsImageCached(const std::wstring& strI
 
 std::shared_ptr<ImageInfo> GlobalManager::AddImageCached(const std::shared_ptr<ImageInfo>& sharedImage)
 {
+	ASSERT(FALSE); // 暂未使用,应考虑GroupID在处理
 	ASSERT(m_mImageHash[sharedImage->sImageFullPath].expired() == true);
 	m_mImageHash[sharedImage->sImageFullPath] = sharedImage;
 	sharedImage->SetCached(true);
@@ -244,34 +257,39 @@ void GlobalManager::OnImageInfoDestroy(ImageInfo* pImageInfo)
 	ASSERT(pImageInfo);
 	if (pImageInfo && pImageInfo->IsCached()) {
 		if (!pImageInfo->sImageFullPath.empty()) {
-			GlobalManager::RemoveFromImageCache(pImageInfo->sImageFullPath);
+			GlobalManager::RemoveFromImageCache(pImageInfo->sImageFullPath + pImageInfo->sImageGroupID);
 		}
 	}
 	delete pImageInfo;
 }
 
-std::shared_ptr<ImageInfo> GlobalManager::GetImage(const std::wstring& bitmap)
+std::shared_ptr<ImageInfo> GlobalManager::GetImage(const std::wstring& bitmap, const std::wstring& sGroupID, double dScale)
 {
 	std::wstring imageFullPath = StringHelper::ReparsePath(bitmap);
 	if (IsUseZip())
 	{
 		imageFullPath = GetZipFilePath(imageFullPath);
 	}
+	static std::wstring sGlobal = GlobalManager::GetResourceSvgFile();
 	std::shared_ptr<ImageInfo> sharedImage;
-	auto it = m_mImageHash.find(imageFullPath);
+	auto strImageKey = imageFullPath + sGroupID;
+	auto it = m_mImageHash.find(strImageKey);
 	if (it == m_mImageHash.end()) {
 		std::unique_ptr<ImageInfo> data;
 		if (IsUseZip())
 		{
-			data = ImageInfo::LoadImage(GetData(imageFullPath), imageFullPath);
+			data = ImageInfo::LoadImage(GetData(imageFullPath), imageFullPath, sGroupID, dScale);
 		}
 		if (!data)
 		{
-			data = ImageInfo::LoadImage(imageFullPath);
+			if (sGroupID.empty() || sGlobal.compare(imageFullPath) != 0)
+				data = ImageInfo::LoadImage(imageFullPath, sGroupID, dScale);
+			else
+				data = ImageInfo::LoadImageGroup(g_svgTreeBuilder, sGroupID, dScale);
 		}
 		if (!data) return sharedImage;
 		sharedImage.reset(data.release(), &OnImageInfoDestroy);
-		m_mImageHash[imageFullPath] = sharedImage;
+		m_mImageHash[strImageKey] = sharedImage;
 		sharedImage->SetCached(true);
 	}
 	else {

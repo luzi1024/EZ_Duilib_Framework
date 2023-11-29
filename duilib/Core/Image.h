@@ -4,6 +4,8 @@
 #pragma once
 
 #include <GdiPlus.h>
+#include "..\..\..\lulusvg\include\lunasvg.h"
+#define GLOBAL_VSGFILE_KEY  _T("../style.svg")
 
 namespace ui 
 {
@@ -18,6 +20,7 @@ public:
 	bool IsAlpha() { return m_bAlphaChannel; }
 	bool IsCached()	{ return m_bCached; }
 	void SetCached(bool bCached) { m_bCached = bCached; }
+	bool IsGroup() { return !sImageGroupID.empty(); }
 
 	void SetPropertyItem(Gdiplus::PropertyItem* pPropertyItem);
 
@@ -27,17 +30,17 @@ public:
 	bool IsGif();
 	int GetInterval(int nIndex); //毫秒为单位 
 	 
-	static std::unique_ptr<ImageInfo> LoadImage(const std::wstring& strImageFullPath);
-	static std::unique_ptr<ImageInfo> LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath);
-
+	static std::unique_ptr<ImageInfo> LoadImage(const std::wstring& strImageFullPath, std::wstring sGroupID = _T(""), double dScale = 1.0);
+	static std::unique_ptr<ImageInfo> LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath, std::wstring sGroupID = _T(""), double dScale = 1.0);
+	static std::unique_ptr<ImageInfo> LoadImageGroup(std::unique_ptr<lunasvg::ITreeBuilder>& tb, const std::wstring& sGroupID, double dScale);
 private:
-	static std::unique_ptr<ImageInfo> LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const std::wstring& imageFullPath);
-
+	static std::unique_ptr<ImageInfo> LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const std::wstring& imageFullPath, std::wstring  sGroup = _T(""));
+	static IStream* RenderImageGroup(std::unique_ptr<lunasvg::Document>& document, double dScale = 1.0);
 public:
 	int nX;
 	int nY;
 	std::wstring sImageFullPath;
-
+	std::wstring sImageGroupID;
 private:
 	bool m_bAlphaChannel;
 	bool m_bCached;
@@ -53,6 +56,7 @@ public:
 	void Init();
 	void SetImageString(const std::wstring& strImageString);
 	static void ModifyAttribute(ImageAttribute& imageAttribute, const std::wstring& strImageString);
+	std::wstring ImgKey() { return sImageName + sSvgGroupID; };
 
 	std::wstring simageString;
 	std::wstring sImageName;
@@ -63,6 +67,8 @@ public:
 	bool bTiledX;
 	bool bTiledY;
 	int nPlayCount;//如果是GIF可以指定播放次数 -1 ：一直播放，缺省值。
+	std::wstring sSvgGroupID;
+	double dSvgScale;
 };
 
 class UILIB_API Image

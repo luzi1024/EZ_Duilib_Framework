@@ -45,6 +45,11 @@ public:
 	static std::wstring GetResourcePath();
 
 	/**
+	 * @brief 获取当前svg资源文件路径
+	 * @return 返回当前svg资源文件路径
+	 */
+	static std::wstring GetResourceSvgFile();
+	/**
 	 * @brief 设置程序当前目录
 	 * @param[in] strPath 要设置的路径
 	 * @return 无
@@ -151,7 +156,7 @@ public:
 	 * @param[in] bitmap 图片路径
 	 * @return 如果已经被缓存，则返回 ImageInfo 的智能指针对象
 	 */
-	static std::shared_ptr<ImageInfo> IsImageCached(const std::wstring& bitmap);
+	static std::shared_ptr<ImageInfo> IsImageCached(const std::wstring& bitmap, const std::wstring& sGroupID);
 
 	/**
 	 * @brief 添加一个图片到缓存中
@@ -179,7 +184,7 @@ public:
 	 * @param[in] bitmap 图片路径
 	 * @return 返回图片 ImageInfo 对象的智能指针
 	 */
-	static std::shared_ptr<ImageInfo> GetImage(const std::wstring& bitmap);
+	static std::shared_ptr<ImageInfo> GetImage(const std::wstring& bitmap, const std::wstring& sGroupID = _T(""), double dScale = 1.0);
 
 	/**
 	 * @brief 从缓存中删除所有图片

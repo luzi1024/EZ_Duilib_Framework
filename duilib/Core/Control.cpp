@@ -1154,8 +1154,11 @@ void Control::SetClass(const std::wstring& strClass)
 		if (pDefaultAttributes.empty() && m_pWindow) {
 			pDefaultAttributes = m_pWindow->GetClassAttributes(*it);
 		}
-
-		ASSERT(!pDefaultAttributes.empty());
+		if (pDefaultAttributes.empty())
+		{
+			::MessageBox(nullptr, std::wstring(_T("不存在Class样式:") + strClass).c_str(), _T("错误"), MB_ICONERROR);
+			continue;
+		}
 		if( !pDefaultAttributes.empty() ) {
 			ApplyAttributeList(pDefaultAttributes);
 		}
@@ -1221,13 +1224,17 @@ void Control::GetImage(Image& duiImage) const
 	}
 	std::wstring sImageName = duiImage.imageAttribute.sImageName;
 	std::wstring imageFullPath = sImageName;
-	if (::PathIsRelative(sImageName.c_str())) {
+	if (sImageName.compare(GLOBAL_VSGFILE_KEY) == 0)
+		imageFullPath = GlobalManager::GetResourceSvgFile();
+	else if (::PathIsRelative(sImageName.c_str())) {
 		imageFullPath = GlobalManager::GetResourcePath() + m_pWindow->GetWindowResourcePath() + sImageName;
 	}
 	imageFullPath = StringHelper::ReparsePath(imageFullPath);
 
-	if (!duiImage.imageCache || duiImage.imageCache->sImageFullPath != imageFullPath) {
-		duiImage.imageCache = GlobalManager::GetImage(imageFullPath);
+	if (!duiImage.imageCache || 
+		duiImage.imageCache->sImageFullPath != imageFullPath || 
+		duiImage.imageCache->sImageGroupID != duiImage.imageAttribute.sSvgGroupID) {
+		duiImage.imageCache = GlobalManager::GetImage(imageFullPath, duiImage.imageAttribute.sSvgGroupID, duiImage.imageAttribute.dSvgScale);
 	}
 }
 
@@ -1671,7 +1678,7 @@ void Control::InvokeLoadImageCache()
 	imageFullPath = StringHelper::ReparsePath(imageFullPath);
 
 	if (!m_bkImage.imageCache || m_bkImage.imageCache->sImageFullPath != imageFullPath) {
-		auto shared_image = GlobalManager::IsImageCached(imageFullPath);
+		auto shared_image = GlobalManager::IsImageCached(imageFullPath, m_bkImage.imageAttribute.sSvgGroupID);
 		if (shared_image) {
 			m_bkImage.imageCache = shared_image;
 			return;
