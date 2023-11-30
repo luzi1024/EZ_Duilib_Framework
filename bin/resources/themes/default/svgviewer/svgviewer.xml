@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="300,200" caption="0,0,0,35" roundcorner="45,45">
+  <VBox bkcolor="bk_wnd_darkcolor">
+    <HBox width="stretch" height="35" bkcolor="bk_wnd_lightcolor">
+	  <Label text="窗口" font="system_14" valign="center" margin="8"/>
+	  <Control />
+      <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
+      <Box width="21" margin="4,6,0,0">
+        <Button class="btn_wnd_max" name="maxbtn"/>
+        <Button class="btn_wnd_restore" name="restorebtn" visible="false"/>
+      </Box>
+      <Button class="btn_wnd_close" name="closebtn" margin="4,6,8,0"/>
+    </HBox>
+    <Box>
+      <VBox margin="0,0,0,0" valign="center" halign="center" width="auto" height="auto">
+<!--		<Control width="auto" height="auto" bkimage="D:/AA/mybtn0.svg" hotimage="D:/AA/mybtn1.svg" valign="center"/>
+        <Label name="tooltip" text="一个简单窗口2，带有标题栏和常规按钮。"/>-->
+		<Button class="btn_global_blue_80x30" name="btn_ok" text="确认"/>
+		<Button class="svg_button" name="btn_test"/> 
+		<Button class="default" name="btn_test2" margin="0,10,0,0"/> 
+		 <HBox width="auto" height="auto">
+			<VBox width="auto" height="auto">
+				<CheckBox class="default" text="checkbox1" margin="0,5,10,0" selected="true"/>
+				<CheckBox class="default" text="checkbox2" margin="0,5,10,0"/>
+				<CheckBox class="default" text="checkbox3" margin="0,5,10,0"/>
+			</VBox>
+			<VBox width="auto" height="auto">
+				<Option class="default" group="option_group" text="option1" margin="0,5,10,0" selected="true"/>
+				<Option class="default" group="option_group" text="option2" margin="0,5,10,0"/>
+				<Option class="default" group="option_group" text="option3" margin="0,5,10,0"/>
+			</VBox>
+        </HBox>
+      </VBox>
+    </Box>
+  </VBox>
+</Window>

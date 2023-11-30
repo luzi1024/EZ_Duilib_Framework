@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "duilib", "..\duilib\duilib.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui_components", "..\ui_components\ui_components.vcxproj", "{0149BA6E-3C0A-426D-AA0A-0B9EC7742F19}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "svgviewer", "svgviewer\svgviewer.vcxproj", "{3DE23C36-5358-45C9-9743-5C88AA59AE3B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -124,6 +126,14 @@ Global
 		{0149BA6E-3C0A-426D-AA0A-0B9EC7742F19}.Release|Win32.Build.0 = Release|Win32
 		{0149BA6E-3C0A-426D-AA0A-0B9EC7742F19}.Release|x64.ActiveCfg = Release|x64
 		{0149BA6E-3C0A-426D-AA0A-0B9EC7742F19}.Release|x64.Build.0 = Release|x64
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Debug|Win32.Build.0 = Debug|Win32
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Debug|x64.ActiveCfg = Debug|x64
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Debug|x64.Build.0 = Debug|x64
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Release|Win32.ActiveCfg = Release|Win32
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Release|Win32.Build.0 = Release|Win32
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Release|x64.ActiveCfg = Release|x64
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -137,6 +147,7 @@ Global
 		{A9D6DC71-C0DC-4549-AEA0-3B15B44E86A9} = {1DA0A8E2-5832-42FC-83F7-2CDCAD379C90}
 		{8BD95440-9000-4745-8011-27DD553EF06F} = {B2087994-3DF6-4A57-B8C6-6F744520D7FA}
 		{E35589C6-9509-4116-996F-1D045C2DACAE} = {B2087994-3DF6-4A57-B8C6-6F744520D7FA}
+		{3DE23C36-5358-45C9-9743-5C88AA59AE3B} = {B2087994-3DF6-4A57-B8C6-6F744520D7FA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {68CA0970-4242-4E4F-94D2-C19760FCA05D}
