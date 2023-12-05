@@ -45,6 +45,12 @@ public:
 	 */
 	virtual void SetText(const std::wstring& strText) {};
 
+	/**
+	 * @brief 获取正文,子类实现 (New)
+	 * @return 无
+	 */
+	virtual std::wstring GetText() const { return _T(""); };
+
     /// 图形相关	
 	/**
 	 * @brief 获取背景颜色

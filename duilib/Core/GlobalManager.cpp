@@ -210,9 +210,17 @@ void GlobalManager::AddTextColor(const std::wstring& strName, const std::wstring
 
 DWORD GlobalManager::GetTextColor(const std::wstring& strName)
 {
-	// 必须在global.xml中提前定义到颜色值
-	ASSERT(m_mapTextColor[strName] != 0);
-	return m_mapTextColor[strName];
+	// 可以使用global.xml中提定义的颜色值或直接输入颜色码
+	const auto& itDef = m_mapTextColor.find(strName);
+	if (itDef != m_mapTextColor.end())
+		return itDef->second;
+	else if (!strName.empty() && strName.at(0) == _T('#'))
+	{
+		LPTSTR pstr = NULL;
+		return _tcstoul(strName.substr(1).c_str(), &pstr, 16);
+	}
+	ASSERT(FALSE);
+	return 0;
 }
 
 void GlobalManager::RemoveAllTextColors()

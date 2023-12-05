@@ -408,10 +408,13 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
     ULONG iPrevious = 0;
     for( ; ; ) 
     {
-        if( *pstrText == _T('\0') && iParent <= 1 ) return true;
+        if( *pstrText == _T('\0') && iParent <= 1 ) 
+            return true;
         _SkipWhitespace(pstrText);
-        if( *pstrText != _T('<') ) return _Failed(_T("Expected start tag"), pstrText);
-        if( pstrText[1] == _T('/') ) return true;
+        if( *pstrText != _T('<') ) 
+            return _Failed(_T("Expected start tag"), pstrText);
+        if( pstrText[1] == _T('/') ) 
+            return true;
         *pstrText++ = _T('\0');
         _SkipWhitespace(pstrText);
         // Skip comment or processing directive
@@ -437,9 +440,14 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
         LPCTSTR pstrName = pstrText;
         _SkipIdentifier(pstrText);
         LPTSTR pstrNameEnd = pstrText;
-        if( *pstrText == _T('\0') ) return _Failed(_T("Error parsing element name"), pstrText);
+        if( *pstrText == _T('\0') ) 
+            return _Failed(_T("Error parsing element name"), pstrText);
         // Parse attributes
-        if( !_ParseAttributes(pstrText) ) return false;
+        if (!_ParseAttributes(pstrText))
+        {
+            ASSERT(FALSE);
+            return false;
+        }
         _SkipWhitespace(pstrText);
         if( pstrText[0] == _T('/') && pstrText[1] == _T('>') )
         {
@@ -449,17 +457,25 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
         }
         else
         {
-            if( *pstrText != _T('>') ) return _Failed(_T("Expected start-tag closing"), pstrText);
+            if( *pstrText != _T('>') ) 
+                return _Failed(_T("Expected start-tag closing"), pstrText);
             // Parse node data
             pEl->iData = ++pstrText - m_pstrXML;
             LPTSTR pstrDest = pstrText;
-            if( !_ParseData(pstrText, pstrDest, _T('<')) ) return false;
+            if( !_ParseData(pstrText, pstrDest, _T('<')) ) 
+			{
+				ASSERT(FALSE);
+				return false;
+			}
             // Determine type of next element
-            if( *pstrText == _T('\0') && iParent <= 1 ) return true;
-            if( *pstrText != _T('<') ) return _Failed(_T("Expected end-tag start"), pstrText);
+            if( *pstrText == _T('\0') && iParent <= 1 ) 
+                return true;
+            if( *pstrText != _T('<') ) 
+                return _Failed(_T("Expected end-tag start"), pstrText);
             if( pstrText[0] == _T('<') && pstrText[1] != _T('/') ) 
             {
-                if( !_Parse(pstrText, iPos) ) return false;
+                if( !_Parse(pstrText, iPos) ) 
+                    return false;
             }
             if( pstrText[0] == _T('<') && pstrText[1] == _T('/') ) 
             {
@@ -468,10 +484,12 @@ bool CMarkup::_Parse(LPTSTR& pstrText, ULONG iParent)
                 pstrText += 2;
                 _SkipWhitespace(pstrText);
                 SIZE_T cchName = pstrNameEnd - pstrName;
-                if( _tcsncmp(pstrText, pstrName, cchName) != 0 ) return _Failed(_T("Unmatched closing tag"), pstrText);
+                if( _tcsncmp(pstrText, pstrName, cchName) != 0 )
+                    return _Failed(_T("Unmatched closing tag"), pstrText);
                 pstrText += cchName;
                 _SkipWhitespace(pstrText);
-                if( *pstrText++ != _T('>') ) return _Failed(_T("Unmatched closing tag"), pstrText);
+                if( *pstrText++ != _T('>') ) 
+                    return _Failed(_T("Unmatched closing tag"), pstrText);
             }
         }
         *pstrNameEnd = _T('\0');
@@ -513,7 +531,7 @@ void CMarkup::_SkipIdentifier(LPTSTR& pstr) const
 
 bool CMarkup::_ParseAttributes(LPTSTR& pstrText)
 {   
-    if( *pstrText == _T('>') ) return true;
+    if( *pstrText == _T('>') || *pstrText == _T('/')) return true;
     *pstrText++ = _T('\0');
     _SkipWhitespace(pstrText);
     while( *pstrText != _T('\0') && *pstrText != _T('>') && *pstrText != _T('/') ) {
@@ -599,6 +617,7 @@ bool CMarkup::_Failed(LPCTSTR pstrError, LPCTSTR pstrLocation)
     if( pstrLocation != NULL ) TRACE(pstrLocation);
     _tcsncpy(m_szErrorMsg, pstrError, (sizeof(m_szErrorMsg) / sizeof(m_szErrorMsg[0])) - 1);
     _tcsncpy(m_szErrorXML, pstrLocation != NULL ? pstrLocation : _T(""), lengthof(m_szErrorXML) - 1);
+    ASSERT(FALSE);
     return false; // Always return 'false'
 }
 

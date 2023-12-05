@@ -12,6 +12,10 @@ namespace ui
 {
 
 ImageInfo::ImageInfo() :
+	nX(0),
+	nY(0),
+	sImageFullPath(_T("")),
+	sImageGroupID(_T("")),
 	m_bAlphaChannel(false),
 	m_bCached(false),
 	m_propertyItem(),
