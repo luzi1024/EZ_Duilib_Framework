@@ -220,6 +220,7 @@ public:
 class UILIB_API IRenderFactory
 {
 public:
+	virtual ~IRenderFactory() {};
 	virtual ui::IPen* CreatePen(DWORD color, int width = 1) = 0;
 	virtual ui::IBrush* CreateBrush(DWORD corlor) = 0;
 	virtual ui::IBrush* CreateBrush(HBITMAP bitmap) = 0;

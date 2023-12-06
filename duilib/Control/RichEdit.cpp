@@ -44,7 +44,7 @@ public:
     void SetClientRect(UiRect *prc);
     UiRect* GetClientRect() { return &rcClient; }
     BOOL GetWordWrap(void) { return fWordWrap; }
-    void SetWordWrap(BOOL fWordWrap);
+    void SetWordWrap(BOOL fWW);
     BOOL GetReadOnly();
     void SetReadOnly(BOOL fReadOnly);
 	BOOL IsPassword();
@@ -57,7 +57,7 @@ public:
     BOOL IsCaptured();
 
     BOOL GetAllowBeep();
-    void SetAllowBeep(BOOL fAllowBeep);
+    void SetAllowBeep(BOOL fAllow);
     WORD GetDefaultAlign();
     void SetDefaultAlign(WORD wNewAlign);
     BOOL GetRichTextFlag();
@@ -803,9 +803,9 @@ HRESULT	CTxtWinHost::TxGetSelectionBarWidth (LONG *plSelBarWidth)
     return S_OK;
 }
 
-void CTxtWinHost::SetWordWrap(BOOL fWordWrap)
+void CTxtWinHost::SetWordWrap(BOOL fWW)
 {
-    fWordWrap = fWordWrap;
+    fWordWrap = fWW;
     pserv->OnTxPropertyBitsChange(TXTBIT_WORDWRAP, fWordWrap ? TXTBIT_WORDWRAP : 0);
 }
 
@@ -912,9 +912,9 @@ BOOL CTxtWinHost::GetAllowBeep()
     return fAllowBeep;
 }
 
-void CTxtWinHost::SetAllowBeep(BOOL fAllowBeep)
+void CTxtWinHost::SetAllowBeep(BOOL fAllow)
 {
-    fAllowBeep = fAllowBeep;
+    fAllowBeep = fAllow;
 
     pserv->OnTxPropertyBitsChange(TXTBIT_ALLOWBEEP, 
         fAllowBeep ? TXTBIT_ALLOWBEEP : 0);
@@ -2390,14 +2390,14 @@ void RichEdit::OnSetCursor(EventArgs& event)
 	std::wstring strLink;
 	if (HittestCustomLink(event.ptMouse, strLink))
 	{
-		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+		::SetCursor(::LoadCursor(NULL, IDC_HAND));
 		return;
 	}
 	if (m_pTwh && m_pTwh->DoSetCursor(NULL, &event.ptMouse)) {
 		return;
 	}
 	else {
-		::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
+		::SetCursor(::LoadCursor(NULL, IDC_IBEAM));
 	}
 }
 

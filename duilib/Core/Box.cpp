@@ -277,17 +277,17 @@ void Box::HandleMessageTemplate(EventArgs& msg)
 		}
 
 		if (bRet) {
-			auto callback = OnXmlEvent.find(msg.Type);
-			if (callback != OnXmlEvent.end()) {
-				bRet = callback->second(&msg);
+			auto xmlcallback = OnXmlEvent.find(msg.Type);
+			if (xmlcallback != OnXmlEvent.end()) {
+				bRet = xmlcallback->second(&msg);
 			}
 			if (weakflag.expired()) {
 				return;
 			}
 
-			callback = OnXmlEvent.find(kEventAll);
-			if (callback != OnXmlEvent.end()) {
-				bRet = callback->second(&msg);
+			xmlcallback = OnXmlEvent.find(kEventAll);
+			if (xmlcallback != OnXmlEvent.end()) {
+				bRet = xmlcallback->second(&msg);
 			}
 			if (weakflag.expired()) {
 				return;
@@ -312,17 +312,17 @@ void Box::HandleMessageTemplate(EventArgs& msg)
 	}
 
 	if (bRet) {
-		auto callback = OnXmlBubbledEvent.find(msg.Type);
-		if (callback != OnXmlBubbledEvent.end()) {
-			bRet = callback->second(&msg);
+		auto xmlcallback = OnXmlBubbledEvent.find(msg.Type);
+		if (xmlcallback != OnXmlBubbledEvent.end()) {
+			bRet = xmlcallback->second(&msg);
 		}
 		if (weakflag.expired()) {
 			return;
 		}
 
-		callback = OnXmlBubbledEvent.find(kEventAll);
-		if (callback != OnXmlBubbledEvent.end()) {
-			bRet = callback->second(&msg);
+		xmlcallback = OnXmlBubbledEvent.find(kEventAll);
+		if (xmlcallback != OnXmlBubbledEvent.end()) {
+			bRet = xmlcallback->second(&msg);
 		}
 		if (weakflag.expired()) {
 			return;

@@ -52,9 +52,9 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 	CMarkupNode root = m_xml.GetRoot();
 	if( !root.IsValid() ) return NULL;
 
-	if( pManager ) {
+	if( pManager ) 
+	{
 		std::wstring strClass;
-		int nAttributes = 0;
 		std::wstring strName;
 		std::wstring strValue;
 		LPTSTR pstr = NULL;
@@ -93,7 +93,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					strName = root.GetAttributeName(i);
 					strValue = root.GetAttributeValue(i);
 					if( strName == ATTR_WINDOW_size) {
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);	ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);	ASSERT(pstr); 
 						pManager->SetInitSize(cx, cy);
@@ -120,7 +120,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 					else if( strName == ATTR_WINDOW_sizebox) {
 						UiRect rcSizeBox;
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						rcSizeBox.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						rcSizeBox.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
 						rcSizeBox.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
@@ -129,7 +129,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 					else if( strName == ATTR_WINDOW_caption) {
 						UiRect rcCaption;
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						rcCaption.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						rcCaption.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);    
 						rcCaption.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);    
@@ -140,19 +140,19 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						pManager->SetTextId(strValue);
 					}
 					else if( strName == ATTR_WINDOW_roundcorner) {
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
 						pManager->SetRoundCorner(cx, cy);
 					} 
 					else if( strName == ATTR_WINDOW_mininfo) {
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
 						pManager->SetMinInfo(cx, cy);
 					}
 					else if( strName == ATTR_WINDOW_maxinfo) {
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						int cx = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);    
 						int cy = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr); 
 						pManager->SetMaxInfo(cx, cy);
@@ -165,7 +165,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 					else if (strName == ATTR_WINDOW_shadowcorner) {
 						UiRect rc;
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						rc.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);
 						rc.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
 						rc.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
@@ -174,7 +174,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 					else if (strName == ATTR_WINDOW_alphafixcorner || strName == ATTR_WINDOW_custom_shadow) {
 						UiRect rc;
-						LPTSTR pstr = NULL;
+						pstr = NULL;
 						rc.left = _tcstol(strValue.c_str(), &pstr, 10);  ASSERT(pstr);
 						rc.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
 						rc.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
@@ -192,7 +192,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					ASSERT(FALSE);	//·ÏÆú
 				}
 				else if( strClass == _T("Font") ) {
-					nAttributes = node.GetAttributeCount();
+					int nAttributes = node.GetAttributeCount();
 					std::wstring strFontId;
 					std::wstring strFontName;
 					int size = 12;
@@ -231,7 +231,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 				}
 				else if( strClass == _T("Class") ) {
-					nAttributes = node.GetAttributeCount();
+					int nAttributes = node.GetAttributeCount();
 					std::wstring strClassName;
 					std::wstring strAttribute;
 					for( int i = 0; i < nAttributes; i++ ) {
@@ -260,7 +260,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 				}
 				else if( strClass == _T("TextColor") ) {
-					nAttributes = node.GetAttributeCount();
+					int nAttributes = node.GetAttributeCount();
 					std::wstring strColorName;
 					std::wstring strColor;
 					for( int i = 0; i < nAttributes; i++ ) {
@@ -287,7 +287,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 			for( CMarkupNode node = root.GetChild() ; node.IsValid(); node = node.GetSibling() ) {
 				strClass = node.GetName();
 				if( strClass == _T("Class") ) {
-					nAttributes = node.GetAttributeCount();
+					int nAttributes = node.GetAttributeCount();
 					std::wstring strClassName;
 					std::wstring strAttribute;
 					for( int i = 0; i < nAttributes; i++ ) {

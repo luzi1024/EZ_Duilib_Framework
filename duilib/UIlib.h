@@ -81,6 +81,7 @@
 #include "Utils/ApiWrapper.h"
 #include "Utils/DpiManager.h"
 #include "Utils/Delegate.h"
+#include "Utils/Details.h"
 #include "Utils/StringUtil.h"
 #include "Utils/MultiLangSupport.h"
 #include "Utils/TimerManager.h"

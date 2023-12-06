@@ -188,6 +188,9 @@
     <ClCompile Include="Utils\WindowJit.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Utils\Details.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -353,6 +356,9 @@
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Utils\WindowJit.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Details.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>

@@ -442,11 +442,11 @@ void ScrollBar::HandleMessage(EventArgs& event)
 	}
 	else if (event.Type == kEventSetCursor) {
 		if (m_cursorType == kCursorHand) {
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+			::SetCursor(::LoadCursor(NULL, IDC_HAND));
 			return;
 		}
 		else if (m_cursorType == kCursorArrow){
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+			::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 			return;
 		}
 		else {

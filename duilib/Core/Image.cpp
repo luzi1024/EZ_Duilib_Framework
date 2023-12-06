@@ -234,9 +234,9 @@ IStream* ImageInfo::RenderImageGroup(std::unique_ptr<lunasvg::Document>& documen
 		// #待处理,需要传入控件尺寸后计算比例系数.
 		dScale = 1.0;
 	}
-	auto dScrHeight = document->height();
-	auto dScrWidth  = document->width();
-	auto bitmap = document->renderToBitmap(dScrHeight * dScale, dScrWidth * dScale);
+	int  nScrHeight = round(document->height() * dScale);
+	int  nScrWidth  = round(document->width() * dScale);
+	auto bitmap = document->renderToBitmap(nScrHeight, nScrWidth);
 	if (!bitmap.valid())
 	{
 		ASSERT(FALSE);
@@ -359,7 +359,7 @@ void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const std::
 			}
 			else if (sItem == ATTR__IMAGE_svgscale)
 			{
-				imageAttribute.dSvgScale = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
+				imageAttribute.dSvgScale = _tcstod(sValue.c_str(), &pstr);  ASSERT(pstr);
 			}
 		}
 		if (*pStrImage++ != _T(' ')) break;

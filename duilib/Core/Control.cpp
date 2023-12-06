@@ -756,17 +756,17 @@ void Control::HandleMessageTemplate(EventArgs& msg)
 		}
 
 		if (bRet) {
-			auto callback = OnXmlEvent.find(msg.Type);
-			if (callback != OnXmlEvent.end()) {
-				bRet = callback->second(&msg);
+			auto xmlcallback = OnXmlEvent.find(msg.Type);
+			if (xmlcallback != OnXmlEvent.end()) {
+				bRet = xmlcallback->second(&msg);
 			}
 			if (weakflag.expired()) {
 				return;
 			}
 
-			callback = OnXmlEvent.find(kEventAll);
-			if (callback != OnXmlEvent.end()) {
-				bRet = callback->second(&msg);
+			xmlcallback = OnXmlEvent.find(kEventAll);
+			if (xmlcallback != OnXmlEvent.end()) {
+				bRet = xmlcallback->second(&msg);
 			}
 			if (weakflag.expired()) {
 				return;
@@ -791,19 +791,19 @@ void Control::HandleMessage(EventArgs& msg)
 	else if( msg.Type == kEventSetCursor ) {
 		if (m_cursorType == kCursorHand) {
 			if (IsEnabled()) {
-				::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
+				::SetCursor(::LoadCursor(NULL, IDC_HAND));
 			}
 			else {
-				::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+				::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 			}
 			return;
 		}
 		else if (m_cursorType == kCursorArrow){
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
+			::SetCursor(::LoadCursor(NULL, IDC_ARROW));
 			return;
 		}
 		else if (m_cursorType == kCursorHandIbeam){
-			::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_IBEAM)));
+			::SetCursor(::LoadCursor(NULL, IDC_IBEAM));
 			return;
 		}
 		else {

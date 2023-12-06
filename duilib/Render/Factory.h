@@ -8,6 +8,7 @@ namespace ui
 class UILIB_API RenderFactory_GdiPlus : public IRenderFactory
 {
 public:
+	virtual ~RenderFactory_GdiPlus() {};
 	virtual ui::IPen* CreatePen(DWORD color, int width = 1) override;
 	virtual ui::IBrush* CreateBrush(DWORD corlor) override;
 	virtual ui::IBrush* CreateBrush(HBITMAP bitmap) override;

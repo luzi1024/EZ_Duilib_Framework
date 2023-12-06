@@ -47,6 +47,7 @@ public:
 	class CustomMessageLoopFactory
 	{
 	public:
+		virtual ~CustomMessageLoopFactory() {};
 		virtual CustomMessageLoop* CreateMessageLoop() = 0;
 	};
 
