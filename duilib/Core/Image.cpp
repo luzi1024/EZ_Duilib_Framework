@@ -269,9 +269,11 @@ void ImageAttribute::Init()
 	rcDest.left = rcDest.top = rcDest.right = rcDest.bottom = DUI_NOSET_VALUE;
 	rcSource.left = rcSource.top = rcSource.right = rcSource.bottom = DUI_NOSET_VALUE;
 	rcCorner.left = rcCorner.top = rcCorner.right = rcCorner.bottom = 0;
+	rcPadding.left = rcPadding.top = rcPadding.right = rcPadding.bottom = DUI_NOSET_VALUE;
 	nPlayCount = -1;
 	sSvgGroupID.clear();
 	dSvgScale = 1.0;
+	sFillcolor.clear();
 }
 
 void ImageAttribute::SetImageString(const std::wstring& strImageString)
@@ -361,13 +363,27 @@ void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const std::
 			{
 				imageAttribute.dSvgScale = _tcstod(sValue.c_str(), &pstr);  ASSERT(pstr);
 			}
+			else if (sItem == ATTR__IMAGE_fillcolor)
+			{
+				imageAttribute.sFillcolor = sValue;
+			}
+			else if (sItem == ATTR__IMAGE_destpadding)
+			{
+				imageAttribute.rcPadding.left = _tcstol(sValue.c_str(), &pstr, 10);  ASSERT(pstr);
+				imageAttribute.rcPadding.top = _tcstol(pstr + 1, &pstr, 10);    ASSERT(pstr);
+				imageAttribute.rcPadding.right = _tcstol(pstr + 1, &pstr, 10);  ASSERT(pstr);
+				imageAttribute.rcPadding.bottom = _tcstol(pstr + 1, &pstr, 10); ASSERT(pstr);
+			}
 		}
 		if (*pStrImage++ != _T(' ')) break;
 	}
 	// svg允许缺省文件名
-	if (!bHasFile && !imageAttribute.sSvgGroupID.empty())
+	if (!bHasFile)
 	{
-		imageAttribute.sImageName = GLOBAL_VSGFILE_KEY;
+		if (!imageAttribute.sSvgGroupID.empty())
+			imageAttribute.sImageName = GLOBAL_VSGFILE_KEY;
+		else if (!imageAttribute.sFillcolor.empty())
+			imageAttribute.sImageName.clear();
 	}
 }
 

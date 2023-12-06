@@ -1450,7 +1450,10 @@ void ScrollableBox::EnableScrollBar(bool bEnableVertical, bool bEnableHorizontal
 		m_pVerticalScrollBar->SetScrollRange(0);
 		m_pVerticalScrollBar->SetOwner(this);
 		m_pVerticalScrollBar->SetWindow(m_pWindow, NULL, false);
-		m_pVerticalScrollBar->SetClass(_T("vscrollbar"));
+		if (!GlobalManager::GetClassAttributes(_T("_default_Vscrollbar")).empty())
+			m_pVerticalScrollBar->SetClass(_T("_default_Vscrollbar"));
+		else
+			m_pVerticalScrollBar->SetClass(_T("vscrollbar"));
 	}
 	else if( !bEnableVertical && m_pVerticalScrollBar ) {
 		m_pVerticalScrollBar.reset();
@@ -1463,7 +1466,10 @@ void ScrollableBox::EnableScrollBar(bool bEnableVertical, bool bEnableHorizontal
 		m_pHorizontalScrollBar->SetHorizontal(true);
 		m_pHorizontalScrollBar->SetOwner(this);
 		m_pHorizontalScrollBar->SetWindow(m_pWindow, NULL, false);
-		m_pHorizontalScrollBar->SetClass(_T("hscrollbar"));
+		if (!GlobalManager::GetClassAttributes(_T("_default_Hscrollbar")).empty())
+			m_pHorizontalScrollBar->SetClass(_T("_default_Hscrollbar"));
+		else
+			m_pHorizontalScrollBar->SetClass(_T("hscrollbar"));
 	}
 	else if( !bEnableHorizontal && m_pHorizontalScrollBar ) {
 		m_pHorizontalScrollBar.reset();

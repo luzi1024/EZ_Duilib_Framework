@@ -1248,6 +1248,25 @@ void Control::GetImage(Image& duiImage) const
 
 bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const std::wstring& strModify /*= L""*/, int nFade /*= DUI_NOSET_VALUE*/)
 {
+	// 1. 颜色填充绘制
+	if (!duiImage.imageAttribute.sFillcolor.empty())
+	{
+		DWORD dwBackColor = GlobalManager::GetTextColor(duiImage.imageAttribute.sFillcolor);
+		UiRect rcNewDest = m_rcItem;
+		if (duiImage.imageAttribute.rcPadding.left != DUI_NOSET_VALUE)
+			rcNewDest.left += duiImage.imageAttribute.rcPadding.left;
+		if (duiImage.imageAttribute.rcPadding.right != DUI_NOSET_VALUE)
+			rcNewDest.right -= duiImage.imageAttribute.rcPadding.right;
+		if (duiImage.imageAttribute.rcPadding.top != DUI_NOSET_VALUE)
+			rcNewDest.top += duiImage.imageAttribute.rcPadding.top;
+		if (duiImage.imageAttribute.rcPadding.bottom != DUI_NOSET_VALUE)
+			rcNewDest.bottom -= duiImage.imageAttribute.rcPadding.bottom;
+		if (dwBackColor != 0) {
+			if (dwBackColor >= 0xFF000000) pRender->DrawColor(rcNewDest, dwBackColor);
+			else pRender->DrawColor(m_rcItem, dwBackColor);
+		}
+	}
+	// 2. 图片绘制
 	if (duiImage.imageAttribute.sImageName.empty()) {
 		return false;
 	}
@@ -1259,11 +1278,12 @@ bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const std::wst
 		duiImage.imageAttribute.Init();
 		return false;
 	}
-
+	// 内部附加属性
 	ImageAttribute newImageAttribute = duiImage.imageAttribute;
 	if (!strModify.empty()) {
 		ImageAttribute::ModifyAttribute(newImageAttribute, strModify);
 	}
+	// Dest
 	UiRect rcNewDest = m_rcItem;
 	if (newImageAttribute.rcDest.left != DUI_NOSET_VALUE && newImageAttribute.rcDest.top != DUI_NOSET_VALUE
 		&& newImageAttribute.rcDest.right != DUI_NOSET_VALUE && newImageAttribute.rcDest.bottom != DUI_NOSET_VALUE) {
@@ -1272,6 +1292,16 @@ bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const std::wst
 		rcNewDest.top = m_rcItem.top + newImageAttribute.rcDest.top;
 		rcNewDest.bottom = m_rcItem.top + newImageAttribute.rcDest.bottom;
 	}
+	// Padding
+	if (newImageAttribute.rcPadding.left > DUI_ZERO_VALUE)
+		rcNewDest.left += newImageAttribute.rcPadding.left;
+	if (newImageAttribute.rcPadding.right > DUI_ZERO_VALUE)
+		rcNewDest.right -= newImageAttribute.rcPadding.right;
+	if (newImageAttribute.rcPadding.top > DUI_ZERO_VALUE)
+		rcNewDest.top += newImageAttribute.rcPadding.top;
+	if (newImageAttribute.rcPadding.bottom > DUI_ZERO_VALUE)
+		rcNewDest.bottom -= newImageAttribute.rcPadding.bottom;
+	// Source
 	UiRect rcNewSource = newImageAttribute.rcSource;
 	if (rcNewSource.left == DUI_NOSET_VALUE || rcNewSource.top == DUI_NOSET_VALUE
 		|| rcNewSource.right == DUI_NOSET_VALUE || rcNewSource.bottom == DUI_NOSET_VALUE) {

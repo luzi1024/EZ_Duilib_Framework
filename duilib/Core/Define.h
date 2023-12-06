@@ -10,6 +10,7 @@ namespace ui
 
 class Control;
 
+#define DUI_ZERO_VALUE   0
 #define DUI_NOSET_VALUE  -1
 #define DUI_LENGTH_STRETCH  -1
 #define DUI_LENGTH_AUTO  -2
@@ -256,7 +257,7 @@ EventType StringToEnum(const std::wstring& messageType);
 #define ATTR_WINDOW_sizebox					(_T("sizebox"))
 #define ATTR_WINDOW_caption					(_T("caption"))
 #define ATTR_WINDOW_textid					(_T("textid"))
-#define ATTR_WINDOW_roundcorner				(_T("roundcorner"))		// #BUG不起作用
+#define ATTR_WINDOW_roundcorner				(_T("roundcorner"))		// *仅在阴影关闭shadowattached=false时有效
 #define ATTR_WINDOW_mininfo					(_T("mininfo"))
 #define ATTR_WINDOW_maxinfo					(_T("maxinfo"))
 #define ATTR_WINDOW_shadowattached			(_T("shadowattached"))
@@ -483,7 +484,8 @@ EventType StringToEnum(const std::wstring& messageType);
 #define ATTR__IMAGE_playcount				(_T("playcount"))
 #define ATTR__IMAGE_svggroupid				(_T("svggroupid"))		// (NEW)增加svg组ID属性
 #define ATTR__IMAGE_svgscale				(_T("svgscale"))		// (NEW)增加svg缩放比例, 0表示自动缩放到目标尺寸的分辨率
-
+#define ATTR__IMAGE_fillcolor				(_T("fillcolor"))		// (NEW)增加使用颜色填充
+#define ATTR__IMAGE_destpadding				(_T("destpadding"))		// (NEW)增加padding
 }// namespace ui
 
 #endif // UI_CORE_DEFINE_H_

@@ -63,12 +63,14 @@ public:
 	UiRect rcDest;
 	UiRect rcSource;
 	UiRect rcCorner;
+	UiRect rcPadding;
 	BYTE bFade;
 	bool bTiledX;
 	bool bTiledY;
 	int nPlayCount;//如果是GIF可以指定播放次数 -1 ：一直播放，缺省值。
 	std::wstring sSvgGroupID;
 	double dSvgScale;
+	std::wstring sFillcolor;
 };
 
 class UILIB_API Image
