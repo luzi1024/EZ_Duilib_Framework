@@ -88,7 +88,7 @@ CSize Layout::SetFloatPos(Control* pControl, UiRect rcContainer)
 	return CSize(childPos.GetWidth(), childPos.GetHeight());
 }
 
-bool Layout::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+bool Layout::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	bool hasAttribute = true;
 	if( strName == ATTR_LAYOUT_padding) {
@@ -222,12 +222,12 @@ void Box::SetWindow(Window* pManager, Box* pParent, bool bInit)
 	Control::SetWindow(pManager, pParent, bInit);
 }
 
-void Box::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void Box::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if (m_pLayout->SetAttribute(strName, strValue))	{
 
 	}
-	else if( strName == ATTR_BOX_mousechild) SetMouseChildEnabled(strValue == _T("true"));
+	else if (strName == ATTR_BOX_mousechild) SetMouseChildEnabled(strValue == _T("true"));
 	else Control::SetAttribute(strName, strValue);
 }
 
@@ -383,11 +383,10 @@ void Box::SetEnabled(bool bEnabled)
 CSize Box::EstimateSize(CSize szAvailable)
 {
 	CSize fixedSize = m_cxyFixed;
-	if (GetFixedWidth() == DUI_LENGTH_AUTO || GetFixedHeight() == DUI_LENGTH_AUTO) {
-		if (!m_bReEstimateSize) {
+	if (GetFixedWidth() == DUI_LENGTH_AUTO || GetFixedHeight() == DUI_LENGTH_AUTO) 
+	{
+		if (!m_bReEstimateSize)
 			return m_szEstimateSize;
-		}
-
 		szAvailable.cx -= m_pLayout->GetPadding().left + m_pLayout->GetPadding().right;
 		szAvailable.cy -= m_pLayout->GetPadding().top + m_pLayout->GetPadding().bottom;
 		CSize sizeByChild = m_pLayout->AjustSizeByChild(m_items, szAvailable);
@@ -487,7 +486,7 @@ Control* Box::FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoin
 	return pResult;
 }
 
-Control* Box::FindSubControl(const std::wstring& pstrSubControlName)
+Control* Box::FindSubControl(const ui::string& pstrSubControlName)
 {
 	Control* pSubControl = NULL;
 	pSubControl = static_cast<Control*>(GetWindow()->FindSubControlByName(this, pstrSubControlName));
@@ -781,7 +780,7 @@ ScrollableBox::ScrollableBox(const ScrollableBox& r):
 	m_pHorizontalScrollBar->SetOwner(this);
 }
 
-void ScrollableBox::SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue)
+void ScrollableBox::SetAttribute(const ui::string& pstrName, const ui::string& pstrValue)
 {
 	if( pstrName == ATTR_SLBOX_vscrollbar) {
 		EnableScrollBar(pstrValue == _T("true"), GetHorizontalScrollBar() != NULL);

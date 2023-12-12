@@ -13,6 +13,13 @@
 #if defined(OS_WIN)
 #include "build/winsdk_config.h"
 #include <windows.h>
+#include <tchar.h>
+#include <string>
+#ifdef _UNICODE	
+typedef std::wstring UIString;
+#else
+typedef std::string UIString;
+#endif
 #endif
 
 #endif // BASE_BASE_CONFIG_H_

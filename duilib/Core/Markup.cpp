@@ -336,7 +336,7 @@ bool CMarkup::LoadFromMem(BYTE* pByte, DWORD dwSize, int encoding)
 bool CMarkup::LoadFromFile(LPCTSTR pstrFilename, int encoding)
 {
     Release();
-    std::wstring sFile = GlobalManager::GetResourcePath();
+    ui::string sFile = GlobalManager::GetResourcePath();
 	if (::PathIsRelative(pstrFilename))
 	{
 		sFile += pstrFilename;

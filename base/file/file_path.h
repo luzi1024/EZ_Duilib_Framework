@@ -9,7 +9,11 @@ namespace nbase
 #if defined(OS_POSIX)
 typedef std::string PathString;
 #elif defined(OS_WIN)
-typedef std::wstring PathString;
+#ifdef _UNICODE	
+	typedef std::wstring PathString;
+#else
+	typedef std::string PathString;
+#endif
 #endif
 
 typedef PathString::value_type PathChar;

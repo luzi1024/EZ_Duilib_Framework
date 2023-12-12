@@ -3,7 +3,7 @@
 namespace ui
 {
 
-EventType StringToEnum(const std::wstring& messageType)
+EventType StringToEnum(const ui::string& messageType)
 {
 	if (messageType == EVENTSTR_ALL) {
 		return kEventAll;

@@ -24,7 +24,7 @@ void ChildBox::Init()
 	}
 }
 
-void ChildBox::SetAttribute( const::std::wstring& strName, const std::wstring& strValue )
+void ChildBox::SetAttribute( const::ui::string& strName, const ui::string& strValue )
 {
 	if( strName == ATTR_CHILDBOX_xmlfile)
 		SetChildLayoutXML(strValue);
@@ -32,12 +32,12 @@ void ChildBox::SetAttribute( const::std::wstring& strName, const std::wstring& s
 		Box::SetAttribute(strName,strValue);
 }
 
-void ChildBox::SetChildLayoutXML( std::wstring strXML )
+void ChildBox::SetChildLayoutXML(ui::string strXML )
 {
 	m_strXMLFile = strXML;
 }
 
-std::wstring ChildBox::GetChildLayoutXML()
+ui::string ChildBox::GetChildLayoutXML()
 {
 	return m_strXMLFile;
 }

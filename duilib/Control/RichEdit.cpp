@@ -305,7 +305,7 @@ BOOL CTxtWinHost::Init(RichEdit *re, const CREATESTRUCT *pcs)
     IUnknown *pUnk = nullptr;
 	HMODULE hmod = NULL;
     HRESULT hr;
-	std::wstring edit_dll(L"msftedit.dll");
+	ui::string edit_dll(_T("msftedit.dll"));
     m_re = re;
     // Initialize Reference count
     cRefs = 1;
@@ -353,13 +353,13 @@ BOOL CTxtWinHost::Init(RichEdit *re, const CREATESTRUCT *pcs)
 
 	//解决32位系统下跨窗口间拖拽文字在win7及win7以下系统上会出现重复的问题（64位暂不修复） lty 20170714
 #if defined(_M_X64) || defined(__x86_64__)
-	edit_dll = L"msftedit.dll";
+	edit_dll = _T("msftedit.dll");
 #else
-	edit_dll = nbase::win32::GetCurrentModuleDirectory() + L"msftedit50.dll";
+	edit_dll = nbase::win32::GetCurrentModuleDirectory() + _T("msftedit50.dll");
 	if (!(::GetFileAttributesW(edit_dll.c_str()) != INVALID_FILE_ATTRIBUTES))
-		edit_dll = L"msftedit.dll";
+		edit_dll = _T("msftedit.dll");
 #endif
-	hmod = LoadLibraryW(edit_dll.c_str()); //msftedit.dll
+	hmod = LoadLibrary(edit_dll.c_str()); //msftedit.dll
 	if (hmod)
 	{
 		TextServicesProc = (PCreateTextServices)GetProcAddress(hmod,"CreateTextServices");
@@ -1275,12 +1275,12 @@ void RichEdit::SetWordWrap(bool bWordWrap)
     if( m_pTwh ) m_pTwh->SetWordWrap(bWordWrap);
 }
 
-std::wstring RichEdit::GetFont() const
+ui::string RichEdit::GetFont() const
 {
     return m_sFontId;
 }
 
-void RichEdit::SetFont(const std::wstring& strFontId)
+void RichEdit::SetFont(const ui::string& strFontId)
 {
     m_sFontId = strFontId;
     if( m_pTwh ) {
@@ -1288,7 +1288,7 @@ void RichEdit::SetFont(const std::wstring& strFontId)
     }
 }
 
-void RichEdit::SetFont(const std::wstring& pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic)
+void RichEdit::SetFont(const ui::string& pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic)
 {
     if( m_pTwh ) {
         LOGFONT lf = { 0 };
@@ -1328,7 +1328,7 @@ ui::VerAlignType RichEdit::GetTextVerAlignType()
 	return m_textVerAlignType;
 }
 
-void RichEdit::SetTextColor(const std::wstring& dwTextColor)
+void RichEdit::SetTextColor(const ui::string& dwTextColor)
 {
 	if(m_sCurrentColor == dwTextColor)
 		return;
@@ -1347,7 +1347,7 @@ void RichEdit::SetTextColor(DWORD color)
 	}
 }
 
-std::wstring RichEdit::GetTextColor()
+ui::string RichEdit::GetTextColor()
 {
 	return m_sCurrentColor;
 }
@@ -1379,7 +1379,7 @@ long RichEdit::GetTextLength(DWORD dwFlags) const
     return (long)lResult;
 }
 
-std::wstring RichEdit::GetText() const
+ui::string RichEdit::GetText() const
 {
     long lLen = GetTextLength(GTL_DEFAULT);
     LPTSTR lpText = NULL;
@@ -1399,19 +1399,13 @@ std::wstring RichEdit::GetText() const
     gt.lpDefaultChar = NULL;
     gt.lpUsedDefChar = NULL;
     TxSendMessage(EM_GETTEXTEX, (WPARAM)&gt, (LPARAM)lpText, 0);
-    std::wstring sText(lpText);
+	ui::string sText(lpText);
     delete[] lpText;
     return sText;
 }
 
-std::string RichEdit::GetUTF8Text() const
-{
-	std::string strOut;
-	StringHelper::UnicodeToMBCS(GetText(), strOut, CP_UTF8);
-	return strOut;
-}
 
-void RichEdit::SetText(const std::wstring& strText)
+void RichEdit::SetText(const ui::string& strText)
 {
 	m_sText = strText;
 	if( !m_bInited )
@@ -1423,22 +1417,16 @@ void RichEdit::SetText(const std::wstring& strText)
 	m_linkInfo.clear();
 }
 
-void RichEdit::SetTextId(const std::wstring& strTextId)
+void RichEdit::SetTextId(const ui::string& strTextId)
 {
 	MutiLanSupport* mutilan = MutiLanSupport::GetInstance();
 	if (mutilan)
 	{
-		std::wstring strText = mutilan->GetStringViaID(strTextId);
+		ui::string strText = mutilan->GetStringViaID(strTextId);
 		SetText(strText);
 	}
 }
 
-void RichEdit::SetUTF8Text( const std::string& strText )
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strText, strOut, CP_UTF8);
-	SetText(strOut);
-}
 
 bool RichEdit::GetModify() const
 { 
@@ -1483,7 +1471,7 @@ int RichEdit::SetSel(long nStartChar, long nEndChar)
     return (int)lResult;
 }
 
-void RichEdit::ReplaceSel(const std::wstring& lpszNewText, bool bCanUndo)
+void RichEdit::ReplaceSel(const ui::string& lpszNewText, bool bCanUndo)
 {
 #ifdef _UNICODE		
     TxSendMessage(EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpszNewText.c_str(), 0); 
@@ -1499,19 +1487,25 @@ void RichEdit::ReplaceSelW(LPCWSTR lpszNewText, bool bCanUndo)
     TxSendMessage(EM_REPLACESEL, (WPARAM) bCanUndo, (LPARAM)lpszNewText, 0); 
 }
 
-std::wstring RichEdit::GetSelText() const
+ui::string RichEdit::GetSelText() const
 {
-    if( !m_pTwh ) return std::wstring();
+    if( !m_pTwh ) return ui::string();
     CHARRANGE cr;
     cr.cpMin = cr.cpMax = 0;
     TxSendMessage(EM_EXGETSEL, 0, (LPARAM)&cr, 0);
-    LPWSTR lpText = NULL;
+	LPWSTR lpText = NULL;
     lpText = new WCHAR[cr.cpMax - cr.cpMin + 1];
     ::ZeroMemory(lpText, (cr.cpMax - cr.cpMin + 1) * sizeof(WCHAR));
     TxSendMessage(EM_GETSELTEXT, 0, (LPARAM)lpText, 0);
-    std::wstring sText;
-    sText = (LPCWSTR)lpText;
-    delete[] lpText;
+	ui::string sText;
+#ifdef _UNICODE		
+	sText = (LPCWSTR)lpText;
+#else
+    std::wstring sTextW;
+    sTextW = (LPCWSTR)lpText;
+	StringHelper::UnicodeToMBCS(sTextW, sText);
+#endif
+	delete[] lpText;
     return sText;
 }
 
@@ -1583,18 +1577,24 @@ DWORD RichEdit::SetEventMask(DWORD dwEventMask)
     return (DWORD)lResult;
 }
 
-std::wstring RichEdit::GetTextRange(long nStartChar, long nEndChar) const
+ui::string RichEdit::GetTextRange(long nStartChar, long nEndChar) const
 {
     TEXTRANGEW tr = { 0 };
     tr.chrg.cpMin = nStartChar;
     tr.chrg.cpMax = nEndChar;
-    LPWSTR lpText = NULL;
+	LPWSTR lpText = NULL;
     lpText = new WCHAR[nEndChar - nStartChar + 1];
     ::ZeroMemory(lpText, (nEndChar - nStartChar + 1) * sizeof(WCHAR));
     tr.lpstrText = lpText;
     TxSendMessage(EM_GETTEXTRANGE, 0, (LPARAM)&tr, 0);
-    std::wstring sText;
+    ui::string sText;
+#ifdef _UNICODE	
     sText = (LPCWSTR)lpText;
+#else
+	std::wstring sTextW;
+	sTextW = (LPCWSTR)lpText;
+	StringHelper::UnicodeToMBCS(sTextW, sText);
+#endif
     delete[] lpText;
     return sText;
 }
@@ -1616,7 +1616,7 @@ int RichEdit::InsertText(long nInsertAfterChar, LPCTSTR lpstrText, bool bCanUndo
     return nRet;
 }
 
-int RichEdit::AppendText(const std::wstring& strText, bool bCanUndo)
+int RichEdit::AppendText(const ui::string& strText, bool bCanUndo)
 {
     int nRet = SetSel(-1, -1);
     ReplaceSel(strText, bCanUndo);
@@ -1752,15 +1752,21 @@ int RichEdit::GetLineCount() const
     return (int)lResult; 
 }
 
-std::wstring RichEdit::GetLine(int nIndex, int nMaxLength) const
+ui::string RichEdit::GetLine(int nIndex, int nMaxLength) const
 {
-    LPWSTR lpText = NULL;
+	LPWSTR lpText = NULL;
     lpText = new WCHAR[nMaxLength + 1];
     ::ZeroMemory(lpText, (nMaxLength + 1) * sizeof(WCHAR));
     *(LPWORD)lpText = (WORD)nMaxLength;
     TxSendMessage(EM_GETLINE, nIndex, (LPARAM)lpText, 0);
-    std::wstring sText;
-    sText = (LPCWSTR)lpText;
+    ui::string sText;
+#ifdef _UNICODE
+	sText = (LPCWSTR)lpText;
+#else
+	std::wstring sTextW;
+	sTextW = (LPCWSTR)lpText;
+	StringHelper::UnicodeToMBCS(sTextW, sText);
+#endif
     delete[] lpText;
     return sText;
 }
@@ -1881,8 +1887,8 @@ void RichEdit::OnTxNotify(DWORD iNotify, void *pv)
 
 			if(link->msg == WM_LBUTTONUP) {
 				this->SetSel(link->chrg);
-				std::wstring url = GetSelText();	
-				wprintf_s(L"[Link]%s\n", url.c_str());
+				ui::string url = GetSelText();	
+				_tprintf_s(_T("[Link]%s\n"), url.c_str());
 
 				HWND hwnd = this->GetWindow()->GetHWND();
 				SendMessage(hwnd, WM_NOTIFY, EN_LINK, (LPARAM)&url);
@@ -2313,7 +2319,7 @@ void RichEdit::HandleMessage(EventArgs& event)
 
 	if (event.Type == kEventMouseButtonDown || event.Type == kEventPointDown) {
 		if (m_linkInfo.size() > 0)	{
-			std::wstring strLink;
+			ui::string strLink;
 			if (HittestCustomLink(event.ptMouse, strLink))
 			{
 				//::SetCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_HAND)));
@@ -2387,7 +2393,7 @@ void RichEdit::HandleMessage(EventArgs& event)
 
 void RichEdit::OnSetCursor(EventArgs& event)
 {
-	std::wstring strLink;
+	ui::string strLink;
 	if (HittestCustomLink(event.ptMouse, strLink))
 	{
 		::SetCursor(::LoadCursor(NULL, IDC_HAND));
@@ -2462,13 +2468,13 @@ void RichEdit::OnKeyDown(EventArgs& event)
 		}
 	}
 	else if (m_bNumberOnly && event.wParam == 'V' && ::GetKeyState(VK_CONTROL) < 0) {
-		std::wstring strClipText;
+		ui::string strClipText;
 		GetClipboardText(strClipText);
 		if (!strClipText.empty()) {
-			std::wstring strNum;
+			ui::string strNum;
 			for (auto it = strClipText.begin(); it != strClipText.end(); it++)
 			{
-				if ((*it) <= L'9' && (*it) >= L'0') {
+				if ((*it) <= _T('9') && (*it) >= _T('0')) {
 					strNum.push_back((*it));
 				}
 			}
@@ -2631,7 +2637,7 @@ void RichEdit::PaintChild(IRenderContext* pRender, const UiRect& rcPaint)
     }
 }
 
-void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void RichEdit::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if (strName == ATTR_RICHEDIT_vscrollbar) {
 		if (strValue == _T("true")) {
@@ -2698,25 +2704,25 @@ void RichEdit::SetAttribute(const std::wstring& strName, const std::wstring& str
 		}
 	}
 	else if (strName == ATTR_RICHEDIT_align) {
-		if (strValue.find(_T("left")) != std::wstring::npos) {
+		if (strValue.find(_T("left")) != ui::string::npos) {
 			m_lTwhStyle &= ~(ES_CENTER | ES_RIGHT);
 			m_lTwhStyle |= ES_LEFT;
 		}
-		if (strValue.find(_T("hcenter")) != std::wstring::npos) {
+		if (strValue.find(_T("hcenter")) != ui::string::npos) {
 			m_lTwhStyle &= ~(ES_LEFT | ES_RIGHT);
 			m_lTwhStyle |= ES_CENTER;
 		}
-		if (strValue.find(_T("right")) != std::wstring::npos) {
+		if (strValue.find(_T("right")) != ui::string::npos) {
 			m_lTwhStyle &= ~(ES_LEFT | ES_CENTER);
 			m_lTwhStyle |= ES_RIGHT;
 		}
-		if (strValue.find(_T("top")) != std::wstring::npos) {
+		if (strValue.find(_T("top")) != ui::string::npos) {
 			m_textVerAlignType = kVerAlignTop;
 		}
-		if (strValue.find(_T("vcenter")) != std::wstring::npos) {
+		if (strValue.find(_T("vcenter")) != ui::string::npos) {
 			m_textVerAlignType = kVerAlignCenter;
 		}
-		if (strValue.find(_T("bottom")) != std::wstring::npos) {
+		if (strValue.find(_T("bottom")) != ui::string::npos) {
 			m_textVerAlignType = kVerAlignBottom;
 		}
 	}
@@ -2785,12 +2791,12 @@ BOOL RichEdit::ShowCaret(BOOL fShow)
 	return true;
 }
 
-void RichEdit::SetCaretColor(const std::wstring& dwColor)
+void RichEdit::SetCaretColor(const ui::string& dwColor)
 {
 	m_sCaretColor = dwColor;
 }
 
-std::wstring RichEdit::GetCaretColor()
+ui::string RichEdit::GetCaretColor()
 {
 	return m_sCaretColor;
 }
@@ -2840,9 +2846,9 @@ void RichEdit::SetPromptMode(bool bPrompt)
 	Invalidate();
 }
 
-std::wstring RichEdit::GetPromptText() const
+ui::string RichEdit::GetPromptText() const
 {
-	std::wstring strText = m_sPromptText;
+	ui::string strText = m_sPromptText;
 	if (strText.empty() && !m_sPromptTextId.empty()) {
 		strText = MutiLanSupport::GetInstance()->GetStringViaID(m_sPromptTextId);
 	}
@@ -2850,14 +2856,7 @@ std::wstring RichEdit::GetPromptText() const
 	return strText;
 }
 
-std::string RichEdit::GetUTF8PromptText() const
-{
-	std::string strOut;
-	StringHelper::UnicodeToMBCS(GetPromptText(), strOut, CP_UTF8);
-	return strOut;
-}
-
-void RichEdit::SetPromptText(const std::wstring& strText)
+void RichEdit::SetPromptText(const ui::string& strText)
 {
 	if (m_sPromptText == strText) return;
 	m_sPromptText = strText;
@@ -2865,26 +2864,12 @@ void RichEdit::SetPromptText(const std::wstring& strText)
 	Invalidate();
 }
 
-void RichEdit::SetUTF8PromptText(const std::string& strText)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strText, strOut, CP_UTF8);
-	SetPromptText(strOut);
-}
-
-void RichEdit::SetPromptTextId(const std::wstring& strTextId)
+void RichEdit::SetPromptTextId(const ui::string& strTextId)
 {
 	if (m_sPromptTextId == strTextId) return;
 	m_sPromptTextId = strTextId;
 
 	Invalidate();
-}
-
-void RichEdit::SetUTF8PromptTextId(const std::string& strTextId)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strTextId, strOut, CP_UTF8);
-	SetPromptTextId(strOut);
 }
 
 void RichEdit::PaintPromptText(IRenderContext* pRender)
@@ -2896,7 +2881,7 @@ void RichEdit::PaintPromptText(IRenderContext* pRender)
 	if (!m_pTwh)
 		return;
 
-	std::wstring strPrompt = GetPromptText();
+	ui::string strPrompt = GetPromptText();
 	if (strPrompt.empty() || m_sPromptColor.empty())
 		return;
 
@@ -2908,12 +2893,12 @@ void RichEdit::PaintPromptText(IRenderContext* pRender)
 	pRender->DrawText(rc, strPrompt, dwClrColor, m_sFontId, dwStyle);
 }
 
-std::wstring RichEdit::GetFocusedImage()
+ui::string RichEdit::GetFocusedImage()
 {
 	return m_sFocusedImage.imageAttribute.simageString;
 }
 
-void RichEdit::SetFocusedImage( const std::wstring& strImage )
+void RichEdit::SetFocusedImage( const ui::string& strImage )
 {
 	m_sFocusedImage.SetImageString(strImage);
 	Invalidate();
@@ -2949,7 +2934,7 @@ void RichEdit::SetNoCaretReadonly()
 	m_bNoCaretReadonly = true;
 }
 
-void RichEdit::AddColorText(const std::wstring &str, const std::wstring &color)
+void RichEdit::AddColorText(const ui::string &str, const ui::string &color)
 {
 	if( !m_bRich || str.empty() || color.empty() ) {
 		ASSERT(FALSE);
@@ -2957,9 +2942,9 @@ void RichEdit::AddColorText(const std::wstring &str, const std::wstring &color)
 	}
 	DWORD dwColor = GlobalManager::GetTextColor(color);
 
-	CHARFORMAT2W cf;
+	CHARFORMAT2 cf;
 	ZeroMemory(&cf, sizeof(cf));
-	cf.cbSize = sizeof(CHARFORMAT2W);
+	cf.cbSize = sizeof(CHARFORMAT2);
 	cf.dwMask = CFM_COLOR;
 	cf.dwEffects = 0;
 	cf.crTextColor = RGB(GetBValue(dwColor), GetGValue(dwColor), GetRValue(dwColor));
@@ -2974,7 +2959,7 @@ void RichEdit::AddColorText(const std::wstring &str, const std::wstring &color)
 	SetSelectionCharFormat(cf);
 }
 
-void RichEdit::AddLinkColorText(const std::wstring &str, const std::wstring &color, const std::wstring &linkInfo)
+void RichEdit::AddLinkColorText(const ui::string &str, const ui::string &color, const ui::string &linkInfo)
 {
 	if( !m_bRich || str.empty() || color.empty() ) {
 		ASSERT(FALSE);
@@ -2982,9 +2967,9 @@ void RichEdit::AddLinkColorText(const std::wstring &str, const std::wstring &col
 	}
 	DWORD dwColor = GlobalManager::GetTextColor(color);
 
-	CHARFORMAT2W cf;
+	CHARFORMAT2 cf;
 	ZeroMemory(&cf, sizeof(cf));
-	cf.cbSize = sizeof(CHARFORMAT2W);
+	cf.cbSize = sizeof(CHARFORMAT2);
 	cf.dwMask = CFM_COLOR;
 	cf.crTextColor = RGB(GetBValue(dwColor), GetGValue(dwColor), GetRValue(dwColor));
 
@@ -3001,26 +2986,35 @@ void RichEdit::AddLinkColorText(const std::wstring &str, const std::wstring &col
 	GetDefaultCharFormat(cf);
 	SetSelectionCharFormat(cf);
 }
-void  RichEdit::AddLinkColorTextEx(const std::wstring& str, const std::wstring &color, const std::wstring &linkInfo, const std::wstring& strFontId)
+void  RichEdit::AddLinkColorTextEx(const ui::string& str, const ui::string &color, const ui::string &linkInfo, const ui::string& strFontId)
 {
 	if (!m_bRich || str.empty() || color.empty()) {
 		ASSERT(FALSE);
 		return;
 	}
-	
+
 	std::string link;
 	std::string text;
 	std::string font_face;
+#ifdef _UNICODE	
 	StringHelper::UnicodeToMBCS(linkInfo, link);
 	StringHelper::UnicodeToMBCS(str, text);
+#else
+	link = linkInfo;
+	text = str;
+#endif
 	auto hFont = GlobalManager::GetFont(strFontId);
 	if (hFont == NULL)
 		hFont = GlobalManager::GetFont(m_sFontId);
 	if (hFont == NULL)
-		hFont = GlobalManager::GetFont(L"");
+		hFont = GlobalManager::GetFont(_T(""));
 	LOGFONT lf;
 	::GetObject(hFont, sizeof(LOGFONT), &lf);
+#ifdef _UNICODE	
 	StringHelper::UnicodeToMBCS(lf.lfFaceName, font_face);
+#else
+	font_face = lf.lfFaceName;
+#endif
 	DWORD dwTextColor = GlobalManager::GetTextColor(color);
 	static std::string font_format = "{\\fonttbl{\\f0\\fnil\\fcharset%d %s;}}";
 	static std::string color_format = "{\\colortbl ;\\red%d\\green%d\\blue%d;}";
@@ -3039,7 +3033,7 @@ void  RichEdit::AddLinkColorTextEx(const std::wstring& str, const std::wstring &
 	TxSendMessage(EM_SETTEXTEX, (WPARAM)&st, (LPARAM)(LPCTSTR)slinke, NULL);
 	return;
 }
-void RichEdit::AddLinkInfo(const CHARRANGE cr, const std::wstring &linkInfo)
+void RichEdit::AddLinkInfo(const CHARRANGE cr, const ui::string &linkInfo)
 {
 	LinkInfo info;
 	info.info = linkInfo;
@@ -3048,7 +3042,7 @@ void RichEdit::AddLinkInfo(const CHARRANGE cr, const std::wstring &linkInfo)
 }
 
 //根据point来hittest自定义link的数据，返回true表示在link上，info是link的自定义属性
-bool RichEdit::HittestCustomLink(CPoint pt, std::wstring& info)
+bool RichEdit::HittestCustomLink(CPoint pt, ui::string& info)
 {
 	bool bLink = false;
 	info.clear();
@@ -3075,12 +3069,12 @@ void RichEdit::ClearImageCache()
 }
 
 //----------------下面函数用作辅助 字节数限制
-bool IsAsciiChar(const wchar_t ch)
+bool IsAsciiChar(const TCHAR ch)
 {
 	return (ch <= 0x7e && ch >= 0x20);
 }
 
-int GetAsciiCharNumber(const std::wstring &str)
+int GetAsciiCharNumber(const ui::string &str)
 {
 	int len = (int)str.size(), sum = 0;
 	for( int i = 0; i < len; i++ )
@@ -3093,7 +3087,7 @@ int GetAsciiCharNumber(const std::wstring &str)
 	return sum;
 }
 
-void LimitAsciiNumber(std::wstring &src, int limit)
+void LimitAsciiNumber(ui::string &src, int limit)
 {
 	int len = (int)src.size(), sum = 0;
 	for( int i = 0; i < len; i++ )
@@ -3109,7 +3103,7 @@ void LimitAsciiNumber(std::wstring &src, int limit)
 	}
 }
 
-void GetClipboardText( std::wstring &out )
+void GetClipboardText( ui::string &out )
 {
 	out.clear();
 
@@ -3121,7 +3115,11 @@ void GetClipboardText( std::wstring &out )
 				wchar_t* buf = (wchar_t*)::GlobalLock(h);
 				if(buf != NULL)	{
 					std::wstring str(buf, GlobalSize(h)/sizeof(wchar_t));
+#ifdef _UNICODE	
 					out = str;
+#else
+					StringHelper::UnicodeToMBCS(str, out);
+#endif		
 					::GlobalUnlock(h);
 				}
 			}
@@ -3132,8 +3130,11 @@ void GetClipboardText( std::wstring &out )
 				char* buf = (char*)::GlobalLock(h);
 				if(buf != NULL)	{
 					std::string str(buf, GlobalSize(h));
+#ifdef _UNICODE	
 					StringHelper::MBCSToUnicode(str, out);
-
+#else
+					out = str;
+#endif
 					::GlobalUnlock(h);
 				}
 			}
@@ -3142,7 +3143,7 @@ void GetClipboardText( std::wstring &out )
 	}
 }
 
-void SetClipBoardText(const std::wstring &str)
+void SetClipBoardText(const ui::string &str)
 {
 	if (!::OpenClipboard(NULL))
 		return;
@@ -3153,15 +3154,15 @@ void SetClipBoardText(const std::wstring &str)
 	}
 
 	size_t len = str.length();
-	HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)); //分配全局内存  
+	HGLOBAL hMem = ::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(TCHAR)); //分配全局内存  
 	if (!hMem) {
 		::CloseClipboard();
 		return;
 	}
 
-	wchar_t* lpStr = (wchar_t*)::GlobalLock(hMem); //锁住内存区 
-	::memcpy(lpStr, str.c_str(), len * sizeof(wchar_t)); //把数据拷贝考全局内存中
-	lpStr[len] = wchar_t(0); //字符串末尾设为'\0'
+	TCHAR* lpStr = (TCHAR*)::GlobalLock(hMem); //锁住内存区 
+	::memcpy(lpStr, str.c_str(), len * sizeof(TCHAR)); //把数据拷贝考全局内存中
+	lpStr[len] = TCHAR(0); //字符串末尾设为'\0'
 	::GlobalUnlock(hMem); //释放锁 
 
 	::SetClipboardData(CF_UNICODETEXT, hMem); //把内存中的数据放到剪切板上

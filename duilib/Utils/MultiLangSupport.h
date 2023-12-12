@@ -16,14 +16,14 @@ public:
 	 * @param[in] id 指定字符串 ID
 	 * @return 返回 ID 对应的语言字符串
 	 */
-	std::wstring GetStringViaID(const std::wstring& id);
+	ui::string GetStringViaID(const ui::string& id);
 
 	/**
 	 * @brief 加载所有语言映射表
 	 * @param[in] strFilePath 语言文件路径
 	 * @return 返回 true 表示成功，返回 false 表示失败
 	 */
-	bool LoadStringTable(const std::wstring& strFilePath);
+	bool LoadStringTable(const ui::string& strFilePath);
 
 	/**
 	 * @brief 从内存中加载所有语言映射表
@@ -49,10 +49,10 @@ private:
 	 * @param[in] list 读取出来的映射表内容列表
 	 * @return 成功返回 true，否则返回 false
 	 */
-	bool AnalyzeStringTable(const std::vector<std::wstring>& list);
+	bool AnalyzeStringTable(const std::vector<ui::string>& list);
 
 private: 
-	std::map<std::wstring, std::wstring>  m_stringTable;
+	std::map<ui::string, ui::string>  m_stringTable;
 };
 
 }

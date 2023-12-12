@@ -14,7 +14,7 @@ public:
 	/// 重写父类方法，提供个性化功能，请参考父类声明
 	virtual UiRect GetProgressPos() override;
 	virtual void HandleMessage(EventArgs& event) override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 	virtual void PaintStatusImage(IRenderContext* pRender) override;
 	virtual void ClearImageCache() override;
 
@@ -49,7 +49,7 @@ public:
 	 * @param[in] stateType 要获取的状态标识，参考 ControlStateType 枚举
 	 * @return 返回图片路径
 	 */
-	std::wstring GetThumbStateImage(ControlStateType stateType);
+	ui::string GetThumbStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置指定状态下滑块的图片
@@ -57,7 +57,7 @@ public:
 	 * @param[in] pStrImage 要设置的图片位置
 	 * @return 无
 	 */
-	void SetThumbStateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetThumbStateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 获取进度条内边距
@@ -85,7 +85,7 @@ protected:
 	StateImage m_thumbStateImage;
 	UiRect	m_rcProgressBarPadding;
 	ControlStateType m_uButtonState;
-	std::wstring m_sImageModify;
+	ui::string m_sImageModify;
 };
 
 }

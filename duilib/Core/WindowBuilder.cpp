@@ -19,14 +19,18 @@ Box* WindowBuilder::Create(STRINGorID xml, CreateControlCallback pCallback,
 			if (!m_xml.Load(xml.m_lpstr)) return NULL;
 		}
 		else if (GlobalManager::IsUseZip()) {
-			std::wstring sFile = GlobalManager::GetResourcePath();
+			ui::string sFile = GlobalManager::GetResourcePath();
 			sFile += xml.m_lpstr;
 			HGLOBAL hGlobal = GlobalManager::GetData(sFile);
 			if (hGlobal)
 			{
 				std::string src((LPSTR)GlobalLock(hGlobal), GlobalSize(hGlobal));
-				std::wstring string_resourse;
+				ui::string string_resourse;
+#ifdef _UNICODE	
 				StringHelper::MBCSToUnicode(src.c_str(), string_resourse, CP_UTF8);
+#else
+				string_resourse = src;
+#endif
 				GlobalFree(hGlobal);
 				if (!m_xml.Load(string_resourse.c_str())) return NULL;
 			}
@@ -54,9 +58,9 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 
 	if( pManager ) 
 	{
-		std::wstring strClass;
-		std::wstring strName;
-		std::wstring strValue;
+		ui::string strClass;
+		ui::string strName;
+		ui::string strValue;
 		LPTSTR pstr = NULL;
 		strClass = root.GetName();
 
@@ -193,8 +197,8 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 				}
 				else if( strClass == _T("Font") ) {
 					int nAttributes = node.GetAttributeCount();
-					std::wstring strFontId;
-					std::wstring strFontName;
+					ui::string strFontId;
+					ui::string strFontName;
 					int size = 12;
 					bool bold = false;
 					bool underline = false;
@@ -230,10 +234,10 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						GlobalManager::AddFont(strFontId, strFontName, size, bold, underline, italic, isDefault);
 					}
 				}
-				else if( strClass == _T("Class") ) {
+				else if( strClass == _T("Class")) {
 					int nAttributes = node.GetAttributeCount();
-					std::wstring strClassName;
-					std::wstring strAttribute;
+					ui::string strClassName;
+					ui::string strAttribute;
 					for( int i = 0; i < nAttributes; i++ ) {
 						strName = node.GetAttributeName(i);
 						strValue = node.GetAttributeValue(i);
@@ -244,13 +248,13 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 							strAttribute.append(strValue);
 						}
 						else if ( strName == _T("_value") ) {
-							strAttribute.append(StringHelper::Printf(L" value=\"%s\"",strValue.c_str()));
+							strAttribute.append(StringHelper::Printf(_T(" value=\"%s\""),strValue.c_str()));
 						}
 						else if ( strName == _T("class") ) {
 							strAttribute.append(GlobalManager::GetClassAttributes(strValue));
 						}
 						else {
-							strAttribute.append(StringHelper::Printf(L" %s=\"%s\"",
+							strAttribute.append(StringHelper::Printf(_T(" %s=\"%s\""),
 								strName.c_str(), strValue.c_str()));
 						}
 					}
@@ -259,10 +263,10 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 						GlobalManager::AddClass(strClassName, strAttribute);
 					}
 				}
-				else if( strClass == _T("TextColor") ) {
+				else if( strClass == _T("TextColor")) {
 					int nAttributes = node.GetAttributeCount();
-					std::wstring strColorName;
-					std::wstring strColor;
+					ui::string strColorName;
+					ui::string strColor;
 					for( int i = 0; i < nAttributes; i++ ) {
 						strName = node.GetAttributeName(i);
 						strValue = node.GetAttributeValue(i);
@@ -278,7 +282,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 					}
 				}
 				else{
-					::MessageBox(nullptr, std::wstring(_T("无效的全局节点:") + strClass).c_str(), _T("错误"), MB_ICONERROR);
+					::MessageBox(nullptr, ui::string(_T("无效的全局节点:") + strClass).c_str(), _T("错误"), MB_ICONERROR);
 				}
 			}
 		}
@@ -288,8 +292,8 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 				strClass = node.GetName();
 				if( strClass == _T("Class") ) {
 					int nAttributes = node.GetAttributeCount();
-					std::wstring strClassName;
-					std::wstring strAttribute;
+					ui::string strClassName;
+					ui::string strAttribute;
 					for( int i = 0; i < nAttributes; i++ ) {
 						strName = node.GetAttributeName(i);
 						strValue = node.GetAttributeValue(i);
@@ -300,10 +304,10 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 							strAttribute.append(strValue);
 						}
 						else if (strName == _T("_value")) {
-							strAttribute.append(StringHelper::Printf(L" value=\"%s\"", strValue.c_str()));
+							strAttribute.append(StringHelper::Printf(_T(" value=\"%s\""), strValue.c_str()));
 						}
 						else {
-							strAttribute.append(StringHelper::Printf(L" %s=\"%s\"",
+							strAttribute.append(StringHelper::Printf(_T(" %s=\"%s\""),
 								strName.c_str(), strValue.c_str()));
 						}
 					}
@@ -318,7 +322,7 @@ Box* WindowBuilder::Create(CreateControlCallback pCallback, Window* pManager, Bo
 	}
 
 	for( CMarkupNode node = root.GetChild() ; node.IsValid(); node = node.GetSibling() ) {
-		std::wstring strClass = node.GetName();
+		ui::string strClass = node.GetName();
 		if( strClass == _T("Image") || strClass == _T("Font")
 			|| strClass == _T("Class") || strClass == _T("TextColor") ) {
 
@@ -362,7 +366,7 @@ Control* WindowBuilder::_Parse(CMarkupNode* pRoot, Control* pParent, Window* pMa
 {
     Control* pReturn = NULL;
     for( CMarkupNode node = pRoot->GetChild() ; node.IsValid(); node = node.GetSibling() ) {
-        std::wstring strClass = node.GetName();
+		ui::string strClass = node.GetName();
 		if( strClass == _T("Image") || strClass == _T("Font")
 			|| strClass == _T("Class") || strClass == _T("TextColor") ) {
 				continue;
@@ -388,8 +392,8 @@ Control* WindowBuilder::_Parse(CMarkupNode* pRoot, Control* pParent, Window* pMa
         else {
 			pControl = CreateControlByClass(strClass);
 			if (pControl == nullptr) {
-				if (strClass == L"Event" || strClass == L"BubbledEvent") {
-					bool bBubbled = (strClass == L"BubbledEvent");
+				if (strClass == _T("Event") || strClass == _T("BubbledEvent")) {
+					bool bBubbled = (strClass == _T("BubbledEvent"));
 					AttachXmlEvent(bBubbled, node, pParent);
 					continue;
 				}
@@ -445,10 +449,10 @@ Control* WindowBuilder::_Parse(CMarkupNode* pRoot, Control* pParent, Window* pMa
     return pReturn;
 }
 
-Control* WindowBuilder::CreateControlByClass(const std::wstring& strControlClass)
+Control* WindowBuilder::CreateControlByClass(const ui::string& strControlClass)
 {
 	Control* pControl = nullptr;
-	static std::map<std::wstring, std::function<Control* (void)>> _funcCreate = 
+	static std::map<ui::string, std::function<Control* (void)>> _funcCreate =
 	{
 		{ DUI_CTR_BOX,	[]() { return new Box; } },
 		{ DUI_CTR_HBOX, []() { return new HBox; } },
@@ -493,11 +497,11 @@ Control* WindowBuilder::CreateControlByClass(const std::wstring& strControlClass
 void WindowBuilder::AttachXmlEvent(bool bBubbled, CMarkupNode& node, Control* pParent)
 {
 	auto nAttributes = node.GetAttributeCount();
-	std::wstring strType;
-	std::wstring strReceiver;
-	std::wstring strApplyAttribute;
-	std::wstring strName;
-	std::wstring strValue;
+	ui::string strType;
+	ui::string strReceiver;
+	ui::string strApplyAttribute;
+	ui::string strName;
+	ui::string strValue;
 	for( int i = 0; i < nAttributes; i++ ) {
 		strName = node.GetAttributeName(i);
 		strValue = node.GetAttributeValue(i);
@@ -515,8 +519,8 @@ void WindowBuilder::AttachXmlEvent(bool bBubbled, CMarkupNode& node, Control* pP
 		}
 	}
 
-	auto typeList = StringHelper::Split(strType, L" ");
-	auto receiverList = StringHelper::Split(strReceiver, L" ");
+	auto typeList = StringHelper::Split(strType, _T(" "));
+	auto receiverList = StringHelper::Split(strReceiver, _T(" "));
 	for (auto itType = typeList.begin(); itType != typeList.end(); itType++) {
 		for (auto itReceiver = receiverList.begin(); itReceiver != receiverList.end(); itReceiver++) {
 			EventType eventType = StringToEnum(*itType);

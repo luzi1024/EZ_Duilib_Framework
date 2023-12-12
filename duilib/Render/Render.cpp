@@ -423,7 +423,7 @@ void RenderContext_GdiPlus::DrawColor(const UiRect& rc, DWORD dwColor, BYTE uFad
 	graphics.FillRectangle(&brush, rcFill);
 }
 
-void RenderContext_GdiPlus::DrawColor(const UiRect& rc, const std::wstring& colorStr, BYTE uFade)
+void RenderContext_GdiPlus::DrawColor(const UiRect& rc, const ui::string& colorStr, BYTE uFade)
 {
 	if (colorStr.empty()) {
 		return;
@@ -486,7 +486,7 @@ void RenderContext_GdiPlus::DrawRoundRect(const UiRect& rc, const CSize& roundSi
 	graphics.DrawPath(&pen, &pPath);
 }
 
-void RenderContext_GdiPlus::DrawText(const UiRect& rc, const std::wstring& strText, DWORD dwTextColor, const std::wstring& strFontId, UINT uStyle, BYTE uFade /*= 255*/, bool bLineLimit /*= false*/)
+void RenderContext_GdiPlus::DrawText(const UiRect& rc, const ui::string& strText, DWORD dwTextColor, const ui::string& strFontId, UINT uStyle, BYTE uFade /*= 255*/, bool bLineLimit /*= false*/)
 {
 	ASSERT(::GetObjectType(m_hDC) == OBJ_DC || ::GetObjectType(m_hDC) == OBJ_MEMDC);
 	if (strText.empty()) return;
@@ -536,7 +536,7 @@ void RenderContext_GdiPlus::DrawText(const UiRect& rc, const std::wstring& strTe
 	}
 	else if ((uStyle & DT_VCENTER) != 0) {
 		TFontInfo* fontInfo = GlobalManager::GetTFontInfo(strFontId);
-		if (fontInfo->sFontName == L"–¬ÀŒÃÂ") {
+		if (fontInfo->sFontName == _T("–¬ÀŒÃÂ")) {
 			if (rcPaint.Height >= fontInfo->iSize + 2) {
 				rcPaint.Offset(0, 1);
 			}
@@ -550,7 +550,13 @@ void RenderContext_GdiPlus::DrawText(const UiRect& rc, const std::wstring& strTe
 		stringFormat.SetLineAlignment(Gdiplus::StringAlignmentNear);
 	}
 
+#ifdef _UNICODE	
 	graphics.DrawString(strText.c_str(), (int)strText.length(), &font, rcPaint, &stringFormat, &tBrush);
+#else
+	std::wstring strTextW;
+	StringHelper::MBCSToUnicode(strText, strTextW);
+	graphics.DrawString(strTextW.c_str(), (int)strTextW.length(), &font, rcPaint, &stringFormat, &tBrush);
+#endif
 }
 
 void RenderContext_GdiPlus::DrawEllipse(const UiRect& rc, int nSize, DWORD dwColor)
@@ -583,7 +589,7 @@ void RenderContext_GdiPlus::FillPath(const IPath* path, const IBrush* brush)
 	graphics.FillPath(((Brush_Gdiplus*)brush)->GetBrush(), ((Path_Gdiplus*)path)->GetPath());
 }
 
-ui::UiRect RenderContext_GdiPlus::MeasureText(const std::wstring& strText, const std::wstring& strFontId, UINT uStyle, int width /*= DUI_NOSET_VALUE*/)
+ui::UiRect RenderContext_GdiPlus::MeasureText(const ui::string& strText, const ui::string& strFontId, UINT uStyle, int width /*= DUI_NOSET_VALUE*/)
 {
 	Gdiplus::Graphics graphics(m_hDC);
 	Gdiplus::Font font(m_hDC, GlobalManager::GetFont(strFontId));
@@ -596,20 +602,43 @@ ui::UiRect RenderContext_GdiPlus::MeasureText(const std::wstring& strText, const
 	}
 	stringFormat.SetFormatFlags(formatFlags);
 
+#ifdef _UNICODE	
 	if (width == DUI_NOSET_VALUE) {
+
 		graphics.MeasureString(strText.c_str(), (int)strText.length(), &font, Gdiplus::PointF(), &stringFormat, &bounds);
-	}
+}
 	else {
 		Gdiplus::REAL height = 0;
 		if ((uStyle & DT_SINGLELINE) != 0) {
 			Gdiplus::RectF rcEmpty((Gdiplus::REAL)0, (Gdiplus::REAL)0, (Gdiplus::REAL)0, (Gdiplus::REAL)0);
-			graphics.MeasureString(L"≤‚ ‘", 2, &font, rcEmpty, &stringFormat, &bounds);
+			graphics.MeasureString(_T("≤‚ ‘"), 2, &font, rcEmpty, &stringFormat, &bounds);
 			height = bounds.Height;
 		}
 		Gdiplus::RectF rcText((Gdiplus::REAL)0, (Gdiplus::REAL)0, (Gdiplus::REAL)width, height);
 		graphics.MeasureString(strText.c_str(), (int)strText.length(), &font, rcText, &stringFormat, &bounds);
 	}
+#else
+	if (width == DUI_NOSET_VALUE) {
 
+		std::wstring strTextW;
+		StringHelper::MBCSToUnicode(strText, strTextW);
+		graphics.MeasureString(strTextW.c_str(), (int)strTextW.length(), &font, Gdiplus::PointF(), &stringFormat, &bounds);
+	}
+	else {
+		Gdiplus::REAL height = 0;
+		if ((uStyle & DT_SINGLELINE) != 0) {
+			Gdiplus::RectF rcEmpty((Gdiplus::REAL)0, (Gdiplus::REAL)0, (Gdiplus::REAL)0, (Gdiplus::REAL)0);
+			std::wstring strTextW;
+			StringHelper::MBCSToUnicode(_T("≤‚ ‘"), strTextW);
+			graphics.MeasureString(strTextW.c_str(), 2, &font, rcEmpty, &stringFormat, &bounds);
+			height = bounds.Height;
+		}
+		Gdiplus::RectF rcText((Gdiplus::REAL)0, (Gdiplus::REAL)0, (Gdiplus::REAL)width, height);
+		std::wstring strTextW;
+		StringHelper::MBCSToUnicode(strText, strTextW);
+		graphics.MeasureString(strTextW.c_str(), (int)strTextW.length(), &font, rcText, &stringFormat, &bounds);
+	}
+#endif
 	UiRect rc(int(bounds.GetLeft()), int(bounds.GetTop()), int(bounds.GetRight() + 1), int(bounds.GetBottom() + 1));
 	return rc;
 }

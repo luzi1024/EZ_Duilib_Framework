@@ -74,15 +74,19 @@ int ImageInfo::GetInterval(int nIndex)
 	return interval;
 }
 
-std::unique_ptr<ImageInfo> ImageInfo::LoadImage(const std::wstring& strImageFullPath, std::wstring sGroupID, double dScale)
+std::unique_ptr<ImageInfo> ImageInfo::LoadImage(const ui::string& strImageFullPath, ui::string sGroupID, double dScale)
 {
 	if (StringHelper::EndWith(strImageFullPath, _T(".svg")))
 	{
-		std::string st;
-		StringHelper::UnicodeToMBCS(strImageFullPath, st);
+		std::string sfile;
+#ifdef _UNICODE	
+		StringHelper::UnicodeToMBCS(strImageFullPath, sfile);
+#else
+		sfile = strImageFullPath;
+#endif
 		if (sGroupID.empty())
 		{
-			auto document = lunasvg::Document::loadFromFile(st);
+			auto document = lunasvg::Document::loadFromFile(sfile);
 			auto pIStream = RenderImageGroup(document, dScale);
 			if (pIStream == nullptr)
 				return nullptr;
@@ -91,15 +95,21 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImage(const std::wstring& strImageFull
 		}
 		else
 		{
-			auto tb = lunasvg::ITreeBuilder::parseFromFile(st);
+			auto tb = lunasvg::ITreeBuilder::parseFromFile(sfile);
 			return LoadImageGroup(tb, sGroupID, dScale);
 		}
 	}
-	std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromFile(strImageFullPath.c_str()));
+	std::wstring sn;
+#ifdef _UNICODE	
+	sn = strImageFullPath;
+#else
+	StringHelper::MBCSToUnicode(strImageFullPath, sn);
+#endif
+	std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromFile(sn.c_str()));
 	return LoadImageByBitmap(gdiplusBitmap, strImageFullPath, sGroupID);
 }
 
-std::unique_ptr<ImageInfo> ImageInfo::LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath, std::wstring sGroupID, double dScale)
+std::unique_ptr<ImageInfo> ImageInfo::LoadImage(HGLOBAL hGlobal, const ui::string& imageFullPath, ui::string sGroupID, double dScale)
 {
 	if (hGlobal == NULL)
 	{
@@ -119,7 +129,7 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImage(HGLOBAL hGlobal, const std::wstr
 	return LoadImageByBitmap(gdiplusBitmap, imageFullPath, sGroupID);
 }
 
-std::unique_ptr<ui::ImageInfo> ImageInfo::LoadImageGroup(std::unique_ptr<lunasvg::ITreeBuilder>& tb, const std::wstring& sGroupID, double dScale)
+std::unique_ptr<ui::ImageInfo> ImageInfo::LoadImageGroup(std::unique_ptr<lunasvg::ITreeBuilder>& tb, const ui::string& sGroupID, double dScale)
 {
 	if (!tb)
 	{
@@ -127,7 +137,11 @@ std::unique_ptr<ui::ImageInfo> ImageInfo::LoadImageGroup(std::unique_ptr<lunasvg
 		return nullptr;
 	}
 	std::string sgid;
+#ifdef _UNICODE	
 	StringHelper::UnicodeToMBCS(sGroupID, sgid);
+#else
+	sgid = sGroupID;
+#endif
 	auto document = tb->buildClip(sgid);
 	auto pIStream = RenderImageGroup(document, dScale);
 	if (pIStream == nullptr)
@@ -137,7 +151,7 @@ std::unique_ptr<ui::ImageInfo> ImageInfo::LoadImageGroup(std::unique_ptr<lunasvg
 	return LoadImageByBitmap(gdiplusBitmap, _T(""), sGroupID);
 }
 
-std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const std::wstring& strImageFullPath, std::wstring  sGroup)
+std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const ui::string& strImageFullPath, ui::string  sGroup)
 {
 	Gdiplus::Status status;
 	status = pGdiplusBitmap->GetLastStatus();
@@ -276,7 +290,7 @@ void ImageAttribute::Init()
 	sFillcolor.clear();
 }
 
-void ImageAttribute::SetImageString(const std::wstring& strImageString)
+void ImageAttribute::SetImageString(const ui::string& strImageString)
 {
 	Init();
 	simageString = strImageString;
@@ -284,10 +298,10 @@ void ImageAttribute::SetImageString(const std::wstring& strImageString)
 	ModifyAttribute(*this, strImageString);
 }
 
-void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const std::wstring& strImageString)
+void ImageAttribute::ModifyAttribute(ImageAttribute& imageAttribute, const ui::string& strImageString)
 {
-	std::wstring sItem;
-	std::wstring sValue;
+	ui::string sItem;
+	ui::string sValue;
 	LPTSTR pstr = NULL;
 	bool bScaleDest = true;
 	bool bHasFile = false;
@@ -398,7 +412,7 @@ Image::Image() :
 
 }
 
-void Image::SetImageString(const std::wstring& strImageString)
+void Image::SetImageString(const ui::string& strImageString)
 {
 	ClearCache();
 	imageAttribute.SetImageString(strImageString);
@@ -478,15 +492,15 @@ bool StateImage::HasHotImage()
 	return !m_stateImageMap[kControlStateHot].imageAttribute.simageString.empty();
 }
 
-bool StateImage::PaintStatusImage(IRenderContext* pRender, ControlStateType stateType, const std::wstring& sImageModify /*= L""*/)
+bool StateImage::PaintStatusImage(IRenderContext* pRender, ControlStateType stateType, const ui::string& sImageModify /*= L""*/)
 {
 	if (m_pControl) {
 		bool bFadeHot = m_pControl->GetAnimationManager().GetAnimationPlayer(kAnimationHot) != nullptr;
 		int nHotAlpha = m_pControl->GetHotAlpha();
 		if (bFadeHot) {
 			if (stateType == kControlStateNormal || stateType == kControlStateHot) {
-				std::wstring strNormalImageKey = m_stateImageMap[kControlStateNormal].imageAttribute.ImgKey();
-				std::wstring strHotImageKey = m_stateImageMap[kControlStateHot].imageAttribute.ImgKey();
+				ui::string strNormalImageKey = m_stateImageMap[kControlStateNormal].imageAttribute.ImgKey();
+				ui::string strHotImageKey = m_stateImageMap[kControlStateHot].imageAttribute.ImgKey();
 
 				if (strNormalImageKey.empty() || strHotImageKey.empty()
 					|| strNormalImageKey != strHotImageKey
@@ -573,12 +587,12 @@ void StateImageMap::SetControl(Control* control)
 	m_stateImageMap[kStateImageSelectedFore].SetControl(control);
 }
 
-void StateImageMap::SetImage(StateImageType stateImageType, ControlStateType stateType, const std::wstring& strImagePath)
+void StateImageMap::SetImage(StateImageType stateImageType, ControlStateType stateType, const ui::string& strImagePath)
 {
 	m_stateImageMap[stateImageType][stateType].SetImageString(strImagePath);
 }
 
-std::wstring StateImageMap::GetImagePath(StateImageType stateImageType, ControlStateType stateType)
+ui::string StateImageMap::GetImagePath(StateImageType stateImageType, ControlStateType stateType)
 {
 	return m_stateImageMap[stateImageType][stateType].imageAttribute.simageString;
 }
@@ -593,7 +607,7 @@ bool StateImageMap::HasHotImage()
 	return false;
 }
 
-bool StateImageMap::PaintStatusImage(IRenderContext* pRender, StateImageType stateImageType, ControlStateType stateType, const std::wstring& sImageModify /*= L""*/)
+bool StateImageMap::PaintStatusImage(IRenderContext* pRender, StateImageType stateImageType, ControlStateType stateType, const ui::string& sImageModify /*= L""*/)
 {
 	auto it = m_stateImageMap.find(stateImageType);
 	if (it != m_stateImageMap.end()) {

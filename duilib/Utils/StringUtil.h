@@ -7,21 +7,26 @@ namespace ui
 class UILIB_API StringHelper
 {
 public:
-	static std::wstring ReparsePath(const std::wstring& strFilePath);
+	static ui::string ReparsePath(const ui::string& strFilePath);
 
 	// format a string
-	static std::wstring Printf(const wchar_t *format, ...);
+	static ui::string Printf(const TCHAR* format, ...);
 
 	// replace all 'find' with 'replace' in the string
-	static size_t ReplaceAll(const std::wstring& find, const std::wstring& replace, std::wstring& output);
+	static size_t ReplaceAll(const ui::string& find, const ui::string& replace, ui::string& output);
 
-	static std::wstring MakeLowerString(const std::wstring &str);
-	static std::wstring MakeUpperString(const std::wstring &str);
+	static ui::string MakeLowerString(const ui::string&str);
+	static ui::string MakeUpperString(const ui::string&str);
 
 	static bool MBCSToUnicode(const char *input, std::wstring& output, int code_page = CP_ACP);
 	static bool MBCSToUnicode(const std::string &input, std::wstring& output, int code_page = CP_ACP);
 	static bool UnicodeToMBCS(const wchar_t *input, std::string &output, int code_page = CP_ACP);
 	static bool UnicodeToMBCS(const std::wstring& input, std::string &output, int code_page = CP_ACP);
+
+	// UTF8 to GB2312  
+	static std::string U2G(const char* utf8);
+	// GB2312 to UTF8   
+	static std::string G2U(const char* gb2312);
 
 	// trimming, removing extra spaces
 	static std::string TrimLeft(const char *input);
@@ -38,12 +43,11 @@ public:
 	static std::wstring& Trim(std::wstring &input); /* both left and right */
 
 	// find all tokens splitted by one of the characters in 'delimitor'
-	static std::list<std::string> Split(const std::string& input, const std::string& delimitor);
-	static std::list<std::wstring> Split(const std::wstring& input, const std::wstring& delimitor);
+	static std::list<ui::string> Split(const ui::string& input, const ui::string& delimitor);
 
 	//
-	static bool StartWith(const std::wstring& str, const std::wstring& head);
-	static bool EndWith(const std::wstring& str, const std::wstring& tail);
+	static bool StartWith(const ui::string& str, const ui::string& head);
+	static bool EndWith(const ui::string& str, const ui::string& tail);
 };
 
 }

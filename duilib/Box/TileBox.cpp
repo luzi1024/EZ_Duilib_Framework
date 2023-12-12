@@ -138,7 +138,7 @@ CSize TileLayout::AjustSizeByChild(const std::vector<Control*>& items, CSize szA
 	return size;
 }
 
-bool TileLayout::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+bool TileLayout::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	bool hasAttribute = true;
 	if( strName == ATTR_TILELAYOUT_itemsize) {

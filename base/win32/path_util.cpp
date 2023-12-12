@@ -18,76 +18,76 @@ namespace nbase
 namespace win32
 {
 
-std::wstring GetModulePathName(HMODULE module_handle)
+	UIString GetModulePathName(HMODULE module_handle)
 {
 	//DCHECK(IsModuleHandleValid(module_handle));
-	std::wstring mod_path;
+		UIString mod_path;
 	mod_path.resize(MAX_PATH);
-	mod_path.resize(::GetModuleFileNameW(module_handle, &mod_path[0], (DWORD)mod_path.size()));
+	mod_path.resize(::GetModuleFileName(module_handle, &mod_path[0], (DWORD)mod_path.size()));
 	return mod_path;
 }
 
-std::wstring GetModuleDirectory(HMODULE module_handle)
+	UIString GetModuleDirectory(HMODULE module_handle)
 {
 	//DCHECK(IsModuleHandleValid(module_handle));
-	std::wstring module_directory;
+		UIString module_directory;
 	if (FilePathApartDirectory(GetModulePathName(module_handle), module_directory))
 		return module_directory;
-	return L"";
+	return _T("");
 }
 
-std::wstring GetModuleName(HMODULE module_handle)
+	UIString GetModuleName(HMODULE module_handle)
 {
 	//DCHECK(IsModuleHandleValid(module_handle));
-	std::wstring module_name;
+		UIString module_name;
 	if (FilePathApartFileName(GetModulePathName(module_handle), module_name))
 		return module_name;
-	return L"";
+	return _T("");
 }
 
-std::wstring GetCurrentModulePathName()
+	UIString GetCurrentModulePathName()
 {
 	return GetModulePathName(GetCurrentModuleHandle());
 }
 
-std::wstring GetCurrentModuleDirectory()
+	UIString GetCurrentModuleDirectory()
 {
 	return GetModuleDirectory(GetCurrentModuleHandle());
 }
 
-std::wstring GetCurrentModuleName()
+	UIString GetCurrentModuleName()
 {
 	return GetModuleName(GetCurrentModuleHandle());
 }
 
-std::wstring GetWindowsDir()
+	UIString GetWindowsDir()
 {
-	std::wstring windows_path;
+		UIString windows_path;
 	windows_path.resize(MAX_PATH);
 	DWORD result = ::GetWindowsDirectory(&windows_path[0], MAX_PATH);
 	windows_path.resize(result);
 	return windows_path;
 }
 
-std::wstring GetSystemDir()
+	UIString GetSystemDir()
 {
-	std::wstring system_path;
+		UIString system_path;
 	system_path.resize(MAX_PATH);
 	DWORD result = ::GetSystemDirectory(&system_path[0], MAX_PATH);
 	system_path.resize(result);
 	return system_path;
 }
 
-std::wstring GetTempDir()
+	UIString GetTempDir()
 {
-	std::wstring temp_path;
+		UIString temp_path;
 	temp_path.resize(MAX_PATH);
 	DWORD result = ::GetTempPath(MAX_PATH, &temp_path[0]);
 	temp_path.resize(result);
 	return temp_path;
 }
 
-std::wstring GetLocalAppDataDir(HANDLE token /* = NULL */)
+	UIString GetLocalAppDataDir(HANDLE token /* = NULL */)
 {
 #if (NTDDI_VERSION < NTDDI_VISTA)
 #ifndef KF_FLAG_CREATE
@@ -95,22 +95,22 @@ std::wstring GetLocalAppDataDir(HANDLE token /* = NULL */)
 #endif
 #endif
 
-	std::wstring temp_path;
+		UIString temp_path;
 	if (IsRunningOnVistaOrHigher())
 	{
-		typedef HRESULT (WINAPI *__SHGetKnownFolderPath)(REFKNOWNFOLDERID, DWORD, HANDLE, PWSTR*);
-		HMODULE moudle_handle = ::LoadLibraryW(L"shell32.dll");
+		typedef HRESULT (WINAPI *__SHGetKnownFolderPath)(REFKNOWNFOLDERID, DWORD, HANDLE, PCTSTR*);
+		HMODULE moudle_handle = ::LoadLibrary(_T("shell32.dll"));
 		if (moudle_handle != NULL)
 		{
 			__SHGetKnownFolderPath _SHGetKnownFolderPath =
 				reinterpret_cast<__SHGetKnownFolderPath>(::GetProcAddress(moudle_handle, "SHGetKnownFolderPath"));
 			if (_SHGetKnownFolderPath != NULL)
 			{
-				PWSTR result = NULL;
+				PCTSTR result = NULL;
 				if (S_OK == _SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, token, &result))
 				{
 					temp_path = result;
-					::CoTaskMemFree(result);
+					::CoTaskMemFree((void*)result);
 				}
 			}
 			::FreeLibrary(moudle_handle);
@@ -120,39 +120,39 @@ std::wstring GetLocalAppDataDir(HANDLE token /* = NULL */)
 	{
 		// On Windows XP, CSIDL_LOCAL_APPDATA represents "{user}\Local Settings\Application Data"
 		// while CSIDL_APPDATA represents "{user}\Application Data"
-		wchar_t buffer[MAX_PATH];
+		TCHAR buffer[MAX_PATH];
 		if (S_OK == ::SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA|CSIDL_FLAG_CREATE, token, SHGFP_TYPE_CURRENT, buffer))
 			temp_path = buffer;
 	}
 	if (!temp_path.empty())
-		if (temp_path.back() != L'\\')
-			temp_path.push_back(L'\\');
+		if (temp_path.back() != _T('\\'))
+			temp_path.push_back(_T('\\'));
 	return temp_path;
 }
 
-bool CreateDirectoryRecursively(const wchar_t *full_dir)
+bool CreateDirectoryRecursively(const TCHAR* full_dir)
 {
-	 HRESULT result = ::SHCreateDirectory(NULL, full_dir);
+	 HRESULT result = ::SHCreateDirectoryEx(NULL, full_dir, nullptr);
 	 if (result == ERROR_SUCCESS || result == ERROR_FILE_EXISTS || result == ERROR_ALREADY_EXISTS)
 		 return true;
 	 return false;
 }
 
-bool DeleteDirectoryRecursively(const wchar_t *full_dir)
+bool DeleteDirectoryRecursively(const TCHAR* full_dir)
 {
-	DWORD attributes = ::GetFileAttributesW(full_dir);
+	DWORD attributes = ::GetFileAttributes(full_dir);
 	if (attributes == INVALID_FILE_ATTRIBUTES) // not exists
 		return true;
 	if (!(attributes & FILE_ATTRIBUTE_DIRECTORY)) // not a file
 		return false;
-	SHFILEOPSTRUCTW file_op = {NULL,
+	SHFILEOPSTRUCT file_op = {NULL,
 							   FO_DELETE,
 							   full_dir,
-							   L"",
+							   _T(""),
 							   FOF_NOCONFIRMATION|FOF_NOERRORUI|FOF_SILENT,
 							   FALSE,
 							   0,
-							   L""};
+							   _T("")};
 	if (::SHFileOperation(&file_op) && !file_op.fAnyOperationsAborted)
 		return true;
 	return false;

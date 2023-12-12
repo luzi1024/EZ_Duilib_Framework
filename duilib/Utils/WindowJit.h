@@ -20,9 +20,9 @@ namespace ui
 		~WindowJit() {};
 
 		virtual bool IsSkinJit() override { return true; };
-		virtual std::wstring GetWindowClassName() const override { return _T("WindowJit"); };
-		virtual std::wstring GetSkinFolder() override { return _T("public"); };
-		virtual std::wstring GetSkinFile() override { return _skin; };
+		virtual ui::string GetWindowClassName() const override { return _T("WindowJit"); };
+		virtual ui::string GetSkinFolder() override { return _T("public"); };
+		virtual ui::string GetSkinFile() override { return _skin; };
 		virtual void InitWindow() override
 		{
 			// Ê¾Àı
@@ -52,7 +52,7 @@ namespace ui
 			pBox->Add(pBtn);
 		}
 	private:
-		std::wstring _skin;
+		ui::string _skin;
 	};
 
 };

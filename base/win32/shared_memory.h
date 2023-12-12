@@ -21,8 +21,8 @@ class BASE_EXPORT SharedMemory
 public:
 	SharedMemory() : mapping_(NULL) {}
 	~SharedMemory() { Close(); };
-	bool Create(const wchar_t *name, int size);
-	bool Open(const wchar_t *name);
+	bool Create(const TCHAR *name, int size);
+	bool Open(const TCHAR*name);
 	void Close();
 
 	class MappedView

@@ -118,14 +118,14 @@ public:
 	 * @brief 获取当前设置的字体索引
 	 * @return 返回字体索引（对应 global.xml 中字体的顺序）
 	 */
-	std::wstring GetFont() const;
+	ui::string GetFont() const;
 
 	/**
 	 * @brief 设置字体索引
 	 * @param[in] index 要设置的字体索引（对应 global.xml 中字体的顺序）
 	 * @return 无
 	 */
-	void SetFont(const std::wstring& strFontId);
+	void SetFont(const ui::string& strFontId);
 	void SetFont(HFONT font);
 	/**
 	 * @brief 根据字体名称设置字体
@@ -136,7 +136,7 @@ public:
 	 * @param[in] bItalic 是否斜体显示
 	 * @return 无
 	 */
-    void SetFont(const std::wstring& pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
+    void SetFont(const ui::string& pStrFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
 
 	/**
 	 * @brief 获取窗口样式
@@ -162,14 +162,14 @@ public:
 	 * @param[in] dwTextColor 要设置的文本颜色，该颜色必须在 global.xml 中存在
 	 * @return 无
 	 */
-	virtual void SetTextColor(const std::wstring& dwTextColor);
+	virtual void SetTextColor(const ui::string& dwTextColor);
 	void SetTextColor(DWORD color);
 
 	/**
 	 * @brief 获取文本颜色
 	 * @return 返回当前文本颜色
 	 */
-	std::wstring GetTextColor();
+	ui::string GetTextColor();
 
 	/**
 	 * @brief 获取限制字符数量
@@ -195,34 +195,23 @@ public:
 	 * @brief 获取控件中的文本
 	 * @return 返回控件中的文本内容
 	 */
-    std::wstring GetText() const;
+	ui::string GetText() const;
 
-	/**
-	 * @brief 获取控件中的文本
-	 * @return 返回控件中的文本内容 UTF8 格式
-	 */
-	virtual std::string GetUTF8Text() const;
 
 	/**
 	 * @brief 设置控件的文本
 	 * @param[in] strText 要设置的文本内容
 	 * @return 无
 	 */
-    void SetText(const std::wstring& strText);
+    void SetText(const ui::string& strText);
 
 	/**
 	 * @brief 设置控件的文本对应 ID
 	 * @param[in] strTextId 要设置的 ID，该 ID 必须在加载的语言文件中存在
 	 * @return 无
 	 */
-	void SetTextId(const std::wstring& strTextId);
+	void SetTextId(const ui::string& strTextId);
 
-	/**
-	 * @brief 设置控件的文本对应 ID
-	 * @param[in] strTextId 要设置的 UTF8 格式 ID，该 ID 必须在加载的语言文件中存在
-	 * @return 无
-	 */
-	virtual void SetUTF8Text(const std::string& strText);
 
 	/**
 	 * @brief 获取修改标志
@@ -273,7 +262,7 @@ public:
 	 * @param[in] bCanUndo 是否可以撤销，true 为可以，否则为 false
 	 * @return 无
 	 */
-    void ReplaceSel(const std::wstring& lpszNewText, bool bCanUndo);
+    void ReplaceSel(const ui::string& lpszNewText, bool bCanUndo);
 
 	/**
 	 * @brief 替换所选内容
@@ -287,7 +276,7 @@ public:
 	 * @brief 获取所选文字内容
 	 * @return 返回所选文字内容
 	 */
-    std::wstring GetSelText() const;
+	ui::string GetSelText() const;
 
 	/**
 	 * @brief 全选
@@ -361,7 +350,7 @@ public:
 	 * @param[in] nEndChar 结束为止
 	 * @return 返回设置的指定位置的内容
 	 */
-    std::wstring GetTextRange(long nStartChar, long nEndChar) const;
+	ui::string GetTextRange(long nStartChar, long nEndChar) const;
 
 	/**
 	 * @brief 设置是否隐藏或显示选择的值
@@ -392,7 +381,7 @@ public:
 	 * @param[in] bCanUndo 是否可以撤销，true 为可以，否则为 false，默认为 false
 	 * @return 返回追加后的文字位置
 	 */
-    int AppendText(const std::wstring& strText, bool bCanUndo = false);
+    int AppendText(const ui::string& strText, bool bCanUndo = false);
 
 	/**
 	 * @brief 获取字符格式
@@ -507,7 +496,7 @@ public:
 	 * @param[in] nMaxLength 要获取当前行最大的数据长度
 	 * @return 返回获取的一行数据
 	 */
-    std::wstring GetLine(int nIndex, int nMaxLength) const;
+	ui::string GetLine(int nIndex, int nMaxLength) const;
 
 	/**
 	 * @brief 获取指定行的第一个字符索引
@@ -699,7 +688,7 @@ public:
 
 	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 	virtual void PaintChild(IRenderContext* pRender, const UiRect& rcPaint) override;
-	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
+	virtual void SetAttribute(const ui::string& pstrName, const ui::string& pstrValue) override;
 
 	/**
 	 * @brief 创建光标
@@ -721,13 +710,13 @@ public:
 	 * @param[in] dwColor 要设置的颜色值，该值必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void SetCaretColor(const std::wstring& dwColor);
+	void SetCaretColor(const ui::string& dwColor);
 
 	/**
 	 * @brief 获取光标颜色
 	 * @return 返回光标颜色
 	 */
-	std::wstring GetCaretColor();
+	ui::string GetCaretColor();
 
 	/**
 	 * @brief 获取光标矩形位置
@@ -768,41 +757,21 @@ public:
 	 * @brief 获取提示文字
 	 * @return 返回提示文字内容
 	 */
-	std::wstring GetPromptText() const;
-
-	/**
-	 * @brief 获取提示文字
-	 * @return 返回 UTF8 格式的提示文字
-	 */
-	std::string GetUTF8PromptText() const;
+	ui::string GetPromptText() const;
 
 	/**
 	 * @brief 设置提示文字
 	 * @param[in] strText 要设置的提示文字
 	 * @return 无
 	 */
-	void SetPromptText(const std::wstring& strText);
-
-	/**
-	 * @brief 设置提示文字
-	 * @param[in] strText 要设置的 UTF8 格式提示文字
-	 * @return 无
-	 */
-	void SetUTF8PromptText(const std::string& strText);
+	void SetPromptText(const ui::string& strText);
 
 	/**
 	 * @brief 设置提示文字 ID
 	 * @param[in] strText 要设置的提示文字 ID，该 ID 必须在加载的语言文件中存在
 	 * @return 无
 	 */
-	void SetPromptTextId(const std::wstring& strTextId);
-
-	/**
-	 * @brief 设置提示文字 ID
-	 * @param[in] strText 要设置的 UTF8 格式提示文字 ID，该 ID 必须在加载的语言文件中存在
-	 * @return 无
-	 */
-	void SetUTF8PromptTextId(const std::string& strTextId);
+	void SetPromptTextId(const ui::string& strTextId);
 
 	/**
 	 * @brief 绘制提示文字
@@ -815,14 +784,14 @@ public:
 	 * @brief 获取焦点状态下的图片
 	 * @return 返回焦点状态下的图片
 	 */
-	std::wstring GetFocusedImage();
+	ui::string GetFocusedImage();
 
 	/**
 	 * @brief 设置焦点状态下的图片
 	 * @param[in] strImage 要设置的图片位置
 	 * @return 无
 	 */
-	void SetFocusedImage(const std::wstring& strImage);
+	void SetFocusedImage(const ui::string& strImage);
 
 	/**
 	 * @brief 绘制指定状态下的图片
@@ -857,7 +826,7 @@ public:
 	 * @param[in] color 颜色值，该值必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void AddColorText(const std::wstring &str, const std::wstring &color);
+	void AddColorText(const ui::string&str, const ui::string&color);
 
 	/**
 	 * @brief 添加一个带有文字颜色的超链接
@@ -866,7 +835,7 @@ public:
 	 * @param[in] linkInfo 链接地址
 	 * @return 无
 	 */
-	void AddLinkColorText(const std::wstring &str, const std::wstring &color, const std::wstring &linkInfo = L"");
+	void AddLinkColorText(const ui::string&str, const ui::string&color, const ui::string&linkInfo = _T(""));
 
 	/**
 	 * @brief 添加一个指定字体带有文字颜色的超链接
@@ -876,7 +845,7 @@ public:
 	 * @param[in] font 字体索引
 	 * @return 无
 	 */
-	void AddLinkColorTextEx(const std::wstring& str, const std::wstring &color, const std::wstring &linkInfo = L"", const std::wstring& strFontId = L"");
+	void AddLinkColorTextEx(const ui::string& str, const ui::string&color, const ui::string&linkInfo = _T(""), const ui::string& strFontId = _T(""));
 
 	/**
 	 * @brief 添加一个范围用于 hittest 判断是否是链接信息
@@ -884,7 +853,7 @@ public:
 	 * @param[in] linkInfo 自定义 link 属性
 	 * @return 无
 	 */
-	void AddLinkInfo(const CHARRANGE cr, const std::wstring &linkInfo);
+	void AddLinkInfo(const CHARRANGE cr, const ui::string&linkInfo);
 
 	/**
 	 * @brief 根据point来hittest自定义link的数据
@@ -892,7 +861,7 @@ public:
 	 * @param[in] info 表示 link 的自定义属性
 	 * @return 返回 true 表示在 link 上
 	 */
-	bool HittestCustomLink(CPoint pt, std::wstring& info);
+	bool HittestCustomLink(CPoint pt, ui::string& info);
 
 	/**
 	 * @brief 清理图片缓存
@@ -957,18 +926,18 @@ protected:
 	int  m_iCaretPosY;
 	int  m_iCaretWidth;
 	int  m_iCaretHeight;
-	std::wstring m_sFontId;
+	ui::string m_sFontId;
 	int  m_iLimitText;
 	LONG m_lTwhStyle;
 	VerAlignType m_textVerAlignType;
-	std::wstring m_sCurrentColor;
-	std::wstring m_sTextColor;
-	std::wstring m_sDisabledTextColor;
-	std::wstring m_sPromptColor;
-	std::wstring m_sCaretColor;
-	std::wstring m_sText;
-	std::wstring m_sPromptText;
-	std::wstring m_sPromptTextId;
+	ui::string m_sCurrentColor;
+	ui::string m_sTextColor;
+	ui::string m_sDisabledTextColor;
+	ui::string m_sPromptColor;
+	ui::string m_sCaretColor;
+	ui::string m_sText;
+	ui::string m_sPromptText;
+	ui::string m_sPromptTextId;
 	nbase::WeakCallbackFlag m_drawCaretFlag;
 	std::weak_ptr<nbase::WeakFlag> m_windowFlag; //记录所属窗体的flag
 	FunGetNaturalSize m_cbGetNaturalSize;
@@ -977,7 +946,7 @@ protected:
 	struct LinkInfo
 	{
 		CHARRANGE cr;
-		std::wstring info;
+		ui::string info;
 	};
 	std::map<UINT, nbase::WeakCallbackFlag> m_timeFlagMap;
 	std::vector<LinkInfo> m_linkInfo;
@@ -985,15 +954,15 @@ protected:
 };
 
 //判断是否是字节： 可打印字符（0x20-0x7e）
-bool IsAsciiChar(const wchar_t ch);
+bool IsAsciiChar(const TCHAR ch);
 //获取字符串的字节数
-int  GetAsciiCharNumber(const std::wstring &str);
+int  GetAsciiCharNumber(const ui::string&str);
 //删除字符串中超过limit字节个数之后的字符
-void LimitAsciiNumber(std::wstring &src, int limit);
+void LimitAsciiNumber(ui::string&src, int limit);
 //获取粘贴板字符串
-void GetClipboardText(std::wstring &out);
+void GetClipboardText(ui::string&out);
 //设置粘贴板字符串
-void SetClipBoardText(const std::wstring &str);
+void SetClipBoardText(const ui::string&str);
 
 } // namespace ui
 

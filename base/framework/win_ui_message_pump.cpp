@@ -10,12 +10,13 @@
 
 #if defined(OS_WIN)
 #include <algorithm>
+#include <tchar.h>
 #include "base/framework/message_loop.h"
 
 namespace nbase
 {
 
-static const wchar_t kWndClass[] = L"NeteaseMessagePumpWindow";
+static const TCHAR kWndClass[] = _T("NeteaseMessagePumpWindow");
 static const unsigned int kMsgHaveWork = WM_USER + 1;
 static const int kUserTimerMinmum = 10;
 
@@ -27,7 +28,7 @@ WinUIMessagePump::WinUIMessagePump()
 WinUIMessagePump::~WinUIMessagePump()
 {
 	::DestroyWindow(message_hwnd_);
-	::UnregisterClassW(kWndClass, ::GetModuleHandle(NULL));
+	::UnregisterClass(kWndClass, ::GetModuleHandle(NULL));
 }
 
 void WinUIMessagePump::ScheduleWork()
@@ -108,14 +109,14 @@ void WinUIMessagePump::InitMessageWnd()
 {
 	HINSTANCE hinst = ::GetModuleHandle(NULL);
 
-	WNDCLASSEXW wc = {0};
+	WNDCLASSEX wc = {0};
 	wc.cbSize = sizeof(wc);
 	wc.lpfnWndProc = WndProcThunk;
 	wc.hInstance = hinst;
 	wc.lpszClassName = kWndClass;
-	::RegisterClassExW(&wc);
+	::RegisterClassEx(&wc);
 
-	message_hwnd_ = ::CreateWindowW(kWndClass, 0, 0, 0, 0, 0, 0, HWND_MESSAGE, 0, hinst, 0);
+	message_hwnd_ = ::CreateWindow(kWndClass, 0, 0, 0, 0, 0, 0, HWND_MESSAGE, 0, hinst, 0);
 }
 
 LRESULT CALLBACK WinUIMessagePump::WndProcThunk(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)

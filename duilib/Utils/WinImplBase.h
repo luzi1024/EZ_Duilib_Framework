@@ -52,14 +52,14 @@ public:
 	 * @param[in] 待补充
 	 * @return 待补充
 	 */
-	virtual std::wstring GetResourceID() const;
+	virtual ui::string GetResourceID() const;
 
 	/**
 	 * @brief 当要创建的控件不是标准的控件名称时会调用该函数
 	 * @param[in] pstrClass 控件名称
 	 * @return 返回一个自定义控件指针，一般情况下根据 pstrClass 参数创建自定义的控件
 	 */
-	virtual Control* CreateControl(const std::wstring& pstrClass);
+	virtual Control* CreateControl(const ui::string& pstrClass);
 
 	/**
 	 * @brief 接收所有消息
@@ -302,7 +302,7 @@ public:
 	* @param[in] title 窗口标题
 	* @return void 无返回值
 	*/
-	virtual void SetTaskbarTitle(const std::wstring &title);
+	virtual void SetTaskbarTitle(const ui::string &title);
 
 	/**
 	* @brief 置顶窗口
@@ -316,19 +316,19 @@ protected:
 	 * @brief 创建窗口时被调用，由子类实现用以获取窗口皮肤目录
 	 * @return 子类需实现并返回窗口皮肤目录
 	 */
-	virtual std::wstring GetSkinFolder() = 0;
+	virtual ui::string GetSkinFolder() = 0;
 
 	/**
 	 * @brief 创建窗口时被调用，由子类实现用以获取窗口皮肤 XML 描述文件
 	 * @return 子类需实现并返回窗口皮肤 XML 描述文件
 	 */
-	virtual std::wstring GetSkinFile() = 0;
+	virtual ui::string GetSkinFile() = 0;
 
 	/**
 	 * @brief 创建窗口时被调用，由子类实现用以获取窗口唯一的类名称
 	 * @return 子类需实现并返回窗口唯一的类名称
 	 */
-	virtual std::wstring GetWindowClassName(void) const = 0 ;
+	virtual ui::string GetWindowClassName(void) const = 0 ;
 
 	/**
 	 * @brief 重载实现jit创建逻辑 (New)

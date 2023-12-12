@@ -15,6 +15,12 @@ class Control;
 #define DUI_LENGTH_STRETCH  -1
 #define DUI_LENGTH_AUTO  -2
 
+#ifdef _UNICODE	
+using string = std::wstring;
+#else
+using string = std::string;
+#endif
+
 enum HorAlignType
 {
 	kHorAlignLeft,		// 靠左对齐
@@ -205,7 +211,7 @@ struct EventArgs
 	FLOAT pressure;
 };
 
-EventType StringToEnum(const std::wstring& messageType);
+EventType StringToEnum(const ui::string& messageType);
 
 
 //定义所有控件类型 ///////////////////////////////////////////////////////////////////////////
@@ -386,6 +392,10 @@ EventType StringToEnum(const std::wstring& messageType);
 #define ATTR_COMBO_vscrollbar				(_T("vscrollbar")) // 未处理?
 #define ATTR_COMBO_dropboxsize				(_T("dropboxsize"))
 #define ATTR_COMBO_popuptop					(_T("popuptop"))
+#define ATTR_COMBO_namebox					(_T("namebox"))		// (NEW) 文本对象ID
+#define ATTR_COMBO_namelabel				(_T("namelabel"))	// (NEW) 文本对象ID
+#define ATTR_COMBO_namelayout				(_T("namelayout"))	// (NEW) 文本对象ID
+#define ATTR_COMBO_nameitem					(_T("nameitem"))	// (NEW) 文本对象ID
 // LabelTemplate 默认继承自 Control
 #define ATTR_LABEL_align					(_T("align"))
 #define ATTR_LABEL_endellipsis				(_T("endellipsis"))

@@ -17,7 +17,7 @@ CircleProgress::CircleProgress() :
 
 }
 
-void CircleProgress::SetAttribute(const std::wstring& srName, const std::wstring& strValue)
+void CircleProgress::SetAttribute(const ui::string& srName, const ui::string& strValue)
 {
 	if (srName == ATTR_CPROGRESS_circular) SetCircular(strValue == _T("true"));
 	else if (srName == ATTR_CPROGRESS_circlewidth) SetCircleWidth(_ttoi(strValue.c_str()));
@@ -152,21 +152,21 @@ void CircleProgress::SetCircleWidth(int nCircleWidth)
 }
 
 
-void CircleProgress::SetBackgroudColor(const std::wstring& strColor)
+void CircleProgress::SetBackgroudColor(const ui::string& strColor)
 {
 	m_dwBackgroundColor = GlobalManager::GetTextColor(strColor);
 	ASSERT(m_dwBackgroundColor != 0);
 	Invalidate();
 }
 
-void CircleProgress::SetForegroudColor(const std::wstring& strColor)
+void CircleProgress::SetForegroudColor(const ui::string& strColor)
 {
 	m_dwForegroundColor = GlobalManager::GetTextColor(strColor);
 	ASSERT(m_dwForegroundColor != 0);
 	Invalidate();
 }
 
-void CircleProgress::SetIndicator(const std::wstring& sIndicatorImage)
+void CircleProgress::SetIndicator(const ui::string& sIndicatorImage)
 {
 	if (m_sIndicatorImage != sIndicatorImage)
 	{
@@ -176,15 +176,20 @@ void CircleProgress::SetIndicator(const std::wstring& sIndicatorImage)
 			delete m_pIndicator;
 			m_pIndicator = nullptr;
 		}
-		std::wstring imagepath = m_sIndicatorImage;
-		if (!::PathFileExistsW(imagepath.c_str())) {
+		ui::string imagepath = m_sIndicatorImage;
+		if (!::PathFileExists(imagepath.c_str())) {
 			imagepath = GlobalManager::GetResourcePath() + m_pWindow->GetWindowResourcePath() + imagepath;
 		}
-		if (!::PathFileExistsW(imagepath.c_str())) {
+		if (!::PathFileExists(imagepath.c_str())) {
 			return;
 		}
+#ifdef _UNICODE	
 		m_pIndicator = new Gdiplus::Image(imagepath.c_str());
-
+#else
+		std::wstring imagepathW;
+		StringHelper::MBCSToUnicode(imagepath, imagepathW);
+		m_pIndicator = new Gdiplus::Image(imagepathW.c_str());
+#endif
 		Gdiplus::Status state = m_pIndicator->GetLastStatus();
 		if (Gdiplus::Ok == state)
 		{
@@ -195,7 +200,7 @@ void CircleProgress::SetIndicator(const std::wstring& sIndicatorImage)
 	}
 }
 
-void CircleProgress::SetCircleGradientColor(const std::wstring& strColor)
+void CircleProgress::SetCircleGradientColor(const ui::string& strColor)
 {
 	m_dwGradientColor = GlobalManager::GetTextColor(strColor);
 	ASSERT(m_dwGradientColor != 0);

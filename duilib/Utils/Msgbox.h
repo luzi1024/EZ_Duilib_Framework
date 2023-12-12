@@ -27,7 +27,7 @@ namespace ui{
 	 *		MB_ICONINFORMATION
 	 *		MB_ICONERROR
 	 */
-	UINT MessageBox(HWND hwndParent, const std::wstring& s, UINT ntype = MB_OK);
+	UINT MessageBox(HWND hwndParent, const ui::string& s, UINT ntype = MB_OK);
 
 	/**
 	 * \brief 以异步方式模拟模态对话框.
@@ -39,5 +39,5 @@ namespace ui{
 	 * @param ntype[in] 同上
 	 * @param cb[in] 对话框返回的回调,参数为自身指针及点击按钮类型ID值.
 	 */
-	void MessageBoxFake(HWND hwndParent, const std::wstring& s, UINT ntype = MB_OK, std::function<void(Window* self, UINT ret)> cb = nullptr);
+	void MessageBoxFake(HWND hwndParent, const ui::string& s, UINT ntype = MB_OK, std::function<void(Window* self, UINT ret)> cb = nullptr);
 }

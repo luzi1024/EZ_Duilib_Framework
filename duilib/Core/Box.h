@@ -34,7 +34,7 @@ public:
 	 * @param[in] strValue 要设置的属性值
 	 * @return true 设置成功，false 属性不存在
 	 */
-	virtual bool SetAttribute(const std::wstring& strName, const std::wstring& strValue);
+	virtual bool SetAttribute(const ui::string& strName, const ui::string& strValue);
 
 	/**
 	 * @brief 调整内部所有控件的位置信息
@@ -107,7 +107,7 @@ public:
 public:
 	/// 重写父类接口，提供个性化功能。方法具体说明请查看 Control 控件             */
 	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit = true) override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessageTemplate(EventArgs& msg) override;
 	virtual void PaintChild(IRenderContext* pRender, const UiRect& rcPaint) override;
@@ -128,7 +128,7 @@ public:
 	 * @param[in] pstrSubControlName 子控件名称
 	 * @return 返回子控件指针
 	 */
-	Control* FindSubControl(const std::wstring& pstrSubControlName);
+	Control* FindSubControl(const ui::string& pstrSubControlName);
 
 	/**
 	 * @brief 查找下一个可选控件的索引（面向 list、combo）
@@ -311,7 +311,7 @@ public:
 	ScrollableBox(const ScrollableBox& r);
 	ScrollableBox& operator=(const ScrollableBox& r) = delete;
 
-	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
+	virtual void SetAttribute(const ui::string& pstrName, const ui::string& pstrValue) override;
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessage(EventArgs& event) override;
 	virtual bool MouseEnter(EventArgs& msg) override;

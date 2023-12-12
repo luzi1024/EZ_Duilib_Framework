@@ -115,12 +115,12 @@ bool Control::RemoveSelf()
 	return pParent->Remove(this);
 }
 
-std::wstring Control::GetBkColor() const
+ui::string Control::GetBkColor() const
 {
 	return m_strBkColor;
 }
 
-void Control::SetBkColor(const std::wstring& strColor)
+void Control::SetBkColor(const ui::string& strColor)
 {
 	ASSERT(strColor.empty() || GlobalManager::GetTextColor(strColor) != 0);
 	if( m_strBkColor == strColor ) return;
@@ -129,12 +129,12 @@ void Control::SetBkColor(const std::wstring& strColor)
 	Invalidate();
 }
 
-std::wstring Control::GetStateColor(ControlStateType stateType)
+ui::string Control::GetStateColor(ControlStateType stateType)
 {
 	return m_colorMap[stateType];
 }
 
-void Control::SetStateColor(ControlStateType stateType, const std::wstring& strColor)
+void Control::SetStateColor(ControlStateType stateType, const ui::string& strColor)
 {
 	ASSERT(GlobalManager::GetTextColor(strColor) != 0);
 	if( m_colorMap[stateType] == strColor ) return;
@@ -146,19 +146,12 @@ void Control::SetStateColor(ControlStateType stateType, const std::wstring& strC
 	Invalidate();
 }
 
-std::wstring Control::GetBkImage() const
+ui::string Control::GetBkImage() const
 {
 	return m_bkImage.imageAttribute.simageString;
 }
 
-std::string Control::GetUTF8BkImage() const
-{
-	std::string strOut;
-	StringHelper::UnicodeToMBCS(m_bkImage.imageAttribute.simageString.c_str(), strOut, CP_UTF8);
-	return strOut;
-}
-
-void Control::SetBkImage(const std::wstring& strImage)
+void Control::SetBkImage(const ui::string& strImage)
 {
 	StopGifPlay();
 	m_bkImage.SetImageString(strImage);
@@ -171,19 +164,12 @@ void Control::SetBkImage(const std::wstring& strImage)
 	}
 }
 
-void Control::SetUTF8BkImage(const std::string& strImage)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strImage, strOut, CP_UTF8);
-	SetBkImage(strOut);
-}
-
-std::wstring Control::GetStateImage(ControlStateType stateType)
+ui::string Control::GetStateImage(ControlStateType stateType)
 {
 	return m_imageMap.GetImagePath(kStateImageBk, stateType);
 }
 
-void Control::SetStateImage(ControlStateType stateType, const std::wstring& strImage)
+void Control::SetStateImage(ControlStateType stateType, const ui::string& strImage)
 {
 	if (stateType == kControlStateHot) {
 		m_animationManager.SetFadeHot(true);
@@ -197,12 +183,12 @@ void Control::SetStateImage(ControlStateType stateType, const std::wstring& strI
 	}
 }
 
-std::wstring Control::GetForeStateImage(ControlStateType stateType)
+ui::string Control::GetForeStateImage(ControlStateType stateType)
 {
 	return m_imageMap.GetImagePath(kStateImageFore, stateType);
 }
 
-void Control::SetForeStateImage(ControlStateType stateType, const std::wstring& strImage)
+void Control::SetForeStateImage(ControlStateType stateType, const ui::string& strImage)
 {
 	if (stateType == kControlStateHot) {
 		m_animationManager.SetFadeHot(true);
@@ -256,12 +242,12 @@ void Control::SetBorderSize(int nSize)
 	Invalidate();
 }
 
-std::wstring Control::GetBorderColor() const
+ui::string Control::GetBorderColor() const
 {
     return m_strBorderColor;
 }
 
-void Control::SetBorderColor(const std::wstring& strBorderColor)
+void Control::SetBorderColor(const ui::string& strBorderColor)
 {
     if( m_strBorderColor == strBorderColor ) return;
 
@@ -346,9 +332,9 @@ void Control::SetCursorType(CursorType flag)
 	m_cursorType = flag;
 }
 
-std::wstring Control::GetToolTipText() const
+ui::string Control::GetToolTipText() const
 {
-	std::wstring strText = m_sToolTipText;
+	ui::string strText = m_sToolTipText;
 	if (strText.empty() && !m_sToolTipTextId.empty()) {
 		strText = MutiLanSupport::GetInstance()->GetStringViaID(m_sToolTipTextId);
 	}
@@ -356,50 +342,22 @@ std::wstring Control::GetToolTipText() const
 	return strText;
 }
 
-std::string Control::GetUTF8ToolTipText() const
+void Control::SetToolTipText(const ui::string& strText)
 {
-	std::string strOut;
-	StringHelper::UnicodeToMBCS(GetToolTipText(), strOut, CP_UTF8);
-	return strOut;
-}
-
-void Control::SetToolTipText(const std::wstring& strText)
-{
-	std::wstring strTemp(strText);
+	ui::string strTemp(strText);
 	StringHelper::ReplaceAll(_T("<n>"),_T("\r\n"), strTemp);
 	m_sToolTipText = strTemp;
 
 	Invalidate();
 }
 
-void Control::SetUTF8ToolTipText(const std::string& strText)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strText, strOut, CP_UTF8);
-	if (strOut.empty()) {
-		m_sToolTipText = _T("");
-		Invalidate();//为空则一律重刷
-		return ;
-	}
 
-	if (m_sToolTipText != strOut) {
-		SetToolTipText(strOut);
-	}
-}
-
-void Control::SetToolTipTextId(const std::wstring& strTextId)
+void Control::SetToolTipTextId(const ui::string& strTextId)
 {
 	if (m_sToolTipTextId == strTextId) return;
 	m_sToolTipTextId = strTextId;
 
 	Invalidate();
-}
-
-void Control::SetUTF8ToolTipTextId(const std::string& strTextId)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strTextId, strOut, CP_UTF8);
-	SetToolTipTextId(strOut);
 }
 
 void Control::SetToolTipWidth( int nWidth )
@@ -423,28 +381,14 @@ void Control::SetContextMenuUsed(bool bMenuUsed)
     m_bMenuUsed = bMenuUsed;
 }
 
-std::wstring Control::GetDataID() const
+ui::string Control::GetDataID() const
 {
     return m_sUserData;
 }
 
-std::string Control::GetUTF8DataID() const
-{
-	std::string strOut;
-	StringHelper::UnicodeToMBCS(m_sUserData, strOut, CP_UTF8);
-	return strOut;
-}
-
-void Control::SetDataID(const std::wstring& strText)
+void Control::SetDataID(const ui::string& strText)
 {
     m_sUserData = strText;
-}
-
-void Control::SetUTF8DataID(const std::string& strText)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strText, strOut, CP_UTF8);
-	m_sUserData = strOut;
 }
 
 UserDataBase* Control::GetUserDataBase() const
@@ -785,7 +729,7 @@ void Control::HandleMessageTemplate(EventArgs& msg)
 void Control::HandleMessage(EventArgs& msg)
 {
 	if( !IsMouseEnabled() && msg.Type > kEventMouseBegin && msg.Type < kEventMouseEnd ) {
-		if( m_pParent != NULL ) m_pParent->HandleMessageTemplate(msg);
+		if( m_pParent != NULL) m_pParent->HandleMessageTemplate(msg);
 		return;
 	}
 	else if( msg.Type == kEventSetCursor ) {
@@ -861,7 +805,7 @@ void Control::HandleMessage(EventArgs& msg)
 		return;
 	}
 
-    if( m_pParent != NULL ) m_pParent->HandleMessageTemplate(msg);
+    if( m_pParent != NULL) m_pParent->HandleMessageTemplate(msg);
 }
 
 bool Control::HasHotState()
@@ -946,7 +890,7 @@ bool Control::ButtonUp(EventArgs& msg)
 	return ret;
 }
 
-void Control::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void Control::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if ( strName == ATTR_CTR_class) {
 		SetClass(strValue);
@@ -994,8 +938,8 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
         SetBkColor(pValue);
     }
 	else if (strName == ATTR_CTR_bordersize) {
-		std::wstring nValue = strValue;
-		if (nValue.find(',') == std::wstring::npos) {
+		ui::string nValue = strValue;
+		if (nValue.find(_T(',')) == ui::string::npos) {
 			SetBorderSize(_ttoi(strValue.c_str()));
 			UiRect rcBorder;
 			SetBorderSize(rcBorder);
@@ -1140,20 +1084,20 @@ void Control::SetAttribute(const std::wstring& strName, const std::wstring& strV
 	else if (strName == ATTR_CTR_receivepointer) SetReceivePointerMsg(strValue == _T("true"));
     else
     {
-		std::wstring ws = _T("无效的属性:") + strName;
+		ui::string ws = StringHelper::Printf(_T("无效的%s属性:%s"), GetControlClass().c_str(), strName.c_str());
 		::MessageBox(NULL, ws.c_str(), _T("设置属性错误"), MB_ICONERROR | MB_OK);
         ASSERT(FALSE);
     }
 }
 
-void Control::SetClass(const std::wstring& strClass)
+void Control::SetClass(const ui::string& strClass)
 {
-	std::list<std::wstring> splitList = StringHelper::Split(strClass, L" ");
+	std::list<ui::string> splitList = StringHelper::Split(strClass, _T(" "));
 	for (auto it = splitList.begin(); it != splitList.end(); it++) {
-		std::wstring pDefaultAttributes;
+		ui::string pDefaultAttributes;
 		if (*it == _T("default"))
 		{
-			std::wstring strDefault = StringHelper::Printf(_T("_%s_%s"), it->c_str(), GetControlClass().c_str());
+			ui::string strDefault = StringHelper::Printf(_T("_%s_%s"), it->c_str(), GetControlClass().c_str());
 			pDefaultAttributes = GlobalManager::GetClassAttributes(strDefault);
 		}
 		else
@@ -1164,7 +1108,7 @@ void Control::SetClass(const std::wstring& strClass)
 		}
 		if (pDefaultAttributes.empty())
 		{
-			::MessageBox(nullptr, std::wstring(_T("不存在Class样式:") + strClass).c_str(), _T("错误"), MB_ICONERROR);
+			::MessageBox(nullptr, ui::string(_T("不存在Class样式:") + strClass).c_str(), _T("错误"), MB_ICONERROR);
 			continue;
 		}
 		if( !pDefaultAttributes.empty() ) {
@@ -1173,10 +1117,10 @@ void Control::SetClass(const std::wstring& strClass)
 	}
 }
 
-void Control::ApplyAttributeList(const std::wstring& strList)
+void Control::ApplyAttributeList(const ui::string& strList)
 {
-    std::wstring sItem;
-    std::wstring sValue;
+	ui::string sItem;
+	ui::string sValue;
 	LPCTSTR pstrList = strList.c_str();
     while( *pstrList != _T('\0') ) {
         sItem.clear();
@@ -1205,10 +1149,10 @@ void Control::ApplyAttributeList(const std::wstring& strList)
     return;
 }
 
-bool Control::OnApplyAttributeList(const std::wstring& strReceiver, const std::wstring& strList, EventArgs* eventArgs)
+bool Control::OnApplyAttributeList(const ui::string& strReceiver, const ui::string& strList, EventArgs* eventArgs)
 {
 	Control* pReceiverControl;
-	if (strReceiver.substr(0, 2) == L".\\" || strReceiver.substr(0, 2) == L"./") {
+	if (strReceiver.substr(0, 2) == _T(".\\") || strReceiver.substr(0, 2) == _T("./")) {
 		pReceiverControl = ((Box*)this)->FindSubControl(strReceiver.substr(2));
 	}
 	else {
@@ -1230,8 +1174,8 @@ void Control::GetImage(Image& duiImage) const
 	if (duiImage.imageCache) {
 		return;
 	}
-	std::wstring sImageName = duiImage.imageAttribute.sImageName;
-	std::wstring imageFullPath = sImageName;
+	ui::string sImageName = duiImage.imageAttribute.sImageName;
+	ui::string imageFullPath = sImageName;
 	if (sImageName.compare(GLOBAL_VSGFILE_KEY) == 0)
 		imageFullPath = GlobalManager::GetResourceSvgFile();
 	else if (::PathIsRelative(sImageName.c_str())) {
@@ -1246,7 +1190,7 @@ void Control::GetImage(Image& duiImage) const
 	}
 }
 
-bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const std::wstring& strModify /*= L""*/, int nFade /*= DUI_NOSET_VALUE*/)
+bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const ui::string& strModify /*= L""*/, int nFade /*= DUI_NOSET_VALUE*/)
 {
 	// 1. 颜色填充绘制
 	if (!duiImage.imageAttribute.sFillcolor.empty())
@@ -1705,11 +1649,11 @@ void Control::InvokeLoadImageCache()
 	if (m_loadBkImageWeakFlag.HasUsed()) {
 		return;
 	}
-	std::wstring sImageName = m_bkImage.imageAttribute.sImageName;
+	ui::string sImageName = m_bkImage.imageAttribute.sImageName;
 	if (sImageName.empty()) {
 		return;
 	}
-	std::wstring imageFullPath = sImageName;
+	ui::string imageFullPath = sImageName;
 	if (::PathIsRelative(sImageName.c_str())) {
 		imageFullPath = GlobalManager::GetResourcePath() + m_pWindow->GetWindowResourcePath() + sImageName;
 	}

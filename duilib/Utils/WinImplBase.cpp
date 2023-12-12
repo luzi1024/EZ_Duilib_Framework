@@ -34,12 +34,12 @@ UINT WindowImplBase::GetClassStyle() const
 	return CS_DBLCLKS;
 }
 
-std::wstring WindowImplBase::GetResourceID() const
+ui::string WindowImplBase::GetResourceID() const
 {
 	return _T("");
 }
 
-Control* WindowImplBase::CreateControl(const std::wstring& pstrClass)
+Control* WindowImplBase::CreateControl(const ui::string& pstrClass)
 {
 	return NULL;
 }
@@ -291,15 +291,15 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 	SetWindowResourcePath(GetSkinFolder());
 
 	WindowBuilder builder;
-	std::wstring strSkinFile = IsSkinJit() ? GetSkinFile() : GetWindowResourcePath() + GetSkinFile();
+	ui::string strSkinFile = IsSkinJit() ? GetSkinFile() : GetWindowResourcePath() + GetSkinFile();
 
 	auto callback = nbase::Bind(&WindowImplBase::CreateControl, this, std::placeholders::_1);
 	auto pRoot = (Box*)builder.Create(strSkinFile.c_str(), callback, this);
 
-	ASSERT(pRoot && L"Faield to load xml file.");
+	ASSERT(pRoot && _T("Faield to load xml file."));
 	if (pRoot == NULL) {
 		TCHAR szErrMsg[MAX_PATH] = { 0 };
-		_stprintf_s(szErrMsg, L"Failed to load xml file %s", strSkinFile.c_str());
+		_stprintf_s(szErrMsg, _T("Failed to load xml file %s"), strSkinFile.c_str());
 		::MessageBox(NULL, szErrMsg, _T("Duilib"), MB_OK | MB_ICONERROR);
 		return -1;
 	}
@@ -319,28 +319,28 @@ LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& 
 		::MoveWindow(m_hWnd, 0, 0, needSize.cx, needSize.cy, FALSE);
 	}
 
-	Control *pControl = (Control*)FindControl(L"closebtn");
+	Control *pControl = (Control*)FindControl(_T("closebtn"));
 	if (pControl) {
 		Button *pCloseBtn = dynamic_cast<Button*>(pControl);
 		ASSERT(pCloseBtn);
 		pCloseBtn->AttachClick(nbase::Bind(&WindowImplBase::OnButtonClick, this, std::placeholders::_1));
 	}
 
-	pControl = (Control*)FindControl(L"minbtn");
+	pControl = (Control*)FindControl(_T("minbtn"));
 	if (pControl)	{
 		Button* pMinBtn = dynamic_cast<Button*>(pControl);
 		ASSERT(pMinBtn);
 		pMinBtn->AttachClick(nbase::Bind(&WindowImplBase::OnButtonClick, this, std::placeholders::_1));
 	}
 
-	pControl = (Control*)FindControl(L"maxbtn");
+	pControl = (Control*)FindControl(_T("maxbtn"));
 	if (pControl)	{
 		Button* pMaxBtn = dynamic_cast<Button*>(pControl);
 		ASSERT(pMaxBtn);
 		pMaxBtn->AttachClick(nbase::Bind(&WindowImplBase::OnButtonClick, this, std::placeholders::_1));
 	}
 
-	pControl = (Control*)FindControl(L"restorebtn");
+	pControl = (Control*)FindControl(_T("restorebtn"));
 	if (pControl)	{
 		Button* pRestoreBtn = dynamic_cast<Button*>(pControl);
 		ASSERT(pRestoreBtn);
@@ -424,7 +424,7 @@ LRESULT WindowImplBase::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 bool WindowImplBase::OnButtonClick(EventArgs* msg)
 {
-	std::wstring sCtrlName = msg->pSender->GetName();
+	ui::string sCtrlName = msg->pSender->GetName();
 	if( sCtrlName == _T("closebtn") ) {
 		Close();
 	}
@@ -432,8 +432,8 @@ bool WindowImplBase::OnButtonClick(EventArgs* msg)
 		SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0); 
 	}
 	else if( sCtrlName == _T("maxbtn"))	{
-		Control* pMaxButton = (Control*)FindControl(L"maxbtn");
-		Control* pRestoreButton = (Control*)FindControl(L"restorebtn");
+		Control* pMaxButton = (Control*)FindControl(_T("maxbtn"));
+		Control* pRestoreButton = (Control*)FindControl(_T("restorebtn"));
 		if (pMaxButton && pRestoreButton) {
 			pMaxButton->SetVisible(false);
 			pRestoreButton->SetVisible(true);
@@ -441,8 +441,8 @@ bool WindowImplBase::OnButtonClick(EventArgs* msg)
 		SendMessage(WM_SYSCOMMAND, SC_MAXIMIZE, 0);
 	}
 	else if( sCtrlName == _T("restorebtn"))	{
-		Control* pMaxButton = (Control*)FindControl(L"maxbtn");
-		Control* pRestoreButton = (Control*)FindControl(L"restorebtn");
+		Control* pMaxButton = (Control*)FindControl(_T("maxbtn"));
+		Control* pRestoreButton = (Control*)FindControl(_T("restorebtn"));
 		if (pMaxButton && pRestoreButton) {
 			pMaxButton->SetVisible(true);
 			pRestoreButton->SetVisible(false);
@@ -471,9 +471,9 @@ void WindowImplBase::ActiveWindow()
 	}
 }
 
-void WindowImplBase::SetTaskbarTitle(const std::wstring &title)
+void WindowImplBase::SetTaskbarTitle(const ui::string &title)
 {
-	::SetWindowTextW(m_hWnd, title.c_str());
+	::SetWindowText(m_hWnd, title.c_str());
 }
 
 

@@ -49,13 +49,13 @@ public:
 	 * @param[in] image 图片路径
 	 * @return 无
 	 */
-	void SetShadowImage(const std::wstring &image);
+	void SetShadowImage(const ui::string &image);
 
 	/**
 	 * @brief 获取阴影图片位置
 	 * @return 返回阴影图片位置
 	 */
-	std::wstring GetShadowImage() const;
+	ui::string GetShadowImage() const;
 
 	/**
 	 * @brief 将阴影附加到窗口
@@ -85,7 +85,7 @@ public:
 private:
 	bool m_bShadowAttached;
 	bool m_bUseDefaultImage;
-	std::wstring m_strImage;
+	ui::string m_strImage;
 	UiRect m_rcCurShadowCorner;
 	UiRect m_rcDefaultShadowCorner;
 	UiRect m_rcShadowCornerBackup;

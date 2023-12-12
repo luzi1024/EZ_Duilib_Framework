@@ -50,7 +50,7 @@ PlaceHolder::~PlaceHolder()
 	
 }
 
-ui::Box* PlaceHolder::GetAncestor(const std::wstring& strName)
+ui::Box* PlaceHolder::GetAncestor(const ui::string& strName)
 {
 	Box* pAncestor = this->GetParent();
 	while (pAncestor && pAncestor->GetName() != strName)
@@ -61,28 +61,14 @@ ui::Box* PlaceHolder::GetAncestor(const std::wstring& strName)
 	return pAncestor;
 }
 
-std::wstring PlaceHolder::GetName() const
+ui::string PlaceHolder::GetName() const
 {
 	return m_sName;
 }
 
-std::string PlaceHolder::GetUTF8Name() const
-{
-	std::string strOut;
-	StringHelper::UnicodeToMBCS(m_sName, strOut, CP_UTF8);
-	return strOut;
-}
-
-void PlaceHolder::SetName(const std::wstring& strName)
+void PlaceHolder::SetName(const ui::string& strName)
 {
 	m_sName = strName;
-}
-
-void PlaceHolder::SetUTF8Name(const std::string& strName)
-{
-	std::wstring strOut;
-	StringHelper::MBCSToUnicode(strName, strOut, CP_UTF8);
-	m_sName = strOut;
 }
 
 Window* PlaceHolder::GetWindow() const

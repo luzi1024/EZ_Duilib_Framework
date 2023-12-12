@@ -15,7 +15,7 @@ public:
 	/// 重写父类方法，提供个性化功能，请参考父类声明
 	virtual void Activate() override;
 	virtual Image* GetEstimateImage() override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 	virtual void PaintStatusColor(IRenderContext* pRender) override;
 	virtual void PaintStatusImage(IRenderContext* pRender) override;
 	virtual void PaintText(IRenderContext* pRender) override;
@@ -40,7 +40,7 @@ public:
 	 * @param[in] stateType 要获取何种状态下的图片，参考 ControlStateType 枚举
 	 * @return 返回图片位置
 	 */
-	std::wstring GetSelectedStateImage(ControlStateType stateType);
+	ui::string GetSelectedStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置被选择时的图片
@@ -48,27 +48,27 @@ public:
 	 * @param[in] strImage 图片地址
 	 * @return 无
 	 */
-	void SetSelectedStateImage(ControlStateType stateType, const std::wstring& strImage);
+	void SetSelectedStateImage(ControlStateType stateType, const ui::string& strImage);
 
 	/**
 	 * @brief 获取被选择时的文本颜色
 	 * @return 返回被选择时的文本颜色
 	 */
-	std::wstring GetSelectedTextColor();
+	ui::string GetSelectedTextColor();
 
 	/**
 	 * @brief 设置被选择时的文本颜色
 	 * @param[in] dwTextColor 要设置的颜色字符串，该颜色必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void SetSelectedTextColor(const std::wstring& dwTextColor);
+	void SetSelectedTextColor(const ui::string& dwTextColor);
 
 	/**
 	 * @brief 获取被选择时的控件颜色 
 	 * @param[in] stateType 要获取何种状态下的颜色
 	 * @return 返回颜色字符串，该值在 global.xml 中定义
 	 */
-	std::wstring GetSelectStateColor(ControlStateType stateType);
+	ui::string GetSelectStateColor(ControlStateType stateType);
 
 	/**
 	 * @brief 设置被选择时的控件颜色
@@ -76,14 +76,14 @@ public:
 	 * @param[in] stateColor 要设置的颜色
 	 * @return 无
 	 */
-	void SetSelectedStateColor(ControlStateType stateType, const std::wstring& stateColor);
+	void SetSelectedStateColor(ControlStateType stateType, const ui::string& stateColor);
 
 	/**
 	 * @brief 获取被选择时的前景图片
 	 * @param[in] stateType 要获取何种状态下的前景图片
 	 * @return 返回图片位置
 	 */
-	std::wstring GetSelectedForeStateImage(ControlStateType stateType);
+	ui::string GetSelectedForeStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置被选择时的前景图片
@@ -91,7 +91,7 @@ public:
 	 * @param[in] pStrImage 图片位置
 	 * @return 无
 	 */
-	void SetSelectedForeStateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetSelectedForeStateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 监听被选择时的事件
@@ -109,7 +109,7 @@ public:
 
 protected:
 	bool			m_bSelected;
-	std::wstring	m_dwSelectedTextColor;
+	ui::string	m_dwSelectedTextColor;
 	StateColorMap	m_selectedColorMap;
 };
 
@@ -165,7 +165,7 @@ Image* CheckBoxTemplate<InheritType>::GetEstimateImage()
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void CheckBoxTemplate<InheritType>::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if (strName == ATTR_CHECK_selected) Selected(strValue == _T("true"), true);
 	else if (strName == ATTR_CHECK_selectednormalimage) SetSelectedStateImage(kControlStateNormal, strValue);
@@ -222,20 +222,20 @@ void CheckBoxTemplate<InheritType>::PaintText(IRenderContext* pRender)
 	rc.top += this->m_rcTextPadding.top;
 	rc.bottom -= this->m_rcTextPadding.bottom;
 
-	std::wstring newTextColor = m_dwSelectedTextColor.empty() ? this->m_textColorMap[kControlStateNormal] : m_dwSelectedTextColor;
+	ui::string newTextColor = m_dwSelectedTextColor.empty() ? this->m_textColorMap[kControlStateNormal] : m_dwSelectedTextColor;
 	DWORD dwTextColor = GlobalManager::GetTextColor(newTextColor);
 	DWORD dwDisabledTextColor = GlobalManager::GetTextColor(this->m_textColorMap[kControlStateDisabled]);
 	pRender->DrawText(rc, this->GetText(), this->IsEnabled() ? dwTextColor : dwDisabledTextColor, this->m_sFontId, this->m_uTextStyle);
 }
 
 template<typename InheritType>
-std::wstring CheckBoxTemplate<InheritType>::GetSelectedStateImage(ControlStateType stateType)
+ui::string CheckBoxTemplate<InheritType>::GetSelectedStateImage(ControlStateType stateType)
 {
 	return this->m_imageMap.GetImagePath(kStateImageSelectedBk, stateType);
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::SetSelectedStateImage(ControlStateType stateType, const std::wstring& pStrImage)
+void CheckBoxTemplate<InheritType>::SetSelectedStateImage(ControlStateType stateType, const ui::string& pStrImage)
 {
 	this->m_imageMap.SetImage(kStateImageSelectedBk, stateType, pStrImage);
 	if (this->GetFixedWidth() == DUI_LENGTH_AUTO || this->GetFixedHeight() == DUI_LENGTH_AUTO) {
@@ -247,39 +247,39 @@ void CheckBoxTemplate<InheritType>::SetSelectedStateImage(ControlStateType state
 }
 
 template<typename InheritType>
-std::wstring CheckBoxTemplate<InheritType>::GetSelectedTextColor()
+ui::string CheckBoxTemplate<InheritType>::GetSelectedTextColor()
 {
 	return m_dwSelectedTextColor;
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::SetSelectedTextColor(const std::wstring& dwTextColor)
+void CheckBoxTemplate<InheritType>::SetSelectedTextColor(const ui::string& dwTextColor)
 {
 	m_dwSelectedTextColor = dwTextColor;
 	this->Invalidate();
 }
 
 template<typename InheritType>
-std::wstring CheckBoxTemplate<InheritType>::GetSelectStateColor(ControlStateType stateType)
+ui::string CheckBoxTemplate<InheritType>::GetSelectStateColor(ControlStateType stateType)
 {
 	return m_selectedColorMap[stateType];
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::SetSelectedStateColor(ControlStateType stateType, const std::wstring& stateColor)
+void CheckBoxTemplate<InheritType>::SetSelectedStateColor(ControlStateType stateType, const ui::string& stateColor)
 {
 	m_selectedColorMap[stateType] = stateColor;
 	this->Invalidate();
 }
 
 template<typename InheritType>
-std::wstring CheckBoxTemplate<InheritType>::GetSelectedForeStateImage(ControlStateType stateType)
+ui::string CheckBoxTemplate<InheritType>::GetSelectedForeStateImage(ControlStateType stateType)
 {
 	return this->m_imageMap.GetImagePath(kStateImageSelectedFore, stateType);
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::SetSelectedForeStateImage(ControlStateType stateType, const std::wstring& pStrImage)
+void CheckBoxTemplate<InheritType>::SetSelectedForeStateImage(ControlStateType stateType, const ui::string& pStrImage)
 {
 	this->m_imageMap.SetImage(kStateImageSelectedFore, stateType, pStrImage);
 	if (this->GetFixedWidth() == DUI_LENGTH_AUTO || this->GetFixedHeight() == DUI_LENGTH_AUTO) {

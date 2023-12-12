@@ -8,7 +8,7 @@ namespace ui
 
 class Box;
 class Window;
-typedef std::function<Control* (const std::wstring&)> CreateControlCallback;
+typedef std::function<Control* (const ui::string&)> CreateControlCallback;
 
 class UILIB_API WindowBuilder
 {
@@ -27,7 +27,7 @@ public:
 
 private:
     Control* _Parse(CMarkupNode* parent, Control* pParent = NULL, Window* pManager = NULL);
-	Control* CreateControlByClass(const std::wstring& strControlClass);
+	Control* CreateControlByClass(const ui::string& strControlClass);
 	void AttachXmlEvent(bool bBubbled, CMarkupNode& node, Control* pParent);
 
 private:

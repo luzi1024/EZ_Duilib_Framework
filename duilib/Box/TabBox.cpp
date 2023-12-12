@@ -214,14 +214,14 @@ bool TabBox::SelectItem( Control* pControl )
 		return SelectItem(iIndex);
 }
 
-bool TabBox::SelectItem(const std::wstring& pControlName)
+bool TabBox::SelectItem(const ui::string& pControlName)
 {
 	Control* pControl = FindSubControl(pControlName);
 	ASSERT(pControl);
 	return SelectItem(pControl);
 }
 
-void TabBox::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void TabBox::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if (strName == ATTR_TABBOX_selectedid) m_iCurSel = _ttoi(strValue.c_str());
 	else if( strName == ATTR_TABBOX_fadeswitch) SetFadeSwitch(strValue == _T("true"));

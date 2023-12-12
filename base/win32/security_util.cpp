@@ -17,7 +17,7 @@ namespace nbase
 namespace win32
 {
 
-static const wchar_t kLowIntegeritySddlSaclW[] = L"S:(ML;;NW;;;LW)";
+static const TCHAR kLowIntegeritySddlSaclW[] = _T("S:(ML;;NW;;;LW)");
 
 bool SetObjectToLowIntegrity(HANDLE hObject, SE_OBJECT_TYPE type /*= SE_KERNEL_OBJECT*/)
 {
@@ -31,7 +31,7 @@ bool SetObjectToLowIntegrity(HANDLE hObject, SE_OBJECT_TYPE type /*= SE_KERNEL_O
 	BOOL fSaclPresent = FALSE;
 	BOOL fSaclDefaulted = FALSE;
 
-	if (::ConvertStringSecurityDescriptorToSecurityDescriptorW(kLowIntegeritySddlSaclW, SDDL_REVISION_1, &pSD, NULL))
+	if (::ConvertStringSecurityDescriptorToSecurityDescriptor(kLowIntegeritySddlSaclW, SDDL_REVISION_1, &pSD, NULL))
 	{
 		if (::GetSecurityDescriptorSacl(pSD, &fSaclPresent, &pSacl, &fSaclDefaulted))
 		{

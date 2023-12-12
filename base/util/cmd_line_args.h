@@ -4,22 +4,23 @@
 #include "base/base_export.h"
 #include <vector>
 #include <ctype.h>
+#include <tchar.h>
 
 namespace nbase
 {
 
-class BASE_EXPORT CmdLineArgs: public std::vector<wchar_t*>
+class BASE_EXPORT CmdLineArgs: public std::vector<TCHAR*>
 {
 public:
 
-	CmdLineArgs(const wchar_t *command_line = 0);
+	CmdLineArgs(const TCHAR*command_line = 0);
 	virtual ~CmdLineArgs();
 
 private:
 
 	bool ParseCommandLine();
 
-	wchar_t *buffer_;
+	TCHAR*buffer_;
 };
 
 } // namespace

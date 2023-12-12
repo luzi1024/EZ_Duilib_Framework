@@ -27,7 +27,7 @@ class Box;
 typedef struct tagTFontInfo
 {
 	HFONT hFont;
-	std::wstring sFontName;
+	ui::string sFontName;
 	int iSize;
 	bool bBold;
 	bool bUnderline;
@@ -89,13 +89,13 @@ public:
 	 * @brief 获取窗口类名称
 	 * @return 返回窗口类名称
 	 */
-	virtual std::wstring GetWindowClassName() const;
+	virtual ui::string GetWindowClassName() const;
 
 	/**
 	 * @brief 获取控件窗口类
 	 * @return 返回控件窗口类
 	 */
-	virtual std::wstring GetSuperClassName() const;
+	virtual ui::string GetSuperClassName() const;
 
 	/**
 	 * @brief 获取窗口类的样式，该方法由实例化的子类实现，https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-class-styles
@@ -255,14 +255,14 @@ public:
 	 * @brief 获取窗口资源路径
 	 * @return 返回窗口资源路径
 	 */
-	std::wstring GetWindowResourcePath();
+	ui::string GetWindowResourcePath();
 
 	/**
 	 * @brief 设置窗口资源路径
 	 * @param[in] strPath 要设置的路径
 	 * @return 无
 	 */
-	void SetWindowResourcePath(const std::wstring& strPath);
+	void SetWindowResourcePath(const ui::string& strPath);
 
 	/**
 	 * @brief 获取默认字体信息
@@ -276,27 +276,27 @@ public:
 	 * @param[in] strControlAttrList 通用样式的 XML 转义格式数据
 	 * @return 无
 	 */
-	void AddClass(const std::wstring& strClassName, const std::wstring& strControlAttrList);
+	void AddClass(const ui::string& strClassName, const ui::string& strControlAttrList);
 
 	/**
 	 * @brief 获取所有通用样式
 	 * @return 返回所有通用样式的 map 数据
 	 */
-	const std::map<std::wstring, std::wstring>* GetClassMap();
+	const std::map<ui::string, ui::string>* GetClassMap();
 
 	/**
 	 * @brief 获取指定通用样式的内容
 	 * @param[in] strClassName 通用样式名称
 	 * @return 返回指定名称的通用样式内容，XML 转义格式数据
 	 */
-	std::wstring GetClassAttributes(const std::wstring& strClassName) const;
+	ui::string GetClassAttributes(const ui::string& strClassName) const;
 
 	/**
 	 * @brief 删除一个通用样式
 	 * @param[in] strClassName 要删除的通用样式名称
 	 * @return 返回 true 为成功，false 为失败或样式不存在
 	 */
-	bool RemoveClass(const std::wstring& strClassName);
+	bool RemoveClass(const ui::string& strClassName);
 
 	/**
 	 * @brief 删除所有通用样式
@@ -310,14 +310,14 @@ public:
 	 * @param[in] pControl 控件指针
 	 * @return 返回 true 表示添加成功，false 可能组已经存在
 	 */
-	bool AddOptionGroup(const std::wstring& strGroupName, Control* pControl);
+	bool AddOptionGroup(const ui::string& strGroupName, Control* pControl);
 
 	/**
 	 * @brief 获取指定选项组中控件列表
 	 * @param[in] strGroupName 指定组名称
 	 * @return 返回该组下的所有控件列表
 	 */
-	std::vector<Control*>* GetOptionGroup(const std::wstring& strGroupName);
+	std::vector<Control*>* GetOptionGroup(const ui::string& strGroupName);
 
 	/**
 	 * @brief 删除一个选项组
@@ -325,7 +325,7 @@ public:
 	 * @param[in] pControl 控件名称
 	 * @return 无
 	 */
-	void RemoveOptionGroup(const std::wstring& strGroupName, Control* pControl);
+	void RemoveOptionGroup(const ui::string& strGroupName, Control* pControl);
 
 	/**
 	 * @brief 删除所有选项组
@@ -430,7 +430,7 @@ public:
 	 * @param[in] strTextId 语言 ID，该 ID 必须在语言文件中存在
 	 * @return 无
 	 */
-	void SetTextId(const std::wstring& strTextId);
+	void SetTextId(const ui::string& strTextId);
 
 	/// 阴影相关部分
 	/**
@@ -444,14 +444,14 @@ public:
 	 * @brief 获取阴影图片
 	 * @return 返回阴影图片位置
 	 */
-	std::wstring GetShadowImage() const;
+	ui::string GetShadowImage() const;
 
 	/**
 	 * @brief 设置窗口阴影图片
 	 * @param[in] strImage 图片位置
 	 * @return 无
 	 */
-	void SetShadowImage(const std::wstring &strImage);
+	void SetShadowImage(const ui::string&strImage);
 
 	/**
 	 * @brief 获取阴影的九宫格描述信息
@@ -738,9 +738,9 @@ public:
 	 * @param[in] strName 控件名称
 	 * @return 返回控件指针
 	 */
-	//Control* FindControl(const std::wstring& strName) const;
+	//Control* FindControl(const ui::string& strName) const;
 	template<typename T = Control>
-	T* FindControl(const std::wstring& strName) const
+	T* FindControl(const ui::string& strName) const
 	{
 		ASSERT(m_pRoot);
 		auto it = m_mNameHash.find(strName);
@@ -764,7 +764,7 @@ public:
 	 * @param[in] strName 要查找的名称
 	 * @return 返回控件指针
 	 */
-	Control* FindSubControlByName(Control* pParent, const std::wstring& strName) const;
+	Control* FindSubControlByName(Control* pParent, const ui::string& strName) const;
 
 	/**
 	 * @brief 根据类名查找子控件
@@ -940,10 +940,10 @@ protected:
 	bool m_bMouseTracking;
 	bool m_bMouseCapture;
 
-	std::wstring m_strWindowResourcePath; //每个窗口的资源路径,等于GetSkinFolder()
+	ui::string m_strWindowResourcePath; //每个窗口的资源路径,等于GetSkinFolder()
 	TFontInfo m_defaultFontInfo;
-	std::map<std::wstring, std::wstring> m_defaultAttrHash;
-	std::map<std::wstring, std::vector<Control*>> m_mOptionGroup;
+	std::map<ui::string, ui::string> m_defaultAttrHash;
+	std::map<ui::string, std::vector<Control*>> m_mOptionGroup;
 
 	std::vector<IUIMessageFilter*> m_aPreMessageFilters;
 	std::vector<IUIMessageFilter*> m_aMessageFilters;
@@ -952,7 +952,7 @@ protected:
 
 	std::vector<Control*> m_aDelayedCleanup;
 	std::vector<Control*> m_aFoundControls;
-	std::map<std::wstring, Control*> m_mNameHash;
+	std::map<ui::string, Control*> m_mNameHash;
 
 	nbase::WeakCallbackFlag m_closeFlag;
 	

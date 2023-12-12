@@ -18,7 +18,7 @@ Progress::Progress() :
 	SetFixedHeight(12);
 }
 
-void Progress::SetAttribute(const std::wstring& srName, const std::wstring& strValue)
+void Progress::SetAttribute(const ui::string& srName, const ui::string& strValue)
 {
 	if (srName == ATTR_PROGRESS_hor) SetHorizontal(strValue == _T("true"));
 	else if (srName == ATTR_PROGRESS_min) SetMinValue(_ttoi(strValue.c_str()));
@@ -132,23 +132,23 @@ void Progress::SetStretchForeImage(bool bStretchForeImage /*= true*/)
 	Invalidate();
 }
 
-std::wstring Progress::GetProgressImage() const
+ui::string Progress::GetProgressImage() const
 {
 	return m_progressImage.imageAttribute.simageString;
 }
 
-void Progress::SetProgressImage(const std::wstring& strImage)
+void Progress::SetProgressImage(const ui::string& strImage)
 {
 	m_progressImage.SetImageString(strImage);
 	Invalidate();
 }
 
-std::wstring Progress::GetProgressColor() const
+ui::string Progress::GetProgressColor() const
 {
 	return m_sProgressColor;
 }
 
-void Progress::SetProgressColor(const std::wstring& strProgressColor)
+void Progress::SetProgressColor(const ui::string& strProgressColor)
 {
 	ASSERT(GlobalManager::GetTextColor(strProgressColor) != 0);
 	if( m_sProgressColor == strProgressColor ) return;

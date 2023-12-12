@@ -41,7 +41,7 @@ public:
 	ListBox& operator=(const ListBox& r) = delete;
 
 	/// 重写父类方法，提供个性化功能，请参考父类声明
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 	virtual void HandleMessage(EventArgs& event) override;	
 	virtual void HandleMessageTemplate(EventArgs& event) override;
 	virtual int GetCurSel() const override;
@@ -55,7 +55,7 @@ public:
 	 * @param[in] strItemName 子项名称
 	 * @return 成功返回 true，否则为 false，可能控件不存在
 	 */
-	virtual bool ScrollItemToTop(const std::wstring& strItemName);
+	virtual bool ScrollItemToTop(const ui::string& strItemName);
 
 	/**
 	 * @brief 获取当前位置第一个子项

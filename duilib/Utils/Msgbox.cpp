@@ -5,13 +5,13 @@ namespace ui {
 	class MsgBox : public ui::WindowImplBase
 	{
 	public:
-		MsgBox(const std::wstring& st, UINT ntp = MB_OK) : sText(st), nType(ntp) {};
+		MsgBox(const ui::string& st, UINT ntp = MB_OK) : sText(st), nType(ntp) {};
 		virtual ~MsgBox() {};
 		virtual UINT GetClassStyle() const override { return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS); };
-		virtual std::wstring GetWindowClassName() const override { return _T("MsgBox"); };
-		virtual std::wstring GetSkinFolder() override { return _T("msgbox"); };
-		virtual std::wstring GetSkinFile() override { return _T("msgbox.xml"); };
-		virtual std::wstring GetZIPFileName() const { return _T("msgbox.zip"); };
+		virtual ui::string GetWindowClassName() const override { return _T("MsgBox"); };
+		virtual ui::string GetSkinFolder() override { return _T("msgbox"); };
+		virtual ui::string GetSkinFile() override { return _T("msgbox.xml"); };
+		virtual ui::string GetZIPFileName() const { return _T("msgbox.zip"); };
 		virtual void InitWindow() override 
 		{
 			// Control
@@ -78,25 +78,25 @@ namespace ui {
 		};
 	private:
 		UINT nType;
-		std::wstring sText;
+		ui::string sText;
 	};
 
-	UINT MessageBox(HWND hwndParent, const std::wstring& s, UINT ntype /*= MB_OK*/)
+	UINT MessageBox(HWND hwndParent, const ui::string& s, UINT ntype /*= MB_OK*/)
 	{
 		ASSERT(::IsWindow(hwndParent));
 		MsgBox* msgbox = new MsgBox(s, ntype);
-		HWND hWnd = msgbox->Create(hwndParent, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+		HWND hWnd = msgbox->Create(hwndParent, _T(""), WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 		if (hWnd == NULL)
 			return 0;
 		msgbox->CenterWindow();
 		return msgbox->ShowModal();
 	}
 
-	void MessageBoxFake(HWND hwndParent, const std::wstring& s, UINT ntype/* = MB_OK*/, std::function<void(Window* self, UINT ret)> cb /*= nullptr*/)
+	void MessageBoxFake(HWND hwndParent, const ui::string& s, UINT ntype/* = MB_OK*/, std::function<void(Window* self, UINT ret)> cb /*= nullptr*/)
 	{
 		ASSERT(::IsWindow(hwndParent));
 		MsgBox* msgbox = new MsgBox(s, ntype);
-		HWND hWnd = msgbox->Create(hwndParent, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+		HWND hWnd = msgbox->Create(hwndParent, _T(""), WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 		if (hWnd == NULL)
 			return;
 		msgbox->CenterWindow();

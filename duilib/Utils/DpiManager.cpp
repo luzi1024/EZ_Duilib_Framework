@@ -64,7 +64,7 @@ UINT DpiManager::GetDPIFromRegistry()
 	int dpi_value = 96;
 	HKEY hKEY;
 	long ret = 0;
-	ret = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"CONTROL PANEL\\DESKTOP\\WINDOWMETRICS", 0, KEY_ALL_ACCESS, &hKEY);
+	ret = ::RegOpenKeyEx(HKEY_CURRENT_USER, _T("CONTROL PANEL\\DESKTOP\\WINDOWMETRICS"), 0, KEY_ALL_ACCESS, &hKEY);
 	if (ret != ERROR_SUCCESS)
 	{
 		::RegCloseKey(hKEY);
@@ -74,7 +74,7 @@ UINT DpiManager::GetDPIFromRegistry()
 		DWORD data_size = 4;
 		int data;
 		DWORD type = REG_DWORD;
-		ret = ::RegQueryValueEx(hKEY, L"AppliedDPI", NULL, &type, (LPBYTE)&data, &data_size);
+		ret = ::RegQueryValueEx(hKEY, _T("AppliedDPI"), NULL, &type, (LPBYTE)&data, &data_size);
 		if (ret != ERROR_SUCCESS)
 		{
 			::RegCloseKey(hKEY);

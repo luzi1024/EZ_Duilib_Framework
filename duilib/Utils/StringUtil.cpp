@@ -245,64 +245,60 @@ void StringTrimRightT(std::basic_string<CharType> &output)
 
 } // anonymous namespace
 
-std::wstring StringHelper::ReparsePath(const std::wstring& strFilePath)
+ui::string StringHelper::ReparsePath(const ui::string& strFilePath)
 {
-	std::wstring tmp(strFilePath);
-	ReplaceAll(L"/", L"\\", tmp);
-	ReplaceAll(L"\\\\", L"\\", tmp);
+	ui::string tmp(strFilePath);
+	ReplaceAll(_T("/"), _T("\\"), tmp);
+	ReplaceAll(_T("\\\\"), _T("\\"), tmp);
 	return tmp;
 }
 
-std::wstring StringHelper::Printf(const wchar_t *format, ...)
+ui::string StringHelper::Printf(const TCHAR* format, ...)
 {
 	va_list	args;
 	va_start(args, format);
-	std::wstring output;
-	StringAppendVT<wchar_t>(format, args, output);
+	ui::string output;
+	StringAppendVT<TCHAR>(format, args, output);
 	va_end(args);
-
 	return output;
 }
 
-size_t StringHelper::ReplaceAll(const std::wstring& find, const std::wstring& replace, std::wstring& output)
+size_t StringHelper::ReplaceAll(const ui::string& find, const ui::string& replace, ui::string& output)
 {
 	if (output.empty())
 	{
 		return 0;
 	}
-	return StringReplaceAllT<wchar_t>(find, replace, output);
+	return StringReplaceAllT<TCHAR>(find, replace, output);
 }
 
-
-std::wstring StringHelper::MakeLowerString(const std::wstring &str)
+ui::string StringHelper::MakeLowerString(const ui::string&str)
 {
-	std::wstring resStr = str;
+	ui::string resStr = str;
 	if (resStr.empty())
-		return L"";
-	wchar_t *start = &resStr[0];
-	wchar_t *end = start + resStr.length();
+		return _T("");
+	TCHAR* start = &resStr[0];
+	TCHAR* end = start + resStr.length();
 	for (; start < end; start++)
 	{
-		if (*start >= L'A' && *start <= L'Z')
-			*start += L'a' - L'A';
+		if (*start >= _T('A') && *start <= _T('Z'))
+			*start += _T('a') - _T('A');
 	}
-	
 	return resStr;
 }
 
-std::wstring StringHelper::MakeUpperString(const std::wstring &str)
+ui::string StringHelper::MakeUpperString(const ui::string&str)
 {
-	std::wstring resStr = str;
+	ui::string resStr = str;
 	if (resStr.empty())
-		return L"";
-	wchar_t *start = &resStr[0];
-	wchar_t *end = start + resStr.length();
+		return _T("");
+	TCHAR* start = &resStr[0];
+	TCHAR* end = start + resStr.length();
 	for (; start < end; start++)
 	{
-		if (*start >= L'a' && *start <= L'z')
-			*start -= L'a' - L'A';
+		if (*start >= _T('a') && *start <= _T('z'))
+			*start -= _T('a') - _T('A');
 	}
-
 	return resStr;
 }
 
@@ -377,6 +373,42 @@ bool StringHelper::UnicodeToMBCS(const std::wstring& input, std::string &output,
 		NULL,
 		NULL);
 	return true;
+}
+
+std::string StringHelper::U2G(const char* utf8)
+{
+	int len = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, NULL, 0);
+	wchar_t* wstr = new wchar_t[len + 1];
+	memset(wstr, 0, len + 1);
+	MultiByteToWideChar(CP_UTF8, 0, utf8, -1, wstr, len);
+	len = WideCharToMultiByte(CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL);
+	char* str = new char[len + 1];
+	memset(str, 0, len + 1);
+	WideCharToMultiByte(CP_ACP, 0, wstr, -1, str, len, NULL, NULL);
+	if (wstr)
+	{
+		delete[] wstr;
+		wstr = NULL;
+	}
+	std::string sres = str;
+	delete[] str;
+	return sres;
+}
+
+std::string StringHelper::G2U(const char* gb2312)
+{
+	int len = MultiByteToWideChar(CP_ACP, 0, gb2312, -1, NULL, 0);
+	wchar_t* wstr = new wchar_t[len + 1];
+	memset(wstr, 0, len + 1);
+	MultiByteToWideChar(CP_ACP, 0, gb2312, -1, wstr, len);
+	len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+	char* str = new char[len + 1];
+	memset(str, 0, len + 1);
+	WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);
+	if (wstr) delete[] wstr;
+	std::string sres = str;
+	delete[] str;
+	return sres;
 }
 
 std::string StringHelper::TrimLeft(const char *input)
@@ -458,49 +490,27 @@ std::wstring& StringHelper::Trim(std::wstring &input) /* both left and right */
 }
 
 
-std::list<std::string> StringHelper::Split(const std::string& input, const std::string& delimitor)
+std::list<ui::string> StringHelper::Split(const ui::string& input, const ui::string& delimitor)
 {
-	std::list<std::string> output;
-	std::string input2(input);
-
+	std::list<ui::string> output;
+	ui::string input2(input);
 	if (input2.empty())
 		return output;
-
-	char *token = strtok(&input2[0], delimitor.c_str());
+	TCHAR *token = _tcstok(&input2[0], delimitor.c_str());
 	while (token != NULL)
 	{
 		output.push_back(token);
-		token = strtok(NULL, delimitor.c_str());
+		token = _tcstok(NULL, delimitor.c_str());
 	}
-
 	return output;
 }
 
-std::list<std::wstring> StringHelper::Split(const std::wstring& input, const std::wstring& delimitor)
-{
-	std::list<std::wstring> output;
-	std::wstring input2(input);
-
-	if (input2.empty())
-		return output;
-
-	wchar_t *token = wcstok(&input2[0], delimitor.c_str());
-	while (token != NULL)
-	{
-		output.push_back(token);
-		token = wcstok(NULL, delimitor.c_str());
-	}
-
-
-	return output;
-}
-
-bool StringHelper::StartWith(const std::wstring& str, const std::wstring& head)
+bool StringHelper::StartWith(const ui::string& str, const ui::string& head)
 {
 	return str.compare(0, head.size(), head) == 0;
 }
 
-bool StringHelper::EndWith(const std::wstring& str, const std::wstring& tail)
+bool StringHelper::EndWith(const ui::string& str, const ui::string& tail)
 {
 	return str.compare(str.size() - tail.size(), tail.size(), tail) == 0;
 }

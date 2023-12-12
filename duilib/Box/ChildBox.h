@@ -13,23 +13,23 @@ public:
 
 	/// 重写父类方法，提供个性化功能，请参考父类声明
 	virtual void Init() override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 
 	/**
 	 * @brief 设置 ChildBox 关联的 XML 文件
 	 * @param[in] strXML XML 文件路径
 	 * @return 无
 	 */
-	void SetChildLayoutXML(std::wstring strXML);
+	void SetChildLayoutXML(ui::string strXML);
 
 	/**
 	 * @brief 获取 ChildBox 关联的 XML 文件
 	 * @return 返回 ChildBox 关联的 XML 文件
 	 */
-	std::wstring GetChildLayoutXML();
+	ui::string GetChildLayoutXML();
 
 private:
-	std::wstring m_strXMLFile;
+	ui::string m_strXMLFile;
 };
 
 } // namespace ui

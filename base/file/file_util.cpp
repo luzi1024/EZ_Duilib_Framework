@@ -17,6 +17,8 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <errno.h>
+#elif defined(OS_WIN)
+#include <tchar.h>
 #endif  // OS_POSIX
 
 namespace nbase
@@ -29,11 +31,11 @@ const PathChar kFilePathCurrentDirectory[]  = ".";
 const PathChar kFilePathParentDirectory[]   = "..";
 const PathChar kFilePathExtensionSeparator  = '.';
 #elif defined(OS_WIN)
-const PathChar kEndChar = L'\0';
-const PathChar kFilePathSeparators[] = L"\\/";
-const PathChar kFilePathCurrentDirectory[] = L".";
-const PathChar kFilePathParentDirectory[]  = L"..";
-const PathChar kFilePathExtensionSeparator = L'.';
+const PathChar kEndChar = _T('\0');
+const PathChar kFilePathSeparators[] = _T("\\/");
+const PathChar kFilePathCurrentDirectory[] = _T(".");
+const PathChar kFilePathParentDirectory[]  = _T("..");
+const PathChar kFilePathExtensionSeparator = _T('.');
 #endif  // OS_WIN
 
 bool IsFilePathSeparator(const PathChar separator)
@@ -219,7 +221,7 @@ bool ReadFileToString(const PathString &filepath, std::string &out)
 {
 	std::unique_ptr<FILE, nbase::DeleterFileClose> file;
 #if defined(OS_WIN)
-	file.reset(OpenFile(filepath.c_str(), L"rb"));
+	file.reset(OpenFile(filepath.c_str(), _T("rb")));
 #else
 	file.reset(OpenFile(filepath.c_str(), "rb"));
 #endif

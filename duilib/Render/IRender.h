@@ -198,7 +198,7 @@ public:
 		const UiRect& rcImageDest, const UiRect& rcImageSource, const UiRect& rcCorners, BYTE uFade = 255, bool xtiled = false, bool ytiled = false) = 0;
 
 	virtual void DrawColor(const UiRect& rc, DWORD dwColor, BYTE uFade = 255) = 0;
-	virtual void DrawColor(const UiRect& rc, const std::wstring& colorStr, BYTE uFade = 255) = 0;
+	virtual void DrawColor(const UiRect& rc, const ui::string& colorStr, BYTE uFade = 255) = 0;
 
 	virtual void DrawLine(const UiRect& rc, int nSize, DWORD dwPenColor) = 0;
 	virtual void DrawLine(const IPen* pen, int x1, int y1, int x2, int y2) = 0;
@@ -206,12 +206,12 @@ public:
 	virtual void DrawRect(const UiRect& rc, int nSize, DWORD dwPenColor) = 0;
 	virtual void DrawRoundRect(const UiRect& rc, const CSize& roundSize, int nSize, DWORD dwPenColor) = 0;
 
-	virtual void DrawText(const UiRect& rc, const std::wstring& strText, DWORD dwTextColor, const std::wstring& strFontId, UINT uStyle, BYTE uFade = 255, bool bLineLimit = false) = 0;
+	virtual void DrawText(const UiRect& rc, const ui::string& strText, DWORD dwTextColor, const ui::string& strFontId, UINT uStyle, BYTE uFade = 255, bool bLineLimit = false) = 0;
 
 	virtual void DrawEllipse(const UiRect& rc, int nSize, DWORD dwColor) = 0;
 	virtual void FillEllipse(const UiRect& rc, DWORD dwColor) = 0;
 
-	virtual UiRect MeasureText(const std::wstring& strText, const std::wstring& strFontId, UINT uStyle, int width = DUI_NOSET_VALUE) = 0;
+	virtual UiRect MeasureText(const ui::string& strText, const ui::string& strFontId, UINT uStyle, int width = DUI_NOSET_VALUE) = 0;
 
 	virtual void DrawPath(const IPath* path, const IPen* pen) = 0;
 	virtual void FillPath(const IPath* path, const IBrush* brush) = 0;

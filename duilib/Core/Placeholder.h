@@ -25,33 +25,21 @@ public:
 	 * @param[in] strName 要获取的祖先容器名称
 	 * @return 返回祖先容器指针
 	 */
-	Box* GetAncestor(const std::wstring& strName);
+	Box* GetAncestor(const ui::string& strName);
 
 	/**
 	 * @brief 获取控件名称，对应 xml 中 name 属性
 	 * @return 返回控件名称
 	 */
-	std::wstring GetName() const;
-
-	/**
-	 * @brief 获取控件名称，对应 xml 中 name 属性
-	 * @return 返回控件名称（UTF8 编码）
-	 */
-	std::string GetUTF8Name() const;
+	ui::string GetName() const;
 
 	/**
 	 * @brief 设置控件名称，内存中设置不会写入 xml 中
 	 * @param[in] strName 要设置的名称
 	 * @return 无
 	 */
-	void SetName(const std::wstring& strName);
+	void SetName(const ui::string& strName);
 
-	/**
-	 * @brief 设置控件名称，内存中设置不会写入 xml 中（UTF8 编码）
-	 * @param[in] strName 要设置的名称
-	 * @return 无
-	 */
-	void SetUTF8Name(const std::string& strName);
 
 	/**
 	 * @brief 获取关联的窗口指针
@@ -320,7 +308,7 @@ protected:
 	virtual void ArrangeSelf();
 
 protected:
-	std::wstring m_sName;
+	ui::string m_sName;
 	Window *m_pWindow;
 	Box* m_pParent;
 	CSize m_cxyFixed;

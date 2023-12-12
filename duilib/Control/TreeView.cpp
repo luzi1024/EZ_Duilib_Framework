@@ -206,7 +206,7 @@ TreeView::TreeView() :
 	m_rootNode->SetTreeView(this);
 }
 
-void TreeView::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void TreeView::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if( strName == ATTR_TREEVIEW_indent) {
 		SetIndent(_ttoi(strValue.c_str()));

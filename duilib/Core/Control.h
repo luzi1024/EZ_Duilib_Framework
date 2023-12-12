@@ -43,34 +43,34 @@ public:
 	 * @brief 设置正文,子类实现 (New)
 	 * @return 无
 	 */
-	virtual void SetText(const std::wstring& strText) {};
+	virtual void SetText(const ui::string& strText) {};
 
 	/**
 	 * @brief 获取正文,子类实现 (New)
 	 * @return 无
 	 */
-	virtual std::wstring GetText() const { return _T(""); };
+	virtual ui::string GetText() const { return _T(""); };
 
     /// 图形相关	
 	/**
 	 * @brief 获取背景颜色
 	 * @return 返回背景颜色的字符串，该值在 global.xml 中定义
 	 */
-	std::wstring GetBkColor() const;
+	ui::string GetBkColor() const;
 
 	/**
 	 * @brief 设置背景颜色
 	 * @param[in] strColor 要设置的背景颜色值，该值必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void SetBkColor(const std::wstring& strColor);
+	void SetBkColor(const ui::string& strColor);
 
 	/**
 	 * @brief 获取某个状态下的字体颜色
 	 * @param[in] stateType 要获取何种状态下的颜色值，参考 ControlStateType 枚举
 	 * @return 指定状态下设定的颜色字符串，对应 global.xml 中指定色值
 	 */
-	std::wstring GetStateColor(ControlStateType stateType);
+	ui::string GetStateColor(ControlStateType stateType);
 
 	/**
 	 * @brief 设置某个状态下的字体颜色
@@ -78,40 +78,27 @@ public:
 	 * @param[in] strColor 要设置的颜色值，该值必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void SetStateColor(ControlStateType stateType, const std::wstring& strColor);
+	void SetStateColor(ControlStateType stateType, const ui::string& strColor);
 
 	/**
 	 * @brief 获取背景图片位置
 	 * @return 背景图片位置  
 	 */
-    std::wstring GetBkImage() const;
-
-	/**
-	 * @brief 获取 UTF8 格式的背景图片位置
-	 * @return 背景图片位置
-	 */
-	std::string GetUTF8BkImage() const;
+	ui::string GetBkImage() const;
 
 	/**
 	 * @brief 设置背景图片
 	 * @param[in] strImage 要设置的图片路径
 	 * @return 无
 	 */
-    void SetBkImage(const std::wstring& strImage);
-
-	/**
-	 * @brief 设置背景图片（UTF8 格式字符串）
-	 * @param[in] strImage 要设置的图片路径
-	 * @return 无
-	 */
-	void SetUTF8BkImage(const std::string& strImage);
+    void SetBkImage(const ui::string& strImage);
 
 	/**
 	 * @brief 获取指定状态下的图片位置
 	 * @param[in] 要获取何种状态下的图片，参考 ControlStateType 枚举
 	 * @return 指定状态下的图片位置
 	 */
-	std::wstring GetStateImage(ControlStateType stateType);
+	ui::string GetStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置某个状态下的图片
@@ -119,14 +106,14 @@ public:
 	 * @param[in] strImage 要设置的图片路径
 	 * @return 无
 	 */
-	void SetStateImage(ControlStateType stateType, const std::wstring& strImage);
+	void SetStateImage(ControlStateType stateType, const ui::string& strImage);
 
 	/**
 	 * @brief 获取指定状态下的前景图片
 	 * @param[in] 要获取何种状态下的图片，参考 `ControlStateType` 枚举
 	 * @return 指定状态下前景图片位置
 	 */
-	std::wstring GetForeStateImage(ControlStateType stateType);
+	ui::string GetForeStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置某个状态下前景图片
@@ -134,7 +121,7 @@ public:
 	 * @param[in] strImage 要设置的前景图片路径
 	 * @return 无
 	 */
-	void SetForeStateImage(ControlStateType stateType, const std::wstring& strImage);
+	void SetForeStateImage(ControlStateType stateType, const ui::string& strImage);
 
 	/**
 	 * @brief 获取控件状态
@@ -173,14 +160,14 @@ public:
 	 * @brief 获取边框颜色
 	 * @return 边框的颜色字符串，对应 global.xml 中的具体颜色值
 	 */
-	std::wstring GetBorderColor() const;
+	ui::string GetBorderColor() const;
 
 	/**
 	 * @brief 设置边框颜色
 	 * @param[in] strBorderColor 设置边框的颜色字符串值，该值必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void SetBorderColor(const std::wstring& strBorderColor);
+	void SetBorderColor(const ui::string& strBorderColor);
 
 	/**
 	 * @brief 设置边框的大小
@@ -272,41 +259,21 @@ public:
 	 * @brief 获取控件在鼠标悬浮状态下的提示文本
 	 * @return 返回当前鼠标悬浮状态提示的文本
 	 */
-    virtual std::wstring GetToolTipText() const;
-
-	/**
-	 * @brief 获取控件在鼠标悬浮状态下的提示文本（UTF8 格式）
-	 * @return 返回当前鼠标悬浮状态提示的文本
-	 */
-	virtual std::string GetUTF8ToolTipText() const;
+    virtual ui::string GetToolTipText() const;
 
 	/**
 	 * @brief 设置鼠标悬浮到控件显示的提示文本
 	 * @param[in] strText 要设置的文本
 	 * @return 无
 	 */
-	virtual void SetToolTipText(const std::wstring& strText);
-
-	/**
-	 * @brief 设置鼠标悬浮到控件显示的提示文本（UTF8 格式）
-	 * @param[in] strText 要设置的文本
-	 * @return 无
-	 */
-	virtual void SetUTF8ToolTipText(const std::string& strText);
+	virtual void SetToolTipText(const ui::string& strText);
 
 	/**
 	 * @brief 设置鼠标悬浮到控件显示的提示文本在语言文件中对应的文字
 	 * @param[in] strTextId 在语言文件中对应的提示文字 ID
 	 * @return 无
 	 */
-	virtual void SetToolTipTextId(const std::wstring& strTextId);
-
-	/**
-	 * @brief 设置鼠标悬浮到控件显示的提示文本在语言文件中对应的文字（UTF8 格式）
-	 * @param[in] strTextId 在语言文件中对应的提示文字 ID
-	 * @return 无
-	 */
-	virtual void SetUTF8ToolTipTextId(const std::string& strTextId);
+	virtual void SetToolTipTextId(const ui::string& strTextId);
 
 	/**
 	 * @brief 设置鼠标悬浮到控件上提示的文本单行最大宽度
@@ -340,27 +307,14 @@ public:
 	 * @brief 获取用户绑定到控件的数据字符串
 	 * @return 返回具体数据字符串
 	 */
-    virtual std::wstring GetDataID() const;
-
-	/**
-	 * @brief 获取用户绑定到控件的数据字符串（UTF8 格式）
-	 * @return 返回具体数据字符串
-	 */
-	virtual std::string GetUTF8DataID() const;				
+    virtual ui::string GetDataID() const;				
 
 	/**
 	 * @brief 绑定一个字符串数据到控件
 	 * @param[in] strText 要绑定的字符串数据
 	 * @return 无
 	 */
-    virtual void SetDataID(const std::wstring& strText);
-
-	/**
-	 * @brief 绑定一个字符串数据到控件（UTF8 格式）
-	 * @param[in] strText 要绑定的字符串数据
-	 * @return 无
-	 */
-	virtual void SetUTF8DataID(const std::string& strText);	
+    virtual void SetDataID(const ui::string& strText);
 
 	/**
 	 * @brief 获取用户绑定的自定义数据结构
@@ -605,28 +559,28 @@ public:
 	 * @param[in] strValue 要设置的属性值（如 100）
 	 * @return 无
 	 */
-    virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue);
+    virtual void SetAttribute(const ui::string& strName, const ui::string& strValue);
 
 	/**
 	 * @brief 设置控件的 class 全局属性
 	 * @param[in] strClass 要设置的 class 名称，该名称必须在 global.xml 中存在
 	 * @return 无
 	 */
-	void SetClass(const std::wstring& strClass);
+	void SetClass(const ui::string& strClass);
 
 	/**
 	 * @brief 应用一套属性列表
 	 * @param[in] strList 属性列表的字符串表示，如 `width="100" height="30"`
 	 * @return 无
 	 */
-    void ApplyAttributeList(const std::wstring& strList);
+    void ApplyAttributeList(const ui::string& strList);
 
 	/**
 	 * @brief 待补充
 	 * @param[in] 待补充
 	 * @return 待补充
 	 */
-	bool OnApplyAttributeList(const std::wstring& strReceiver, const std::wstring& strList, EventArgs* eventArgs);
+	bool OnApplyAttributeList(const ui::string& strReceiver, const ui::string& strList, EventArgs* eventArgs);
 
 	/// 绘制操作
 	/**
@@ -644,7 +598,7 @@ public:
 	 * @param[in] nFade 控件的透明度，如果启用动画效果该值在绘制时是不断变化的
 	 * @return 成功返回 true，失败返回 false
 	 */
-	bool DrawImage(IRenderContext* pRender, Image& duiImage, const std::wstring& strModify = L"", int nFade = DUI_NOSET_VALUE);
+	bool DrawImage(IRenderContext* pRender, Image& duiImage, const ui::string& strModify = _T(""), int nFade = DUI_NOSET_VALUE);
 
 	/**
 	* @brief 获取绘制上下文对象
@@ -943,15 +897,15 @@ protected:
 	UiRect m_rcBorderSize;
 	CursorType m_cursorType;	//影响控件的鼠标形状
 	ControlStateType m_uButtonState;
-	std::wstring m_sToolTipText;
-	std::wstring m_sToolTipTextId;
-	std::wstring m_sUserData;
-	std::wstring m_strBkColor;
-	std::wstring m_strControlClass;
+	ui::string m_sToolTipText;
+	ui::string m_sToolTipTextId;
+	ui::string m_sUserData;
+	ui::string m_strBkColor;
+	ui::string m_strControlClass;
 	StateColorMap m_colorMap;
 	Image m_bkImage;
 	StateImageMap m_imageMap;
-	std::wstring m_strBorderColor;
+	ui::string m_strBorderColor;
 	nbase::WeakCallbackFlag m_gifWeakFlag;
 	AnimationManager m_animationManager;
 	nbase::WeakCallbackFlag m_loadBkImageWeakFlag;

@@ -12,6 +12,7 @@
 #include "base/util/string_util.h"
 
 #if defined(OS_WIN)
+#include <tchar.h>
 #include <windows.h>
 #include "base/win32/scoped_win_handle.h"
 
@@ -22,7 +23,7 @@ bool FilePathCurrentDirectory(PathString &directory_out)
 {
 	PathChar directory[MAX_PATH];
 	directory[0] = 0;
-	DWORD len = ::GetCurrentDirectoryW(MAX_PATH, directory);
+	DWORD len = ::GetCurrentDirectory(MAX_PATH, directory);
 	if (len == 0 || len > MAX_PATH)
 	{
 		return false;
@@ -35,7 +36,7 @@ bool FilePathCurrentDirectory(PathString &directory_out)
 
 bool FilePathIsExist(const PathChar *filepath_in, bool is_directory)
 {
-	const DWORD file_attr = ::GetFileAttributesW(filepath_in);
+	const DWORD file_attr = ::GetFileAttributes(filepath_in);
 	if (file_attr != INVALID_FILE_ATTRIBUTES)
 	{
 		if (is_directory)
@@ -75,7 +76,7 @@ bool CreateDirectory(const PathChar* full_path)
 	for (auto i = subpaths.begin(); i != subpaths.end(); ++i) {
 		if (FilePathIsExist(i->c_str(), true))
 			continue;
-		if (!::CreateDirectoryW(i->c_str(), NULL)) {
+		if (!::CreateDirectory(i->c_str(), NULL)) {
 			DWORD error = ::GetLastError();
 			if (error == ERROR_ALREADY_EXISTS &&
 				FilePathIsExist(i->c_str(), true)) {
@@ -89,12 +90,12 @@ bool CreateDirectory(const PathChar* full_path)
 
 FILE* OpenFile(const PathChar *filepath, const PathChar *mode)
 {
-	return _wfsopen(filepath, mode, _SH_DENYNO);
+	return _tfsopen(filepath, mode, _SH_DENYNO);
 }
 
 int ReadFile(const PathChar *filepath, void *data_out, size_t size)
 {
-	win32::ScopedWinHandle file(CreateFileW(filepath,
+	win32::ScopedWinHandle file(CreateFile(filepath,
 		                                    GENERIC_READ,
 		                                    FILE_SHARE_READ | FILE_SHARE_WRITE,
 		                                    NULL,
@@ -113,7 +114,7 @@ int ReadFile(const PathChar *filepath, void *data_out, size_t size)
 
 int WriteFile(const PathChar *filepath, const void *data, size_t size)
 {
-	win32::ScopedWinHandle file(CreateFileW(filepath,
+	win32::ScopedWinHandle file(CreateFile(filepath,
 		                                    GENERIC_WRITE,
 		                                    0,
 		                                    NULL,
@@ -137,21 +138,21 @@ bool CopyFile(const PathString &from_path, const PathString &to_path)
 		to_path.size() >= MAX_PATH) {
 			return false;
 	}
-	return (::CopyFileW(from_path.c_str(), to_path.c_str(),
+	return (::CopyFile(from_path.c_str(), to_path.c_str(),
 		false) != 0);
 }
 
 bool DeleteFile(const PathString &filepath)
 {
-	if (::DeleteFileW(filepath.c_str()) != 0)
+	if (::DeleteFile(filepath.c_str()) != 0)
 		return true;
 	return false;
 }
 
 int64_t GetFileSize(const PathString &filepath)
 {
-	WIN32_FIND_DATAW file_data;
-	HANDLE file = FindFirstFileW(filepath.c_str(), &file_data);
+	WIN32_FIND_DATA file_data;
+	HANDLE file = FindFirstFile(filepath.c_str(), &file_data);
 
 	if (file == INVALID_HANDLE_VALUE)
 		return -1;

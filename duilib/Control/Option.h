@@ -15,7 +15,7 @@ public:
 		
 	/// 重写父类方法，提供个性化功能，请参考父类声明
 	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit = true) override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 	virtual void Selected(bool bSelected, bool bTriggerEvent = false) override;
 	virtual void Activate() override;
 
@@ -23,17 +23,17 @@ public:
 	 * @brief 获取所属组名称
 	 * @return 返回组名称
 	 */
-	virtual  std::wstring GetGroup() const;
+	virtual  ui::string GetGroup() const;
 
 	/**
 	 * @brief 设置所属组
 	 * @param[in] strGroupName 组名称
 	 * @return 无
 	 */
-	virtual void SetGroup(const std::wstring& strGroupName);
+	virtual void SetGroup(const ui::string& strGroupName);
 
 protected:
-	std::wstring	m_sGroupName;
+	ui::string	m_sGroupName;
 };
 
 template<typename InheritType>
@@ -59,7 +59,7 @@ void OptionTemplate<InheritType>::SetWindow(Window* pManager, Box* pParent, bool
 }
 
 template<typename InheritType>
-void OptionTemplate<InheritType>::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void OptionTemplate<InheritType>::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if (strName == ATTR_OPTION_group) SetGroup(strValue);
 	else __super::SetAttribute(strName, strValue);
@@ -107,13 +107,13 @@ void OptionTemplate<InheritType>::Activate()
 }
 
 template<typename InheritType>
-std::wstring OptionTemplate<InheritType>::GetGroup() const
+ui::string OptionTemplate<InheritType>::GetGroup() const
 {
 	return m_sGroupName;
 }
 
 template<typename InheritType>
-void OptionTemplate<InheritType>::SetGroup(const std::wstring& strGroupName)
+void OptionTemplate<InheritType>::SetGroup(const ui::string& strGroupName)
 {
 	if (strGroupName.empty()) {
 		if (m_sGroupName.empty()) return;

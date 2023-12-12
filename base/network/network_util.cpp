@@ -14,6 +14,7 @@
 #include <nb30.h>
 #include <snmp.h>
 #include <iphlpapi.h>
+#include <tchar.h>
 #else
 #include <net/if_dl.h>
 #if defined (OS_IOS) && !defined (IFT_ETHER)
@@ -197,7 +198,7 @@ bool GetMacAddressBySNMP(std::string &mac_address)
 		return false;
 
 	// Load the SNMP dll and get the addresses of the functions necessary
-	const HINSTANCE m_dll = LoadLibrary(L"inetmib1.dll");
+	const HINSTANCE m_dll = LoadLibrary(_T("inetmib1.dll"));
 	if (m_dll < (HINSTANCE) HINSTANCE_ERROR)
 		return false;
 

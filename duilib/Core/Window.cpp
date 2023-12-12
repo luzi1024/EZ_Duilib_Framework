@@ -120,7 +120,7 @@ bool Window::RegisterWindowClass()
 	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 	wc.hbrBackground = NULL;
 	wc.lpszMenuName = NULL;
-	std::wstring className = GetWindowClassName();
+	ui::string className = GetWindowClassName();
 	wc.lpszClassName = className.c_str();
 	ATOM ret = ::RegisterClass(&wc);
 	ASSERT(ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS);
@@ -133,32 +133,32 @@ bool Window::RegisterSuperClass()
 	// window so we can subclass it later on...
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(WNDCLASSEX);
-	std::wstring superClassName = GetSuperClassName();
+	ui::string superClassName = GetSuperClassName();
 	if (!::GetClassInfoEx(NULL, superClassName.c_str(), &wc)) {
 		if (!::GetClassInfoEx(::GetModuleHandle(NULL), superClassName.c_str(), &wc)) {
-			ASSERT(!"Unable to locate window class");
+			ASSERT(!_T("Unable to locate window class"));
 			return false;
 		}
 	}
 	m_OldWndProc = wc.lpfnWndProc;
 	wc.lpfnWndProc = Window::__ControlProc;
 	wc.hInstance = ::GetModuleHandle(NULL);
-	std::wstring className = GetWindowClassName();
+	ui::string className = GetWindowClassName();
 	wc.lpszClassName = className.c_str();
 	ATOM ret = ::RegisterClassEx(&wc);
 	ASSERT(ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS);
 	return ret != NULL || ::GetLastError() == ERROR_CLASS_ALREADY_EXISTS;
 }
 
-std::wstring Window::GetWindowClassName() const
+ui::string Window::GetWindowClassName() const
 {
 	ASSERT(FALSE);
-	return L"";
+	return _T("");
 }
 
-std::wstring Window::GetSuperClassName() const
+ui::string Window::GetSuperClassName() const
 {
-    return std::wstring();
+    return ui::string();
 }
 
 UINT Window::GetClassStyle() const
@@ -192,7 +192,7 @@ HWND Window::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwEx
 {
     if( !GetSuperClassName().empty() && !RegisterSuperClass() ) return NULL;
     if( GetSuperClassName().empty() && !RegisterWindowClass() ) return NULL;
-	std::wstring className = GetWindowClassName();
+	ui::string className = GetWindowClassName();
 	m_bIsLayeredWindow = isLayeredWindow;
 	if (m_bIsLayeredWindow) {
 		dwExStyle |= WS_EX_LAYERED;
@@ -474,7 +474,7 @@ void Window::ReapObjects(Control* pControl)
 	if (pControl == m_pEventTouch) m_pEventTouch = NULL;
 	if (pControl == m_pEventPointer) m_pEventPointer = NULL;
 	if (pControl == m_pFocus) m_pFocus = NULL;
-	std::wstring sName = pControl->GetName();
+	ui::string sName = pControl->GetName();
 	if (!sName.empty()) {
 		auto it = m_mNameHash.find(sName);
 		if (it != m_mNameHash.end())
@@ -484,12 +484,12 @@ void Window::ReapObjects(Control* pControl)
 	}
 }
 
-std::wstring Window::GetWindowResourcePath()
+ui::string Window::GetWindowResourcePath()
 {
 	return m_strWindowResourcePath;
 }
 
-void Window::SetWindowResourcePath(const std::wstring& strPath)
+void Window::SetWindowResourcePath(const ui::string& strPath)
 {
 	m_strWindowResourcePath = strPath;
 	if (m_strWindowResourcePath.empty()) return;
@@ -507,19 +507,19 @@ TFontInfo* Window::GetDefaultFontInfo()
 	return &m_defaultFontInfo;
 }
 
-void Window::AddClass(const std::wstring& strClassName, const std::wstring& strControlAttrList)
+void Window::AddClass(const ui::string& strClassName, const ui::string& strControlAttrList)
 {
 	ASSERT(!strClassName.empty());
 	ASSERT(!strControlAttrList.empty());
 	m_defaultAttrHash[strClassName] = strControlAttrList;
 }
 
-const std::map<std::wstring, std::wstring>* Window::GetClassMap()
+const std::map<ui::string, ui::string>* Window::GetClassMap()
 {
 	return &m_defaultAttrHash;
 }
 
-std::wstring Window::GetClassAttributes(const std::wstring& strClassName) const
+ui::string Window::GetClassAttributes(const ui::string& strClassName) const
 {
 	auto it = m_defaultAttrHash.find(strClassName);
 	if (it != m_defaultAttrHash.end())
@@ -527,10 +527,10 @@ std::wstring Window::GetClassAttributes(const std::wstring& strClassName) const
 		return it->second;
 	}
 
-	return L"";
+	return _T("");
 }
 
-bool Window::RemoveClass(const std::wstring& strClassName)
+bool Window::RemoveClass(const ui::string& strClassName)
 {
 	auto it = m_defaultAttrHash.find(strClassName);
 	if (it != m_defaultAttrHash.end())
@@ -546,7 +546,7 @@ void Window::RemoveAllClass()
 	m_defaultAttrHash.clear();
 }
 
-bool Window::AddOptionGroup(const std::wstring& strGroupName, Control* pControl)
+bool Window::AddOptionGroup(const ui::string& strGroupName, Control* pControl)
 {
 	auto it = m_mOptionGroup.find(strGroupName);
 	if (it != m_mOptionGroup.end()) {
@@ -563,14 +563,14 @@ bool Window::AddOptionGroup(const std::wstring& strGroupName, Control* pControl)
 	return true;
 }
 
-std::vector<Control*>* Window::GetOptionGroup(const std::wstring& strGroupName)
+std::vector<Control*>* Window::GetOptionGroup(const ui::string& strGroupName)
 {
 	auto it = m_mOptionGroup.find(strGroupName);
 	if (it != m_mOptionGroup.end()) return &(it->second);
 	return NULL;
 }
 
-void Window::RemoveOptionGroup(const std::wstring& strGroupName, Control* pControl)
+void Window::RemoveOptionGroup(const ui::string& strGroupName, Control* pControl)
 {
 	ASSERT(!strGroupName.empty());
 	ASSERT(pControl);
@@ -673,7 +673,7 @@ void Window::SetHeightPercent(double heightPercent)
 	m_heightPercent = heightPercent;
 }
 
-void Window::SetTextId(const std::wstring& strTextId)
+void Window::SetTextId(const ui::string& strTextId)
 {
 	::SetWindowText(m_hWnd, MutiLanSupport::GetInstance()->GetStringViaID(strTextId).c_str());
 }
@@ -683,12 +683,12 @@ void Window::SetShadowAttached(bool bShadowAttached)
 	m_shadow.SetShadowAttached(bShadowAttached);
 }
 
-std::wstring Window::GetShadowImage() const
+ui::string Window::GetShadowImage() const
 {
 	return m_shadow.GetShadowImage();
 }
 
-void Window::SetShadowImage(const std::wstring &strImage)
+void Window::SetShadowImage(const ui::string& strImage)
 {
 	m_shadow.SetShadowImage(strImage);
 }
@@ -1003,7 +1003,7 @@ LRESULT Window::DoHandlMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& ha
 			m_pEventHover->HandleMessageTemplate(kEventMouseHover, 0, 0, 0, pt);
 		}
 		// Create tooltip information
-		std::wstring sToolTip = pHover->GetToolTipText();
+		ui::string sToolTip = pHover->GetToolTipText();
 		//if( sToolTip.empty() ) {
 		//	handled = true;
 		//	return 0;
@@ -1650,7 +1650,7 @@ Control* Window::FindControl(POINT pt) const
 }
 
 #if 0
-Control* Window::FindControl(const std::wstring& strName) const
+Control* Window::FindControl(const ui::string& strName) const
 {
 	ASSERT(m_pRoot);
 	Control* pFindedControl = NULL;
@@ -1670,7 +1670,7 @@ Control* Window::FindSubControlByPoint(Control* pParent, POINT pt) const
 	return pParent->FindControl(__FindControlFromPoint, &pt, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
 }
 
-Control* Window::FindSubControlByName(Control* pParent, const std::wstring& strName) const
+Control* Window::FindSubControlByName(Control* pParent, const ui::string& strName) const
 {
 	if (pParent == NULL) pParent = GetRoot();
 	ASSERT(pParent);
@@ -1985,7 +1985,7 @@ void Window::OnInitLayout()
 Control* CALLBACK Window::__FindControlFromNameHash(Control* pThis, LPVOID pData)
 {
 	Window* pManager = static_cast<Window*>(pData);
-	std::wstring sName = pThis->GetName();
+	ui::string sName = pThis->GetName();
 	if( sName.empty() ) return NULL;
 	// Add this control to the hash list
 	pManager->m_mNameHash[sName] = pThis;
@@ -2037,7 +2037,7 @@ Control* CALLBACK Window::__FindControlFromUpdate(Control* pThis, LPVOID pData)
 Control* CALLBACK Window::__FindControlFromName(Control* pThis, LPVOID pData)
 {
 	LPCTSTR pstrName = static_cast<LPCTSTR>(pData);
-	const std::wstring& sName = pThis->GetName();
+	const ui::string& sName = pThis->GetName();
 	if( sName.empty() ) return NULL;
 	return (_tcsicmp(sName.c_str(), pstrName) == 0) ? pThis : NULL;
 }

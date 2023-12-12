@@ -105,7 +105,7 @@ void Slider::HandleMessage(EventArgs& event)
 	Progress::HandleMessage(event);
 }
 
-void Slider::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+void Slider::SetAttribute(const ui::string& strName, const ui::string& strValue)
 {
 	if (strName == ATTR_SLIDER_step) SetChangeStep(_ttoi(strValue.c_str()));
 	else if (strName == ATTR_SLIDER_thumbnormalimage) SetThumbStateImage(kControlStateNormal, strValue);
@@ -204,12 +204,12 @@ UiRect Slider::GetThumbRect() const
 	}
 }
 
-std::wstring Slider::GetThumbStateImage(ControlStateType stateType)
+ui::string Slider::GetThumbStateImage(ControlStateType stateType)
 {
 	return m_thumbStateImage[stateType].imageAttribute.simageString;
 }
 
-void Slider::SetThumbStateImage(ControlStateType stateType, const std::wstring& pStrImage)
+void Slider::SetThumbStateImage(ControlStateType stateType, const ui::string& pStrImage)
 {
 	m_thumbStateImage[stateType].SetImageString(pStrImage);
 	Invalidate();

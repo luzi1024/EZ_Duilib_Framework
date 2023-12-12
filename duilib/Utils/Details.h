@@ -7,7 +7,7 @@ namespace ui
 class UILIB_API Details
 {
 public:
-	static bool HasFile(const std::wstring& sf);
+	static bool HasFile(const ui::string& sf);
 };
 
 }

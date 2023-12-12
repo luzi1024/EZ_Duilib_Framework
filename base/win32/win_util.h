@@ -18,24 +18,24 @@ BASE_EXPORT bool IsModuleHandleValid(HMODULE module_handle);
 BASE_EXPORT HMODULE GetModuleHandleFromAddress(void* address);
 BASE_EXPORT HMODULE GetCurrentModuleHandle();
 
-BASE_EXPORT std::wstring GetHostName();
+BASE_EXPORT UIString GetHostName();
 
-BASE_EXPORT bool RunApp(const wchar_t *application, HANDLE *process = NULL);
-BASE_EXPORT bool RunAppWithCommand(const wchar_t *application, const wchar_t *command, HANDLE *process = NULL);
-BASE_EXPORT bool RunAppWithRedirection(const wchar_t *application,
-									const wchar_t *command,
+BASE_EXPORT bool RunApp(const TCHAR *application, HANDLE *process = NULL);
+BASE_EXPORT bool RunAppWithCommand(const TCHAR* application, const TCHAR *command, HANDLE *process = NULL);
+BASE_EXPORT bool RunAppWithRedirection(const TCHAR *application,
+									const TCHAR *command,
 									HANDLE input,
 									HANDLE output,
 									HANDLE error,
 									HANDLE *process = NULL);
 
 BASE_EXPORT bool MinimizeProcessWorkingSize();
-BASE_EXPORT bool SingletonRun(const wchar_t *application);
+BASE_EXPORT bool SingletonRun(const TCHAR *application);
 
 BASE_EXPORT bool IsRunningOnVistaOrHigher();
 
-BASE_EXPORT bool OpenResource(const wchar_t *resource,
-						   const wchar_t *type,
+BASE_EXPORT bool OpenResource(const TCHAR *resource,
+						   const TCHAR *type,
 						   void *&data,
 						   unsigned long &size,
 						   HMODULE module = NULL);

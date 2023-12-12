@@ -24,7 +24,7 @@ public:
 	virtual bool MouseLeave(EventArgs& msg) override;
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessage(EventArgs& event) override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 	virtual void ClearImageCache() override;
 
@@ -117,7 +117,7 @@ public:
 	 * @param[in] stateType 要获取的状态，参考 ControlStateType 枚举
 	 * @return 返回图片位置
 	 */
-	std::wstring GetButton1StateImage(ControlStateType stateType);
+	ui::string GetButton1StateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置指定状态下的向左或向上按钮图片
@@ -125,7 +125,7 @@ public:
 	 * @param[in] pStrImage 图片位置
 	 * @return 无
 	 */
-	void SetButton1StateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetButton1StateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 是否显示右或下按钮
@@ -145,7 +145,7 @@ public:
 	 * @param[in] stateType 要获取的状态，参考 ControlStateType 枚举
 	 * @return 返回图片位置
 	 */
-	std::wstring GetButton2StateImage(ControlStateType stateType);
+	ui::string GetButton2StateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置指定状态下的向右或向下按钮图片
@@ -153,14 +153,14 @@ public:
 	 * @param[in] pStrImage 图片位置
 	 * @return 无
 	 */
-	void SetButton2StateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetButton2StateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 获取滑块指定状态下的图片
 	 * @param[in] stateType 要获取的状态标识，参考 ControlStateType 枚举
 	 * @return 返回图片位置
 	 */
-	std::wstring GetThumbStateImage(ControlStateType stateType);
+	ui::string GetThumbStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置滑块指定状态下的图片
@@ -168,14 +168,14 @@ public:
 	 * @param[in] pStrImage 图片位置
 	 * @return 无
 	 */
-	void SetThumbStateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetThumbStateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 获取指定状态下滑块中间标识图片
 	 * @param[in] stateType 要获取的状态标识，参考 ControlStateType 枚举
 	 * @return 返回图片位置
 	 */
-	std::wstring GetRailStateImage(ControlStateType stateType);
+	ui::string GetRailStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置指定状态下滑块中间标识图片
@@ -183,14 +183,14 @@ public:
 	 * @param[in] pStrImage 图片位置
 	 * @return 无
 	 */
-	void SetRailStateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetRailStateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 获取指定状态下的背景图片
 	 * @param[in] stateType 要获取的状态标识，参考 ControlStateType 枚举
 	 * @return 返回图片位置
 	 */
-	std::wstring GetBkStateImage(ControlStateType stateType);
+	ui::string GetBkStateImage(ControlStateType stateType);
 
 	/**
 	 * @brief 设置指定状态下的背景图片
@@ -198,7 +198,7 @@ public:
 	 * @param[in] pStrImage 图片位置
 	 * @return 无
 	 */
-	void SetBkStateImage(ControlStateType stateType, const std::wstring& pStrImage);
+	void SetBkStateImage(ControlStateType stateType, const ui::string& pStrImage);
 
 	/**
 	 * @brief 是否自动隐藏滚动条
@@ -254,7 +254,7 @@ protected:
 	ControlStateType m_uButton1State;
 	ControlStateType m_uButton2State;
 	ControlStateType m_uThumbState;
-	std::wstring m_sImageModify;
+	ui::string m_sImageModify;
 	StateImage m_bkStateImage;
 	StateImage m_button1StateImage;
 	StateImage m_button2StateImage;

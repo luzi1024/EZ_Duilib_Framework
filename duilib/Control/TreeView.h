@@ -149,7 +149,7 @@ public:
 	TreeView(void);
 
 	/// 重写父类方法，提供个性化功能，请参考父类声明
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
 
 	/**
 	 * @brief 获取根节点

@@ -18,12 +18,13 @@
 
 #if defined(OS_WIN)
 #include <windows.h>
+#include <tchar.h>
 #endif // OS_WIN
 
 namespace nbase
 {
 
-CmdLineArgs::CmdLineArgs(const wchar_t *command_line):
+CmdLineArgs::CmdLineArgs(const TCHAR *command_line):
 	buffer_(NULL)
 {
 	size_t alloc;
@@ -31,19 +32,19 @@ CmdLineArgs::CmdLineArgs(const wchar_t *command_line):
 
 #if defined(OS_WIN)
 	if (command_line == NULL)
-		command_line = ::GetCommandLineW();
+		command_line = ::GetCommandLine();
 #endif // OS_WIN
 
 	if (command_line != NULL)
 	{
-		length = wcslen(command_line);
+		length = _tcslen(command_line);
 		if (length > 0)
 		{
-			alloc = (length + 1) * sizeof(wchar_t);
-			buffer_ = (wchar_t*)malloc(alloc);
+			alloc = (length + 1) * sizeof(TCHAR);
+			buffer_ = (TCHAR*)malloc(alloc);
 			if (buffer_ != NULL)
 			{
-				wcscpy(buffer_, command_line);
+				_tcscpy(buffer_, command_line);
 				buffer_[length] = 0;
 				ParseCommandLine();
 			}
@@ -62,12 +63,12 @@ bool CmdLineArgs::ParseCommandLine()
 {
 	enum
 	{
-		Term	= L'\0',
-		Quote	= L'"',
+		Term	= _T('\0'),
+		Quote	= _T('"'),
 	};
 
 	bool isQuoted = false;
-	wchar_t *arg, *ch = buffer_;
+	TCHAR *arg, *ch = buffer_;
 
 	if (buffer_ == NULL)
 		return false;
@@ -75,7 +76,7 @@ bool CmdLineArgs::ParseCommandLine()
 	while (*ch != Term)
 	{
 		/* remove leading space(s) */
-		while (iswspace(*ch))
+		while (_istspace(*ch))
 			ch++;
 		/* may reach tail */
 		if (*ch == Term)
@@ -88,12 +89,12 @@ bool CmdLineArgs::ParseCommandLine()
 		{
 			if (isQuoted)
 			{
-				if (*ch == Quote && (ch[1] == Term || iswspace(ch[1])))
+				if (*ch == Quote && (ch[1] == Term || _istspace(ch[1])))
 					break; /* a quoted argument found */
 			}
 			else
 			{
-				if (iswspace(*ch))
+				if (_istspace(*ch))
 					break; /* a common argument found */
 			}
 			ch++;

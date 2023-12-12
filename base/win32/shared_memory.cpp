@@ -15,7 +15,7 @@ namespace nbase
 namespace win32
 {
 
-bool SharedMemory::Create(const wchar_t *name, int size)
+bool SharedMemory::Create(const TCHAR *name, int size)
 {
 	assert(mapping_ == NULL);
 	mapping_ = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE,
@@ -28,7 +28,7 @@ bool SharedMemory::Create(const wchar_t *name, int size)
 }
 
 
-bool SharedMemory::Open(const wchar_t *name)
+bool SharedMemory::Open(const TCHAR*name)
 {
 	assert(mapping_ == NULL);
 	mapping_ = OpenFileMapping(FILE_MAP_READ | FILE_MAP_WRITE, FALSE, name);
