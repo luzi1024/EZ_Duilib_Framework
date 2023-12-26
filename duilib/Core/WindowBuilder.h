@@ -13,12 +13,16 @@ typedef std::function<Control* (const ui::string&)> CreateControlCallback;
 class UILIB_API WindowBuilder
 {
 public:
-    WindowBuilder();
+    WindowBuilder(CreateControlCallback pCallback = CreateControlCallback());
 
 	Box* Create(STRINGorID xml, CreateControlCallback pCallback = CreateControlCallback(),
 		Window* pManager = nullptr, Box* pParent = nullptr, Box* pUserDefinedBox = nullptr);
 	Box* Create(CreateControlCallback pCallback = CreateControlCallback(), Window* pManager = nullptr,
 		Box* pParent = nullptr, Box* pUserDefinedBox = nullptr);
+	bool LoadBuilder(STRINGorID xml);
+	bool BuilderWindow(Window* pWindow);
+	bool BuilderGlobal();
+	Box* BuilderControl(Window* pWindow = nullptr, Box* pParent = nullptr, Box* pUserDefinedBox = nullptr);
 
     CMarkup* GetMarkup();
 

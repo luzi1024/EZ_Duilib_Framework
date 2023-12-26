@@ -638,6 +638,18 @@ protected:
 	AnimationPlayer m_renderOffsetYAnimation;
 };
 
+class UILIB_API SkinBox : public Box
+{
+public:
+	SkinBox() {};
+	virtual void SetPos(UiRect rc) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
+	virtual void PaintStatusImage(IRenderContext* pRender) override;
+	virtual CSize EstimateSize(CSize szAvailable) override;
+	bool HasStatusImage(ControlStateType stateType) const;
+	const Image* GetStatusImage(bool bDeep) const;
+};
+
 } // namespace ui
 
 #endif // UI_CORE_BOX_H_

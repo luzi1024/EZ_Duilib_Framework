@@ -236,6 +236,12 @@ public:
 	bool AttachDialog(Box* pRoot);
 
 	/**
+	 * @brief (NEW) 拆离窗口的顶层容器
+	 * @return 返回 Box* 容器指针
+	 */
+	Box* DetachDialog();
+
+	/**
 	 * @brief 初始化控件，在容器中添加控件时会被调用（用于对控件名称做缓存）
 	 * @param[in] pControl 控件指针
 	 * @param[in] pParent 控件父容器

@@ -20,6 +20,7 @@ public:
 class UILIB_API Control : public PlaceHolder
 {
 	typedef std::map<int, CEventSource> GifEventMap;
+	friend class SkinBox;
 public:
 	Control();
 	Control(const Control& r);
@@ -569,6 +570,13 @@ public:
 	void SetClass(const ui::string& strClass);
 
 	/**
+	 * @brief 设置控件的 skin 全局属性
+	 * @param[in] strSkin 要设置的 skin 名称，该名称必须在 global.xml 中存在
+	 * @return 无
+	 */
+	void SetSkin(const ui::string& strSkin);
+
+	/**
 	 * @brief 应用一套属性列表
 	 * @param[in] strList 属性列表的字符串表示，如 `width="100" height="30"`
 	 * @return 无
@@ -599,6 +607,16 @@ public:
 	 * @return 成功返回 true，失败返回 false
 	 */
 	bool DrawImage(IRenderContext* pRender, Image& duiImage, const ui::string& strModify = _T(""), int nFade = DUI_NOSET_VALUE);
+
+	/**
+	 * @brief 绘制图片
+	 * @param[in] pRender 绘制上下文
+	 * @param[in] duiImage 图片对象
+	 * @param[in] strModify 图片的附加属性
+	 * @param[in] nFade 控件的透明度，如果启用动画效果该值在绘制时是不断变化的
+	 * @return 成功返回 true，失败返回 false
+	 */
+	bool DrawSkin(IRenderContext* pRender, Image& duiImage, int nFade = DUI_NOSET_VALUE);
 
 	/**
 	* @brief 获取绘制上下文对象
@@ -902,6 +920,8 @@ protected:
 	ui::string m_sUserData;
 	ui::string m_strBkColor;
 	ui::string m_strControlClass;
+	ui::string m_strSkinName;
+	std::shared_ptr<StateSkin> m_skinImage;
 	StateColorMap m_colorMap;
 	Image m_bkImage;
 	StateImageMap m_imageMap;

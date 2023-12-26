@@ -1,53 +1,58 @@
-#ifndef UI_CONTROL_COMBO_H_
-#define UI_CONTROL_COMBO_H_
-
 #pragma once
 
 namespace ui 
 {
 
-class CComboWnd;
+class WindowComboList;
 class UILIB_API Combo : public Box
 {
-    friend class CComboWnd;
+	friend class WindowComboList;
 public:
 	Combo();
 	Combo(const Combo& r) = delete;
 	Combo& operator=(const Combo& r) = delete;
-
-	/// 重写父类方法，提供个性化功能，请参考父类声明
-	virtual bool Add(Control* pControl) override;
-	virtual bool Remove(Control* pControl) override;
-	virtual bool RemoveAt(std::size_t iIndex) override;
-	virtual void RemoveAll() override;
-	virtual void Activate() override;
-	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
-	virtual void PaintText(IRenderContext* pRender) override;
-
+	virtual ~Combo();
 	/**
 	 * @brief 获取当前选择项文本
 	 * @return 返回当前选择项文本
 	 */
-    std::wstring GetText() const;
+	virtual ui::string GetText() const override;
+
+	/**
+	 * @brief 添加下拉项
+	 * @return 无
+	 */
+	bool AddItem(ListContainerElement* pItem);
+
+	/**
+	 * @brief 添加下拉项字符串
+	 * @return 无
+	 */
+	bool AddString(const ui::string& str);
+
+	/**
+	 * @brief 移除指定下拉项
+	 * @return 移除成功True
+	 */
+	bool RemoveItem(ListContainerElement* pControl);
+
+	/**
+	 * @brief 通过索引移除下拉项,如果为负数表示反向索引
+	 * @return 移除成功True
+	 */
+	bool RemoveItemAt(int iIndex);
+
+	/**
+	 * @brief 移除所有下拉项
+	 * @return 无
+	 */
+	void RemoveItemAll();
 
 	/**
 	 * @brief 获取当前所属的 List 对象
 	 * @return 返回所属的 List 对象指针
 	 */
-	ListBox* GetListBox() { return m_pLayout.get(); }
-
-	/**
-	 * @brief 获取下拉框属性信息
-	 * @return 返回字符串形式的属性信息
-	 */
-    std::wstring GetDropBoxAttributeList();
-
-	/**
-	 * @brief 设置下拉框的属性信息
-	 * @param[in] pstrList 转义后的 XML 格式属性列表
-	 * @return 无
-	 */
-    void SetDropBoxAttributeList(const std::wstring& pstrList);
+	ListBox* GetListBox() { return m_pListBox.get(); }
 
 	/**
 	 * @brief 获取下拉框容器大小
@@ -83,13 +88,6 @@ public:
 	bool SelectItem(int iIndex);
 
 	/**
-	 * @brief 获取指定索引下的子项控件
-	 * @param[in] iIndex 要获取的子项索引
-	 * @return 返回控件指针
-	 */
-	Control* GetItemAt(int iIndex);
-
-	/**
 	 * @brief 获取当前选择项索引
 	 * @return 返回当前选择项索引
 	 */
@@ -99,15 +97,14 @@ public:
 	 * @brief 获取所有子项数量
 	 * @return 返回所有子项数量
 	 */
-	virtual int GetCount() const { return m_pLayout->GetCount(); }
+	int GetItemCount() const { return m_pListBox->GetCount(); }
     
-	/**
-	 * @brief 监听子项被选择事件
-	 * @param[in] callback 子项被选择后触发的回调函数
-	 * @return 无
-	 */
-	void AttachSelect(const EventCallback& callback) { m_pLayout->AttachSelect(callback); }
-
+protected:
+	// 重载父类容器方法
+	virtual bool Add(Control* pControl) override;
+	virtual void SetAttribute(const ui::string& strName, const ui::string& strValue) override;
+	Control* FindLabelControl() { return FindSubControl(m_sControlNameLabel); };
+	Control* FindButtonControl() { return FindSubControl(m_sControlNameButton); };
 private:
 	/**
 	 * @brief 默认的子项被选择处理函数
@@ -116,16 +113,23 @@ private:
 	 */
 	bool OnSelectItem(EventArgs* args);
 
+	/**
+	 * @brief 默认的子控件被点击函数
+	 * @param[in] args 参数列表
+	 * @return 始终返回 true
+	 */
+	bool OnClickControl(EventArgs* args);
 protected:
-    CComboWnd *m_pWindow;
-	std::unique_ptr<ListBox> m_pLayout;
+	WindowComboList* m_pWndList;
+	std::unique_ptr<ListBox> m_pListBox;
+	std::unique_ptr<ListContainerElement> m_pItemTemp;
     int m_iCurSel;  
-	ControlStateType m_uButtonState;
 	CSize m_szDropBox;
-	std::wstring m_sDropBoxAttributes;
 	bool m_bPopupTop;
+	ui::string m_sControlNameLabel;
+	ui::string m_sControlNameButton;
+	ui::string m_sControlNameListwnd;
 };
 
 } // namespace ui
 
-#endif // UI_CONTROL_COMBO_H_

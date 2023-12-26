@@ -43,6 +43,8 @@ Control::Control() :
 	m_animationManager(),
 	m_imageMap(),
 	m_bkImage(),
+	m_strControlClass(),
+	m_strSkinName(),
 	m_loadBkImageWeakFlag()
 {
 	m_colorMap.SetControl(this);
@@ -89,6 +91,7 @@ Control::Control(const Control& r) :
 	m_animationManager(r.m_animationManager),
 	m_imageMap(r.m_imageMap),
 	m_bkImage(r.m_bkImage),
+	m_strSkinName(r.m_strSkinName),
 	m_loadBkImageWeakFlag()
 {
 	m_colorMap.SetControl(this);
@@ -811,7 +814,7 @@ void Control::HandleMessage(EventArgs& msg)
 bool Control::HasHotState()
 {
 	// ÅÐ¶Ï±¾¿Ø¼þÊÇ·ñÓÐhot×´Ì¬
-	return m_colorMap.HasHotColor() || m_imageMap.HasHotImage();
+	return m_colorMap.HasHotColor() || m_imageMap.HasHotImage() || (m_skinImage && m_skinImage->HasStateImage(kControlStateHot));
 }
 
 bool Control::MouseEnter(EventArgs& msg)
@@ -894,6 +897,9 @@ void Control::SetAttribute(const ui::string& strName, const ui::string& strValue
 {
 	if ( strName == ATTR_CTR_class) {
 		SetClass(strValue);
+	}
+	else if ( strName == ATTR_CTR_skin ) {
+		SetSkin(strValue);
 	}
 	else if( strName == ATTR_CTR_halign) {
 		if (strValue == _T("left")) {
@@ -1069,6 +1075,7 @@ void Control::SetAttribute(const ui::string& strName, const ui::string& strValue
 	else if (strName == ATTR_CTR_hotimage) SetStateImage(kControlStateHot, strValue);
 	else if (strName == ATTR_CTR_pushedimage) SetStateImage(kControlStatePushed, strValue);
 	else if (strName == ATTR_CTR_disabledimage) SetStateImage(kControlStateDisabled, strValue);
+	else if (strName == ATTR_CTR_focusedimage) SetStateImage(kControlStateFocused, strValue);
 	else if (strName == ATTR_CTR_forenormalimage) SetForeStateImage(kControlStateNormal, strValue);
 	else if (strName == ATTR_CTR_forehotimage) SetForeStateImage(kControlStateHot, strValue);
 	else if (strName == ATTR_CTR_forepushedimage) SetForeStateImage(kControlStatePushed, strValue);
@@ -1115,6 +1122,12 @@ void Control::SetClass(const ui::string& strClass)
 			ApplyAttributeList(pDefaultAttributes);
 		}
 	}
+}
+
+void Control::SetSkin(const ui::string& strSkin)
+{
+	m_strSkinName = strSkin;
+	m_skinImage.reset();
 }
 
 void Control::ApplyAttributeList(const ui::string& strList)
@@ -1206,14 +1219,13 @@ bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const ui::stri
 		if (duiImage.imageAttribute.rcPadding.bottom != DUI_NOSET_VALUE)
 			rcNewDest.bottom -= duiImage.imageAttribute.rcPadding.bottom;
 		if (dwBackColor != 0) {
-			if (dwBackColor >= 0xFF000000) pRender->DrawColor(rcNewDest, dwBackColor);
-			else pRender->DrawColor(m_rcItem, dwBackColor);
+			if (dwBackColor >= 0xFF000000) pRender->DrawColor(rcNewDest, dwBackColor, nFade);
+			else pRender->DrawColor(m_rcItem, dwBackColor, nFade);
 		}
 	}
 	// 2. Í¼Æ¬»æÖÆ
-	if (duiImage.imageAttribute.sImageName.empty()) {
+	if (duiImage.imageAttribute.sImageName.empty())
 		return false;
-	}
 
 	GetImage(duiImage);
 
@@ -1255,16 +1267,35 @@ bool Control::DrawImage(IRenderContext* pRender, Image& duiImage, const ui::stri
 		rcNewSource.bottom = duiImage.imageCache->nY;
 	}
 
-	if (m_bkImage.imageCache && m_bkImage.imageCache->IsGif() && m_bGifPlay && !m_bkImage.IsPlaying()) {
+	if (m_bkImage.imageCache && m_bkImage.imageCache->IsGif() && m_bGifPlay && !m_bkImage.IsPlaying()) 
+	{
 		GifPlay();
 	}
-	else {
+	else 
+	{
 		int iFade = nFade == DUI_NOSET_VALUE ? newImageAttribute.bFade : nFade;
 		ImageInfo* imageInfo = duiImage.imageCache.get();
 		pRender->DrawImage(m_rcPaint, duiImage.GetCurrentHBitmap(), imageInfo->IsAlpha(),
 			rcNewDest, rcNewSource, newImageAttribute.rcCorner, iFade, newImageAttribute.bTiledX, newImageAttribute.bTiledY);
 	}
 
+	return true;
+}
+
+bool Control::DrawSkin(IRenderContext* pRender, Image& duiImage, int nFade /*= DUI_NOSET_VALUE*/)
+{
+	if (!duiImage.imageCache)
+	{
+		assert(false);
+		return false;
+	}
+	assert(duiImage.imageCache->nX == m_rcItem.GetWidth());
+	assert(duiImage.imageCache->nY == m_rcItem.GetHeight());
+	UiRect rcSource = { 0,0,duiImage.imageCache->nX,duiImage.imageCache->nY };
+	UiRect rcCorner = { 0,0,0,0 };
+	int iFade = nFade == DUI_NOSET_VALUE ? duiImage.imageAttribute.bFade : nFade;
+	pRender->DrawImage(m_rcPaint, duiImage.GetCurrentHBitmap(), duiImage.imageCache->IsAlpha(),
+		m_rcItem, rcSource, rcCorner, iFade, false, false);
 	return true;
 }
 
@@ -1374,7 +1405,6 @@ void Control::AlphaPaint(IRenderContext* pRender, const UiRect& rcPaint)
 void Control::Paint(IRenderContext* pRender, const UiRect& rcPaint)
 {
     if( !::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem) ) return;
-
 	PaintBkColor(pRender);
 	PaintBkImage(pRender);
 	PaintStatusColor(pRender);
@@ -1408,8 +1438,27 @@ void Control::PaintStatusColor(IRenderContext* pRender)
 
 void Control::PaintStatusImage(IRenderContext* pRender)
 {
-	m_imageMap.PaintStatusImage(pRender, kStateImageBk, m_uButtonState);
-	m_imageMap.PaintStatusImage(pRender, kStateImageFore, m_uButtonState);
+	if (m_strSkinName.empty())
+	{
+		m_imageMap.PaintStatusImage(pRender, kStateImageBk, m_uButtonState);
+		m_imageMap.PaintStatusImage(pRender, kStateImageFore, m_uButtonState);
+	}
+	else
+	{
+		if (!m_skinImage)
+		{
+			m_skinImage = GlobalManager::GetStateSkin(m_strSkinName, m_rcItem);
+			if (m_skinImage && m_skinImage->HasStateImage(kControlStateHot))
+				m_animationManager.SetFadeHot(true);
+		}
+		if (m_skinImage)
+		{
+			if (IsFocused() && m_skinImage->HasStateImage(kControlStateFocused))
+				m_skinImage->PaintStatusImage(this, pRender, kControlStateFocused);
+			else
+				m_skinImage->PaintStatusImage(this, pRender, m_uButtonState);
+		}	
+	}
 }
 
 void Control::PaintText(IRenderContext* pRender)

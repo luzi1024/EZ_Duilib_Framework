@@ -76,7 +76,7 @@ int ImageInfo::GetInterval(int nIndex)
 
 std::unique_ptr<ImageInfo> ImageInfo::LoadImage(const ui::string& strImageFullPath, ui::string sGroupID, double dScale)
 {
-	if (StringHelper::EndWith(strImageFullPath, _T(".svg")))
+	if (StringHelper::EndWith(strImageFullPath, _T(".svg"), true))
 	{
 		std::string sfile;
 #ifdef _UNICODE	
@@ -148,6 +148,7 @@ std::unique_ptr<ui::ImageInfo> ImageInfo::LoadImageGroup(std::unique_ptr<lunasvg
 		return nullptr;
 	// 显示
 	std::unique_ptr<Gdiplus::Bitmap> gdiplusBitmap(Gdiplus::Bitmap::FromStream(pIStream));
+	pIStream->Release();
 	return LoadImageByBitmap(gdiplusBitmap, _T(""), sGroupID);
 }
 
@@ -203,7 +204,7 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus:
 	if ((format & PixelFormatIndexed) != 0) {
 		int nPalSize = pGdiplusBitmap->GetPaletteSize();
 		if (nPalSize > 0) {
-			Gdiplus::ColorPalette *palette = (Gdiplus::ColorPalette*)malloc(nPalSize);;
+			Gdiplus::ColorPalette *palette = (Gdiplus::ColorPalette*)malloc(nPalSize);
 			status = pGdiplusBitmap->GetPalette(palette, nPalSize);
 			if (status == Gdiplus::Ok) {
 				imageInfo->SetAlpha((palette->Flags & Gdiplus::PaletteFlagsHasAlpha) != 0);
@@ -232,7 +233,6 @@ std::unique_ptr<ImageInfo> ImageInfo::LoadImageByBitmap(std::unique_ptr<Gdiplus:
 		imageInfo->SetAlpha(false);
 		return imageInfo;
 	}
-
 	return imageInfo;
 }
 
@@ -240,7 +240,7 @@ IStream* ImageInfo::RenderImageGroup(std::unique_ptr<lunasvg::Document>& documen
 {
 	if (!document)
 	{
-		ASSERT(FALSE);
+		assert(false);
 		return nullptr;
 	}
 	if (dScale < 1e-4)
@@ -253,7 +253,7 @@ IStream* ImageInfo::RenderImageGroup(std::unique_ptr<lunasvg::Document>& documen
 	auto bitmap = document->renderToBitmap(nScrWidth, nScrHeight);
 	if (!bitmap.valid())
 	{
-		ASSERT(FALSE);
+		assert(false);
 		return nullptr;
 	}
 	bitmap.convertToRGBA();
@@ -264,6 +264,7 @@ IStream* ImageInfo::RenderImageGroup(std::unique_ptr<lunasvg::Document>& documen
 		BYTE* pMem = (BYTE*)::GlobalLock(hMem);
 		memcpy(pMem, data, size);
 		::CreateStreamOnHGlobal(hMem, FALSE, ps);
+		::GlobalUnlock(hMem);
 		}, &pIStream, bitmap.width(), bitmap.height(), 4, bitmap.data(), 0);
 	return pIStream;
 }
@@ -480,6 +481,7 @@ bool Image::ContinuePlay()
 	else
 		return m_nCycledCount < imageAttribute.nPlayCount;
 }
+
 StateImage::StateImage() :
 	m_pControl(nullptr),
 	m_stateImageMap()
@@ -554,6 +556,15 @@ Image* StateImage::GetEstimateImage()
 	return pEstimateImage;
 }
 
+const ui::Image* StateImage::GetStatusImage(ControlStateType stateType) const
+{
+	auto item = m_stateImageMap.find(stateType);
+	if (item == m_stateImageMap.end())
+		return nullptr;
+	const Image* pImage = &item->second;
+	return pImage;
+}
+
 void StateImage::ClearCache()
 {
 	auto it = m_stateImageMap.find(kControlStateNormal);
@@ -625,6 +636,15 @@ Image* StateImageMap::GetEstimateImage(StateImageType stateImageType)
 	return nullptr;
 }
 
+const ui::Image* StateImageMap::GetStatusImage(StateImageType stateImageType, ControlStateType stateType) const
+{
+	auto it = m_stateImageMap.find(stateImageType);
+	if (it != m_stateImageMap.end()) {
+		return it->second.GetStatusImage(stateType);
+	}
+	return nullptr;
+}
+
 void StateImageMap::ClearCache()
 {
 	m_stateImageMap[kStateImageBk].ClearCache();
@@ -680,5 +700,94 @@ void StateColorMap::PaintStatusColor(IRenderContext* pRender, UiRect rcPaint, Co
 
 	pRender->DrawColor(rcPaint, m_stateColorMap[stateType]);
 }
+
+ui::Image* StateSkin::GetStatusImage(ControlStateType st)
+{
+	auto item = m_stateImageMap.find(st);
+	if (item == m_stateImageMap.end())
+		return nullptr;
+	Image* pImage = &item->second;
+	return pImage;
+}
+
+ui::string StateSkin::SkinKey()
+{
+	return StringHelper::Printf(_T(":%s_%dx%d"), m_strName.c_str(), m_nX, m_nY);
+}
+
+bool StateSkin::PaintStatusImage(Control* pControl, IRenderContext* pRender, ControlStateType stateType)
+{
+	if (pControl == nullptr)
+	{
+		assert(false);
+		return false;
+	}
+	// 增加Focused状态绘制
+	if (pControl->IsFocused() && HasStateImage(kControlStateFocused)) 
+	{
+		return pControl->DrawSkin(pRender, m_stateImageMap[kControlStateFocused]);
+	}
+
+	if (pControl->GetAnimationManager().GetAnimationPlayer(kAnimationHot))
+	{
+		//Image* pStateActive = nullptr;
+		//if (HasStateImage(kControlStateFocused))
+		//	pStateActive = GetStatusImage(kControlStateFocused);
+		//else if (HasStateImage(kControlStateHot))
+		//	pStateActive = GetStatusImage(kControlStateHot);
+		//return false;
+		if (stateType == kControlStateNormal || stateType == kControlStateHot) 
+		{
+			int nHotAlpha = pControl->GetHotAlpha();
+			ui::string strNormalImageKey = m_stateImageMap[kControlStateNormal].imageAttribute.ImgKey();
+			ui::string strHotImageKey = m_stateImageMap[kControlStateHot].imageAttribute.ImgKey();
+
+			if (strNormalImageKey.empty() || strHotImageKey.empty()
+				|| strNormalImageKey != strHotImageKey
+				|| !m_stateImageMap[kControlStateNormal].imageAttribute.rcSource.Equal(m_stateImageMap[kControlStateHot].imageAttribute.rcSource)) 
+			{
+				int nHotFade = m_stateImageMap[kControlStateHot].imageAttribute.bFade;
+				nHotFade = int(nHotFade * (double)nHotAlpha / 255);
+				if (nHotFade == 0)
+				{
+					return pControl->DrawSkin(pRender, m_stateImageMap[kControlStateNormal]);
+				}
+				else
+				{
+					return (pControl->DrawSkin(pRender, m_stateImageMap[kControlStateNormal]) &&
+							pControl->DrawSkin(pRender, m_stateImageMap[kControlStateHot], nHotFade));
+				}		
+			}
+			else 
+			{
+				int nNormalFade = m_stateImageMap[kControlStateNormal].imageAttribute.bFade;
+				int nHotFade = m_stateImageMap[kControlStateHot].imageAttribute.bFade;
+				int nBlendFade = int((1 - (double)nHotAlpha / 255) * nNormalFade + (double)nHotAlpha / 255 * nHotFade);
+				return pControl->DrawSkin(pRender, m_stateImageMap[kControlStateHot], nBlendFade);
+			}
+		}
+	}
+
+	if (stateType == kControlStatePushed && m_stateImageMap[kControlStatePushed].imageAttribute.simageString.empty()) {
+		stateType = kControlStateHot;
+		m_stateImageMap[kControlStateHot].imageAttribute.bFade = 255;
+	}
+	if (stateType == kControlStateHot && m_stateImageMap[kControlStateHot].imageAttribute.simageString.empty()) {
+		stateType = kControlStateNormal;
+	}
+	if (stateType == kControlStateDisabled && m_stateImageMap[kControlStateDisabled].imageAttribute.simageString.empty()) {
+		stateType = kControlStateNormal;
+	}
+
+	return pControl->DrawSkin(pRender, m_stateImageMap[stateType]);
+}
+
+void StateSkin::ClearCache()
+{
+	for (auto& it : m_stateImageMap)
+		it.second.ClearCache();
+	m_stateImageMap.clear();
+}
+
 
 }

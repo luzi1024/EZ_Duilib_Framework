@@ -2604,7 +2604,7 @@ void RichEdit::PaintChild(IRenderContext* pRender, const UiRect& rcPaint)
             }
         }
         else {
-			AutoClip childClip(pRender, rcTemp);
+			//AutoClip childClip(pRender, rcTemp); // 用处不大,且影响到内部float元素绘制范围,暂时关闭 lzk
 			for( auto it = m_items.begin(); it != m_items.end(); it++ ) {
 				auto pControl = *it;
                 if( !pControl->IsVisible() ) continue;
@@ -2909,7 +2909,7 @@ void RichEdit::PaintStatusImage(IRenderContext* pRender)
 	if( IsReadOnly() )
 		return;
 
-	if(IsFocused()) {
+	if(IsFocused() && m_sFocusedImage.Has()) {
 		DrawImage(pRender, m_sFocusedImage);
 		PaintPromptText(pRender);
 		return;

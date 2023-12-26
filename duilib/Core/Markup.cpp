@@ -133,6 +133,38 @@ bool CMarkupNode::GetAttributeValue(LPCTSTR pstrName, LPTSTR pstrValue, SIZE_T c
     return false;
 }
 
+bool CMarkupNode::ToString(ui::string& sNode)
+{
+    ui::string sName = GetName();
+	int nAttributes = GetAttributeCount();
+	ui::string strAttribute;
+    for (int i = 0; i < nAttributes; i++)
+    {
+        auto sa = StringHelper::Printf(_T(" %s=\"%s\""), GetAttributeName(i), GetAttributeValue(i));
+        strAttribute += sa;
+    }
+    ui::string sChild;
+    for (CMarkupNode node = GetChild(); node.IsValid(); node = node.GetSibling())
+	{
+        ui::string sItem;
+        node.ToString(sItem);
+        if (sItem.empty() == false)
+		{
+			sChild += _T("\r\n");
+			sChild += sItem;
+        }
+	}
+    if (sChild.empty())
+    {
+        sNode = StringHelper::Printf(_T("<%s%s/>"), sName.c_str(), strAttribute.c_str());
+    }
+    else
+    {
+        sNode = StringHelper::Printf(_T("<%s%s>%s\r\n</%s>"), sName.c_str(), strAttribute.c_str(), sChild.c_str(), sName.c_str());
+    }
+    return !sNode.empty();
+}
+
 int CMarkupNode::GetAttributeCount()
 {
     if( m_pOwner == NULL ) return 0;

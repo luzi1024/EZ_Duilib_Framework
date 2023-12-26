@@ -11,6 +11,7 @@ public:
 
 	// format a string
 	static ui::string Printf(const TCHAR* format, ...);
+	static ui::string Format(const TCHAR* format, ...);
 
 	// replace all 'find' with 'replace' in the string
 	static size_t ReplaceAll(const ui::string& find, const ui::string& replace, ui::string& output);
@@ -46,8 +47,11 @@ public:
 	static std::list<ui::string> Split(const ui::string& input, const ui::string& delimitor);
 
 	//
-	static bool StartWith(const ui::string& str, const ui::string& head);
-	static bool EndWith(const ui::string& str, const ui::string& tail);
+	static bool StartWith(const ui::string& str, const ui::string& head, bool bCase = false);
+	static bool EndWith(const ui::string& str, const ui::string& tail, bool bCase = false);
+
+	// 忽略大小写比较
+	static bool CaseCompare(const ui::string& s1, const ui::string& s2);
 };
 
 }

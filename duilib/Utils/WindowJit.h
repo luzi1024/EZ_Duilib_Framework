@@ -6,8 +6,14 @@ namespace ui
 	class UILIB_API WindowJit : public WindowImplBase
 	{
 	public:
-		WindowJit() {
-			_skin = _T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
+		WindowJit() {};
+		~WindowJit() {};
+
+		virtual ui::string GetWindowClassName() const override { return _T("WindowJit"); };
+		virtual ui::string GetSkinFolder() override { return _T("public"); };
+		virtual ui::string GetSkinFile() override { return _T(""); };
+		virtual ui::string GetSkinData() override {
+			static ui::string _skinData = _T("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
 				_T("<Window size=\"540,320\" caption=\"0,0,0,34\">")
 				_T("<VBox bkcolor=\"bk_wnd_darkcolor\">")
 				_T("<HBox class=\"caption\">")
@@ -16,13 +22,8 @@ namespace ui
 				_T("</HBox>")
 				_T("</VBox>")
 				_T("</Window>");
+			return _skinData;
 		};
-		~WindowJit() {};
-
-		virtual bool IsSkinJit() override { return true; };
-		virtual ui::string GetWindowClassName() const override { return _T("WindowJit"); };
-		virtual ui::string GetSkinFolder() override { return _T("public"); };
-		virtual ui::string GetSkinFile() override { return _skin; };
 		virtual void InitWindow() override
 		{
 			// Ê¾Àý
@@ -51,8 +52,6 @@ namespace ui
 			pBox->Add(pEdit);
 			pBox->Add(pBtn);
 		}
-	private:
-		ui::string _skin;
 	};
 
 };

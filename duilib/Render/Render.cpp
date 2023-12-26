@@ -2,7 +2,7 @@
 
 namespace ui {
 
-static inline void DrawFunction(HDC hDC, bool bTransparent, UiRect rcDest, HDC hdcSrc, UiRect rcSrc, bool bAlphaChannel, int uFade)
+void RenderContext_GdiPlus::DrawFunction(HDC hDC, bool bTransparent, UiRect rcDest, HDC hdcSrc, UiRect rcSrc, bool bAlphaChannel, int uFade)
 {
 	if (bTransparent || bAlphaChannel || uFade < 255
 		|| (rcSrc.GetWidth() == rcDest.GetWidth() && rcSrc.GetHeight() == rcDest.GetHeight())) {
@@ -85,6 +85,7 @@ HBITMAP RenderContext_GdiPlus::DetachBitmap()
 		return NULL;
 
 	::SelectObject(m_hDC, m_hOldBitmap);
+	m_hOldBitmap = NULL;
 	return m_bitmap.DetachBitmap();
 }
 
@@ -189,11 +190,13 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 	const UiRect& rcImageDest, const UiRect& rcImageSource, const UiRect& rcCorners, BYTE uFade /*= 255*/, bool xtiled /*= false*/, bool ytiled /*= false*/)
 {
 	UiRect rcTestTemp;
-	if (!::IntersectRect(&rcTestTemp, &rcImageDest, &rcPaint)) return;
+	if (!::IntersectRect(&rcTestTemp, &rcImageDest, &rcPaint)) 
+		return;
 
 	ASSERT(::GetObjectType(m_hDC) == OBJ_DC || ::GetObjectType(m_hDC) == OBJ_MEMDC);
 
-	if (hBitmap == NULL) return;
+	if (hBitmap == NULL) 
+		return;
 
 	HDC hCloneDC = ::CreateCompatibleDC(m_hDC);
 	HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, hBitmap);
@@ -214,11 +217,14 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 	rcSource.top = rcImageSource.top + rcCorners.top;
 	rcSource.right = rcImageSource.right - rcCorners.right;
 	rcSource.bottom = rcImageSource.bottom - rcCorners.bottom;
-	if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) {
-		if (!xtiled && !ytiled) {
+	if (::IntersectRect(&rcTemp, &rcPaint, &rcDest)) 
+	{
+		if (!xtiled && !ytiled) 
+		{
 			DrawFunction(m_hDC, m_bTransparent, rcDest, hCloneDC, rcSource, bAlphaChannel, uFade);
 		}
-		else if (xtiled && ytiled) {
+		else if (xtiled && ytiled) 
+		{
 			LONG lWidth = rcImageSource.right - rcImageSource.left - rcCorners.left - rcCorners.right;
 			LONG lHeight = rcImageSource.bottom - rcImageSource.top - rcCorners.top - rcCorners.bottom;
 			int iTimesX = (rcDest.right - rcDest.left + lWidth - 1) / lWidth;
@@ -248,7 +254,8 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 				}
 			}
 		}
-		else if (xtiled) {
+		else if (xtiled) 
+		{
 			LONG lWidth = rcImageSource.right - rcImageSource.left - rcCorners.left - rcCorners.right;
 			int iTimes = (rcDest.right - rcDest.left + lWidth - 1) / lWidth;
 			for (int i = 0; i < iTimes; ++i) {
@@ -267,7 +274,8 @@ void RenderContext_GdiPlus::DrawImage(const UiRect& rcPaint, HBITMAP hBitmap, bo
 				DrawFunction(m_hDC, m_bTransparent, rcPieceDest, hCloneDC, rcSource, bAlphaChannel, uFade);
 			}
 		}
-		else { // ytiled
+		else 
+		{	// ytiled
 			LONG lHeight = rcImageSource.bottom - rcImageSource.top - rcCorners.top - rcCorners.bottom;
 			int iTimes = (rcDest.bottom - rcDest.top + lHeight - 1) / lHeight;
 			for (int i = 0; i < iTimes; ++i) {

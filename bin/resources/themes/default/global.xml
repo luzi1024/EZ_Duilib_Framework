@@ -44,6 +44,7 @@
     <TextColor name="light_green" value="#ff21c7a6"/>
     <TextColor name="blue" value="#ff006DD9"/>
     <TextColor name="red" value="#ffC63535"/>
+	<TextColor name="yellow" value="#ffFFFF00"/>
 
     <!--文字色值，不带透明层-->
     <TextColor name="textdefaultcolor" value="#ff333333"/>
@@ -54,6 +55,7 @@
     <TextColor name="bk_main_wnd_search" value="#ff1e7ad7"/>
     <TextColor name="bk_wnd_darkcolor" value="#fff0f2f5"/>
     <TextColor name="bk_wnd_lightcolor" value="#ffffffff"/>
+	<TextColor name="bk_wnd_gray" value="#ffe6e5e4"/>
     <TextColor name="bk_menuitem_hovered" value="#ffe1e6eb"/>
     <TextColor name="bk_menuitem_selected" value="#ffced4db"/>
     <TextColor name="bk_listitem_hovered" value="#fff0f2f5"/>
@@ -88,6 +90,32 @@
     <TextColor name="color_palette8" value="#ffa8a8a8"/>
     <TextColor name="color_palette9" value="#ffffffff"/>
 
+	<Window name="wnd_combo_list">
+		<Button skin="skin_ecombobox_list" name="_combo_label" width="stretch" height="stretch" text="可可乐乐abc" align="vcenter,left" textpadding="7,-1,17"/>
+	</Window>
+	<Window name="wnd_combo_down">
+		<RichEdit skin="skin_ecombobox_down" name="_combo_label_d" width="stretch" height="stretch" text="可可乐乐12345" padding="7,0,26" multiline="false" rich="false" autohscroll="true" align="vcenter">
+				<Button name="_combo_btn" float="true" nofocus="true" width="26" height="stretch" skin="skin_ecombobox_down_btn" valign="center" halign="right" margin="0,1,0,1" />
+		</RichEdit>
+	</Window>
+	<Window name="wnd_combo_dropbox" shadowattached="false">
+		<VListBox bkcolor="bk_wnd_darkcolor" width="stretch" height="stretch" padding="1,1,1,1" bordersize="1,1,1,1" bordercolor="gray" vscrollbar="true">
+			<ListContainerElement class="listitem" height="30" bkcolor="white" textpadding="6,0,6,0" text="这是一个模板"/>
+		</VListBox>
+	</Window>
+
+    <!--预定义皮肤-->
+	<Skin name="skin_button" normalimage="svggroupid='g-button-normal' corner='7,7,7,7' " hotimage="svggroupid='g-button-focused' corner='7,7,7,7'" pushedimage="svggroupid='g-button-pressed' corner='7,7,7,7'"/>
+	<Skin name="skin_ebutton" normalimage="svggroupid='g-ebutton-normal' corner='4,4,4,4'" hotimage="svggroupid='g-ebutton-focused' corner='4,4,4,4'" pushedimage="svggroupid='g-ebutton-pressed' corner='4,4,4,4'"/>
+	<Skin name="skin_ecombobox_list" normalimage="svggroupid='g-ebutton-normal' corner='4,4,4,4'" hotimage="svggroupid='g-ebutton-focused' corner='4,4,4,4'" pushedimage="svggroupid='g-ebutton-pressed' corner='4,4,4,4'" >
+		<Skin width="auto" height="auto" normalimage="svggroupid='arrow-down-normal' svgscale='0.5'" hotimage="svggroupid='arrow-down-focused' svgscale='0.5'" pushedimage="svggroupid='arrow-down-focused' svgscale='0.5'" halign="right" valign="center" margin="0,0,7,0"/>
+	</Skin>
+	<Skin name="skin_ecombobox_down" normalimage="svggroupid='g-elineedit-normal' corner='4,4,4,4'" focusedimage="svggroupid='g-elineedit-focused' corner='4,4,4,4'" />
+	<Skin name="skin_ecombobox_down_btn" hotimage="svggroupid='g-ebutton-focused' corner='4,4,4,4'" pushedimage="svggroupid='g-ebutton-pressed' corner='4,4,4,4'" >
+		<Skin width="auto" height="auto" normalimage="svggroupid='arrow-down-normal' svgscale='0.5'" hotimage="svggroupid='arrow-down-focused' svgscale='0.5'" pushedimage="svggroupid='arrow-down-focused' svgscale='0.5'" halign="right" valign="center" margin="0,0,7,0"/>
+	</Skin>
+	<Skin name="skin_edit" normalimage="svggroupid='g-elineedit-normal' corner='4,4,4,4'" focusedimage="svggroupid='g-elineedit-focused' corner='4,4,4,4'" />
+	
     <!--字体大小-->
     <Class name="font_title" font="system_14"/>
 
@@ -133,7 +161,7 @@
     <Class name="btn_del_search" normalimage="../public/button/btn_del_search_normal_gray.png" hotimage="../public/button/btn_del_search_hover_gray.png" pushedimage="../public/button/btn_del_search_pushed_gray.png"/>
 
     <!--列表通用样式-->
-    <Class name="list" bkcolor="bk_wnd_lightcolor" vscrollbar="true"/>
+    <Class name="list" bkcolor="bk_wnd_lightcolor" vscrollbar="true" bordersize="1" bordercolor="dark_gray" padding="4,3,4,3"/>
     <Class name="listitem" hotcolor="bk_listitem_hovered" pushedcolor="bk_listitem_selected" selectednormalcolor="bk_listitem_selected" fadehot="false"/>
     <Class name="list_topitem" normalcolor="bk_topitem_normal" hotcolor="bk_topitem_hovered" pushedcolor="bk_topitem_selected" selectednormalcolor="bk_topitem_selected" fadehot="false"/>
 
@@ -160,10 +188,37 @@
    <!--头像蒙版-->
     <Class name="icon_headimage_mask_40x40" width="40" height="40" bkimage="../public/headmask/icon_headimage_mask_40x40_normal.png"/>
 	
+	<!--svg标题栏-->
+    <Class name="svg_caption" height="34" bkimage="svggroupid='titlebar-normal' corner='0,0,0,1'" padding="10,0,5,0" />
+	
+	<!--svg滚动条-->
+	<Class name="svg_vscrollbar" width="14" fadealpha="true" thumbnormalimage="svggroupid='g-vscrollbarslider-normal' corner='0,8,0,8'" thumbhotimage="svggroupid='g-vscrollbarslider-pressed' corner='0,8,0,8'" thumbpushedimage="svggroupid='g-vscrollbarslider-focused' corner='0,8,0,8'" bkhotimage="fillcolor='bk_wnd_gray' destpadding='1,1,1,1'" showbutton1="false" showbutton2="false" />  
+	
 	<!--svg按钮-->
-	<Class name="svg_button_normal" normalimage="svggroupid='g-button-normal' corner='7,7,7,7' " hotimage="svggroupid='g-button-focused' corner='7,7,7,7'" pushedimage="svggroupid='g-button-pressed' corner='7,7,7,7'" width="80" height="30" text="按钮"/> 
-	<Class name="svg_ebutton_normal" normalimage="svggroupid='g-ebutton-normal' corner='4,4,4,4'" hotimage="svggroupid='g-ebutton-focused' corner='4,4,4,4'" pushedimage="svggroupid='g-ebutton-pressed' corner='4,4,4,4'" width="80" height="30" text="按钮"/> 
+	<Class name="svg_button_close" width="20" height="20" normalimage="svggroupid='mdi-close-normal' svgscale='0.625'" hotimage="svggroupid='mdi-close-focused' svgscale='0.625'" pushedimage="svggroupid='mdi-close-pressed' svgscale='0.625'" fadehot="false"/>
+	<Class name="svg_button_minimize" width="20" height="20" normalimage="svggroupid='mdi-minimize-normal' svgscale='0.625'" hotimage="svggroupid='mdi-minimize-focused' svgscale='0.625'" pushedimage="svggroupid='mdi-minimize-pressed' svgscale='0.625'" fadehot="false"/>
+	<Class name="svg_button_maximize" width="20" height="20" normalimage="svggroupid='mdi-maximize-normal' svgscale='0.625'" hotimage="svggroupid='mdi-maximize-focused' svgscale='0.625'" pushedimage="svggroupid='mdi-maximize-pressed' svgscale='0.625'" fadehot="false"/>
+	<Class name="svg_button_restore" width="20" height="20" normalimage="svggroupid='mdi-restore-normal' svgscale='0.625'" hotimage="svggroupid='mdi-restore-focused' svgscale='0.625'" pushedimage="svggroupid='mdi-restore-pressed' svgscale='0.625'" fadehot="false"/>
+	
+	<Class name="svg_button" skin="skin_button" width="80" height="30" text="按钮"/> 
+	<Class name="svg_ebutton" skin="skin_ebutton" width="80" height="30" text="按钮"/> 
  
-   <!--默认样式-->
-   <Class name="_default_Button" class="svg_ebutton_normal"/>
+	<Class name="svg_checkbox" normalimage="svggroupid='g-checkbox-normal' dest='0,0,16,16'" hotimage="svggroupid='g-checkbox-focused' dest='0,0,16,16'" selectednormalimage="svggroupid='g-checkbox-checked-normal' dest='0,0,16,16'" selectedhotimage="svggroupid='g-checkbox-checked-focused' dest='0,0,16,16'" textpadding="20,0,0,0" height="16" font="system_12" normaltextcolor="darkcolor" text="check"/>
+	
+	<Class name="svg_option" normalimage="svggroupid='g-radio-normal' dest='0,0,16,16'" hotimage="svggroupid='g-radio-focused' dest='0,0,16,16'" selectednormalimage="svggroupid='g-radio-checked-normal' dest='0,0,16,16'" selectedhotimage="svggroupid='g-radio-checked-focused' dest='0,0,16,16'" textpadding="25,0,0,0" height="16" font="system_12" normaltextcolor="darkcolor" text="check"/>
+
+	<Class name="svg_input" skin="skin_edit" width="150" height="30" multiline="false" rich="false" padding="6,6,6"/>
+	
+	<Class name="svg_ecombobox_list" width="150" height="30" valign="center" namelistwnd="wnd_combo_dropbox" namelabel="_combo_label" namebutton="_combo_label" include="wnd_combo_list"/>
+	<Class name="svg_ecombobox_down" width="150" height="30" valign="center" namelistwnd="wnd_combo_dropbox" namelabel="_combo_label_d" namebutton="_combo_btn" include="wnd_combo_down"/>
+	
+	<!--默认样式-->
+	<Class name="_default_Button" class="svg_ebutton"/>
+	<Class name="_default_CheckBox" class="svg_checkbox"/>
+	<Class name="_default_Option" class="svg_option"/>
+	<Class name="_default_RichEdit" class="svg_input"/>
+	<Class name="_default_Vscrollbar" class="svg_vscrollbar"/>
+	<Class name="_default_Hscrollbar" class="hscrollbar"/>
+   	<Class name="_default_Combo" class="svg_ecombobox_list"/>
+   
 </Global>

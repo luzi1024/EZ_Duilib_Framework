@@ -12,6 +12,7 @@ namespace ui
 
 class UILIB_API ImageInfo
 {
+	friend class Image;
 public:
 	ImageInfo();
 	~ImageInfo();
@@ -78,8 +79,9 @@ class UILIB_API Image
 public:
 	Image();
 
-	bool IsValid() { return (bool)imageCache; }
-	bool IsPlaying() { return m_bPlaying; }
+	bool Has() const { return !imageAttribute.simageString.empty(); }
+	bool IsValid() const { return (bool)imageCache; }
+	bool IsPlaying() const { return m_bPlaying; }
 	void SetPlaying(bool bPlaying) { m_bPlaying = bPlaying; }
 
 	void SetImageString(const ui::string& strImageString);
@@ -113,6 +115,7 @@ public:
 	bool HasHotImage();
 	bool PaintStatusImage(IRenderContext* pRender, ControlStateType stateType, const ui::string& sImageModify = _T(""));
 	Image* GetEstimateImage();
+	const Image* GetStatusImage(ControlStateType stateType) const;
 	void ClearCache();
 
 private:
@@ -133,7 +136,7 @@ public:
 	bool HasHotImage();
 	bool PaintStatusImage(IRenderContext* pRender, StateImageType stateImageType, ControlStateType stateType, const ui::string& sImageModify = _T(""));
 	Image* GetEstimateImage(StateImageType stateImageType);
-
+	const Image* GetStatusImage(StateImageType stateImageType, ControlStateType stateType) const;
 	void ClearCache();
 
 private:
@@ -154,6 +157,27 @@ public:
 private:
 	Control* m_pControl;
 	std::map<ControlStateType, ui::string> m_stateColorMap;
+};
+
+class UILIB_API StateSkin
+{
+public:
+	StateSkin() : m_strName(), m_nX(0), m_nY(0), m_bCached(false) {};
+	bool IsCached() { return m_bCached; }
+	void SetCached(bool bCached) { m_bCached = bCached; }
+	bool HasStateImage(ControlStateType st) { return m_stateImageMap.find(st) != m_stateImageMap.end(); };
+	Image* GetStatusImage(ControlStateType st);
+	ui::string SkinKey();
+	bool PaintStatusImage(Control* pControl, IRenderContext* pRender, ControlStateType stateType);
+	void ClearCache();
+public:
+	ui::string m_strName;
+	int m_nX;
+	int m_nY;
+	// ×´Ì¬»º´æ
+	std::map<ControlStateType, Image> m_stateImageMap;
+private:
+	bool m_bCached;
 };
 
 } // namespace ui

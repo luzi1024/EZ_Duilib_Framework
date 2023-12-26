@@ -263,6 +263,23 @@ ui::string StringHelper::Printf(const TCHAR* format, ...)
 	return output;
 }
 
+
+ui::string StringHelper::Format(const TCHAR* format, ...)
+{
+	ui::string str;
+	va_list args;
+	va_start(args, format);
+	{
+		int nLength = _vsctprintf(format, args);
+		nLength += 1;  //上面返回的长度是包含\0，这里加上
+		std::vector<TCHAR> vectorChars(nLength);
+		_vsntprintf(vectorChars.data(), nLength, format, args);
+		str.assign(vectorChars.data());
+	}
+	va_end(args);
+	return str;
+}
+
 size_t StringHelper::ReplaceAll(const ui::string& find, const ui::string& replace, ui::string& output)
 {
 	if (output.empty())
@@ -505,14 +522,27 @@ std::list<ui::string> StringHelper::Split(const ui::string& input, const ui::str
 	return output;
 }
 
-bool StringHelper::StartWith(const ui::string& str, const ui::string& head)
+bool StringHelper::StartWith(const ui::string& str, const ui::string& head, bool bCase/* = false*/)
 {
+	if (bCase)
+		return CaseCompare(str.substr(0, head.size()), head);
 	return str.compare(0, head.size(), head) == 0;
 }
 
-bool StringHelper::EndWith(const ui::string& str, const ui::string& tail)
+bool StringHelper::EndWith(const ui::string& str, const ui::string& tail, bool bCase/* = false*/)
 {
+	if (bCase)
+		return CaseCompare(str.substr(str.size() - tail.size(), tail.size()), tail);
 	return str.compare(str.size() - tail.size(), tail.size(), tail) == 0;
+}
+
+bool StringHelper::CaseCompare(const ui::string& s1, const ui::string& s2)
+{
+#ifdef __LINUX__
+	return (strcasecmp(str1.c_str(), str2.c_str()) == 0); // #include <cstring>
+#else
+	return (_tcsicmp(s1.c_str(), s2.c_str()) == 0);
+#endif
 }
 
 } // namespace nbase

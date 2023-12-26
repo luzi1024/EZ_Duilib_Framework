@@ -283,27 +283,52 @@ LRESULT WindowImplBase::OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 	return lRes;
 }
 
+ui::string WindowImplBase::GetSkinData()
+{
+	ui::string sSkinData = GetWindowResourcePath() + GetSkinFile();
+	return sSkinData;
+}
+
+Box* WindowImplBase::BuilderContent()
+{
+	auto callback = nbase::Bind(&WindowImplBase::CreateControl, this, std::placeholders::_1);
+	WindowBuilder builder(callback);
+	ui::string strSkinData = GetSkinData();
+	if (strSkinData.empty())
+	{
+		::MessageBox(NULL, _T("未提供Skin数据."), _T("错误"), MB_OK | MB_ICONERROR);
+		return nullptr;
+	}
+	if (!builder.LoadBuilder(strSkinData.c_str()))
+		return nullptr;
+
+	builder.BuilderWindow(this);
+	auto pRoot = builder.BuilderControl(this);
+	if (pRoot == NULL) {
+		auto err = StringHelper::Printf(_T("Failed to load xml file %s"), strSkinData.c_str());
+		::MessageBox(NULL, err.c_str(), _T("错误"), MB_OK | MB_ICONERROR);
+	}
+	return pRoot;
+}
+
 LRESULT WindowImplBase::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	::SetWindowLong(this->GetHWND(), GWL_STYLE, GetStyle());
 
 	Init(m_hWnd);
 	SetWindowResourcePath(GetSkinFolder());
-
+#if 0
 	WindowBuilder builder;
-	ui::string strSkinFile = IsSkinJit() ? GetSkinFile() : GetWindowResourcePath() + GetSkinFile();
-
+	ui::string strSkinFile = GetWindowResourcePath() + GetSkinFile();
 	auto callback = nbase::Bind(&WindowImplBase::CreateControl, this, std::placeholders::_1);
 	auto pRoot = (Box*)builder.Create(strSkinFile.c_str(), callback, this);
-
+#else
+	auto pRoot = BuilderContent();
+#endif
 	ASSERT(pRoot && _T("Faield to load xml file."));
-	if (pRoot == NULL) {
-		TCHAR szErrMsg[MAX_PATH] = { 0 };
-		_stprintf_s(szErrMsg, _T("Failed to load xml file %s"), strSkinFile.c_str());
-		::MessageBox(NULL, szErrMsg, _T("Duilib"), MB_OK | MB_ICONERROR);
+	if (pRoot == NULL)
 		return -1;
-	}
-	
+
 	pRoot = m_shadow.AttachShadow(pRoot);
 	AttachDialog(pRoot);
 	InitWindow();

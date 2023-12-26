@@ -201,8 +201,8 @@ HWND Window::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwEx
 	m_hWnd = ::CreateWindowEx(dwExStyle, className.c_str(), pstrName, dwStyle, 
 		rc.left, rc.top, rc.GetWidth(), rc.GetHeight(), hwndParent, NULL, ::GetModuleHandle(NULL), this);
 	LONG nWindowLong = GetWindowLong( m_hWnd, GWL_STYLE );
-	if( nWindowLong & WS_CAPTION ) {
-		SetWindowLong( m_hWnd, GWL_STYLE, nWindowLong & ~WS_CAPTION );
+	if (nWindowLong & WS_CAPTION) {
+		SetWindowLong(m_hWnd, GWL_STYLE, nWindowLong & ~WS_CAPTION);
 	}
 
 	ASSERT(m_hWnd!=NULL);
@@ -451,6 +451,16 @@ bool Window::AttachDialog(Box* pRoot)
 	m_bFocusNeeded = true;
 	// Initiate all control
 	return InitControls(m_pRoot);
+}
+
+Box* Window::DetachDialog()
+{
+	Box* res = m_pRoot;
+	if (res)
+		res->SetWindow(nullptr, nullptr);
+	m_pRoot = nullptr;
+	m_mNameHash.clear();
+	return res;
 }
 
 bool Window::InitControls(Control* pControl, Box* pParent /*= NULL*/)
@@ -806,7 +816,7 @@ void Window::SetMaxInfo(int cx, int cy, bool bContainShadow)
 CSize Window::GetInitSize(bool bContainShadow) const
 {
 	CSize xy = m_szInitWindowSize;
-	if (!bContainShadow) {
+	if (!bContainShadow && m_shadow.IsShadowAttached()) {
 		UiRect rcShadow = m_shadow.GetShadowCorner();
 		if (xy.cx != 0) {
 			xy.cx -= rcShadow.left + rcShadow.right;
@@ -827,7 +837,7 @@ void Window::SetInitSize(int cx, int cy, bool bContainShadow, bool bNeedDpiScale
 		DpiManager::GetInstance()->ScaleInt(cx);
 	}
 
-	if (!bContainShadow) {
+	if (!bContainShadow && m_shadow.IsShadowAttached()) {
 		UiRect rcShadow = m_shadow.GetShadowCorner();
 		cx += rcShadow.left + rcShadow.right;
 		cy += rcShadow.top + rcShadow.bottom;

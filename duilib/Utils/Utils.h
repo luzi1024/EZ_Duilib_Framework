@@ -124,6 +124,11 @@ public:
 		bottom = src.bottom;
 	}
 
+	bool operator==(const UiRect& src) const
+	{
+		return (left == src.left) && (top == src.top) && (right == src.right) && (bottom == src.bottom);
+	}
+
 	UiRect(int iLeft, int iTop, int iRight, int iBottom)
 	{
 		left = iLeft;
@@ -223,6 +228,16 @@ public:
 	{
 		return this->left == rect.left && this->top == rect.top 
 			&& this->right == rect.right && this->bottom == rect.bottom;
+	}
+
+	void MoveTo(const CPoint& point)
+	{
+		auto dx = point.x - this->left;
+		auto dy = point.y - this->top;
+		this->left += dx;
+		this->right += dx;
+		this->top += dy;
+		this->bottom += dy;
 	}
 };
 

@@ -8,6 +8,7 @@
 
 namespace ui 
 {
+class SkinBox;
 /**
 * @brief 全局属性管理工具类
 * 用于管理一些全局属性的工具类，包含全局样式（global.xml）和语言设置等
@@ -129,6 +130,68 @@ public:
 	 * @return 返回绘制区域对象
 	 */
 	static void RemoveAllClasss();
+
+	/**
+	 * @brief (NEW)添加一个全局 skin 属性
+	 * @param[in] strSkinName 全局 skin 名称
+	 * @param[in] strControlAttrList 属性列表，需要做 XML 转义
+	 * @return 无
+	 */
+	static void AddSkin(SkinBox* pSkinBox);
+
+	/**
+	 * @brief (NEW)获取图片 StateSkin 对象
+	 * @param[in] bitmap 图片路径
+	 * @return 返回图片 ImageInfo 对象的智能指针
+	 */
+	static std::shared_ptr<StateSkin> GetStateSkin(const ui::string& strSkinName, const UiRect& rc);
+
+	/**
+	 * @brief (NEW)通过SkinBox生成适配的图片 StateSkin 对象
+	 * @param[in] skinBox 模板对象
+	 * @param[in] rc 适配尺寸
+	 * @return 返回图片 StateSkin 对象的智能指针
+	 */
+	static std::unique_ptr<StateSkin> ProductSkin(std::unique_ptr<SkinBox>& skinBox, const UiRect& rc);
+
+	/**
+	 * @brief (NEW)添加一个全局窗口定义
+	 * @param[in] sName 全局 窗口 名称
+	 * @param[in] sData  XML 数据
+	 * @return 无
+	 */
+	static void AddWindowDefine(const ui::string& sName, const ui::string& sData);
+
+	/**
+	 * @brief (NEW)添加一个全局窗口定义
+	 * @param[in] sName 全局 窗口 名称
+	 * @param[in] sData  XML 数据
+	 * @return 无
+	 */
+	static bool GetWindowDefine(const ui::string& sName, ui::string& sData);
+
+	/**
+	 * @brief (NEW)附着一个全局窗口定义
+	 * @param[in] sName 全局 窗口 名称
+	 * @param[in] pParentBox  父节点
+	 * @return 成功/失败
+	 */
+	static bool IncludeWindowControl(Box* pParentBox, const ui::string& sName, CreateControlCallback callback = CreateControlCallback());
+
+	/**
+	 * @brief (NEW)附着一个全局窗口定义
+	 * @param[in] sName 全局 窗口 名称
+	 * @param[in] pParentBox  父节点
+	 * @return 成功/失败
+	 */
+	static Box* CreateWindowControl(const ui::string& sName, CreateControlCallback callback = CreateControlCallback());
+
+	/**
+	 * @brief 从缓存中一处一个Skin
+	 * @param[in] imageFullPath 图片路径
+	 * @return 无
+	 */
+	static void RemoveFromSkinCache(const ui::string& skey);
 
 	/**
 	 * @brief 添加一个全局颜色值提供程序使用
@@ -431,6 +494,8 @@ public:
 	 */
 	static ui::string GetZipFilePath(const ui::string& path);
 
+
+	static std::unique_ptr<lunasvg::ITreeBuilder>& GetGlobalSvgTreeBuilder();
 private:
 	/**
 	 * @brief 加载全局资源
@@ -459,6 +524,7 @@ private:
 	static std::map<ui::string, DWORD> m_mapTextColor;
 	static std::map<ui::string, ui::string> m_mGlobalClass;
 	static std::map<ui::string, TFontInfo*> m_mCustomFonts;
+	static std::map<ui::string, ui::string> m_mGlobalWindow;
 
 	static ui::string m_sDefaultFontId;
 
@@ -472,6 +538,9 @@ private:
 	static DWORD m_dwDefaultLinkFontColor;
 	static DWORD m_dwDefaultLinkHoverFontColor;
 	static DWORD m_dwDefaultSelectedBkColor;
+	//
+	static std::map<ui::string, std::unique_ptr<SkinBox>> m_mSkinBox;
+	static std::map<ui::string, std::weak_ptr<StateSkin>> m_mSkinHash;
 };
 
 } // namespace ui

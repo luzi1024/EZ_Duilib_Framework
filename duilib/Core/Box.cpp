@@ -17,7 +17,8 @@ void Layout::SetOwner(Box* pOwner)
 
 CSize Layout::SetFloatPos(Control* pControl, UiRect rcContainer)
 {
-	if (!pControl->IsVisible()) return CSize();
+	if (!pControl->IsVisible()) 
+		return CSize();
 
 	int childLeft = 0;
 	int childRight = 0;
@@ -30,26 +31,33 @@ CSize Layout::SetFloatPos(Control* pControl, UiRect rcContainer)
 	int iPosBottom = rcContainer.bottom - rcMargin.bottom;
 	CSize szAvailable(iPosRight - iPosLeft, iPosBottom - iPosTop);
 	CSize childSize = pControl->EstimateSize(szAvailable);
-	if (pControl->GetFixedWidth() == DUI_LENGTH_AUTO && pControl->GetFixedHeight() == DUI_LENGTH_AUTO
-		&& pControl->GetMaxWidth() == DUI_LENGTH_STRETCH) {
+	if (pControl->GetFixedWidth() == DUI_LENGTH_AUTO && 
+		pControl->GetFixedHeight() == DUI_LENGTH_AUTO &&
+		pControl->GetMaxWidth() == DUI_LENGTH_STRETCH) 
+	{
 		int maxwidth = MAX(0, szAvailable.cx);
-		if (childSize.cx > maxwidth) {
+		if (childSize.cx > maxwidth) 
+		{
 			pControl->SetFixedWidth(maxwidth, false);
 			childSize = pControl->EstimateSize(szAvailable);
 			pControl->SetFixedWidth(DUI_LENGTH_AUTO, false);
 		}
 	}
-	if (childSize.cx == DUI_LENGTH_STRETCH) {
+	if (childSize.cx == DUI_LENGTH_STRETCH) 
 		childSize.cx = MAX(0, szAvailable.cx);
-	}
-	if (childSize.cx < pControl->GetMinWidth()) childSize.cx = pControl->GetMinWidth();
-	if (pControl->GetMaxWidth() >= 0 && childSize.cx > pControl->GetMaxWidth()) childSize.cx = pControl->GetMaxWidth();
 
-	if (childSize.cy == DUI_LENGTH_STRETCH) {
+	if (childSize.cx < pControl->GetMinWidth()) 
+		childSize.cx = pControl->GetMinWidth();
+	if (pControl->GetMaxWidth() >= 0 && childSize.cx > pControl->GetMaxWidth()) 
+		childSize.cx = pControl->GetMaxWidth();
+
+	if (childSize.cy == DUI_LENGTH_STRETCH)
 		childSize.cy = MAX(0, szAvailable.cy);
-	}
-	if (childSize.cy < pControl->GetMinHeight()) childSize.cy = pControl->GetMinHeight();
-	if (childSize.cy > pControl->GetMaxHeight()) childSize.cy = pControl->GetMaxHeight();
+
+	if (childSize.cy < pControl->GetMinHeight()) 
+		childSize.cy = pControl->GetMinHeight();
+	if (childSize.cy > pControl->GetMaxHeight()) 
+		childSize.cy = pControl->GetMaxHeight();
 
 
 	int childWidth = childSize.cx;
@@ -227,6 +235,7 @@ void Box::SetAttribute(const ui::string& strName, const ui::string& strValue)
 	if (m_pLayout->SetAttribute(strName, strValue))	{
 
 	}
+	else if (strName == ATTR_BOX_include) GlobalManager::IncludeWindowControl(this, strValue);
 	else if (strName == ATTR_BOX_mousechild) SetMouseChildEnabled(strValue == _T("true"));
 	else Control::SetAttribute(strName, strValue);
 }
@@ -338,7 +347,6 @@ void Box::PaintChild(IRenderContext* pRender, const UiRect& rcPaint)
 {
 	UiRect rcTemp;
 	if( !::IntersectRect(&rcTemp, &rcPaint, &m_rcItem) ) return;
-
 	for (auto it = m_items.begin(); it != m_items.end(); it++) {
 		Control* pControl = *it;
 		if( !pControl->IsVisible() ) continue;
@@ -1709,6 +1717,140 @@ void ScrollableBox::ClearImageCache()
 		m_pHorizontalScrollBar->ClearImageCache();
 	if (m_pVerticalScrollBar)
 		m_pVerticalScrollBar->ClearImageCache();
+}
+
+void SkinBox::SetPos(UiRect rc)
+{
+	__super::SetPos(rc);
+	m_rcPaint = rc;
+}
+
+void SkinBox::SetAttribute(const ui::string& strName, const ui::string& strValue)
+{
+	__super::SetAttribute(strName, strValue);
+	// Skin为静态图,所以要移除默认动画
+	if (strName == ATTR_CTR_hotimage)
+		m_animationManager.SetFadeHot(false);
+}
+
+void SkinBox::PaintStatusImage(IRenderContext* pRender)
+{
+	if (m_imageMap.GetStatusImage(kStateImageBk, m_uButtonState))
+		m_imageMap.PaintStatusImage(pRender, kStateImageBk, m_uButtonState);
+	for (auto& it : m_items)
+	{
+		if (!it->IsVisible())
+			continue;
+		if (it->GetControlClass() != DUI_CTR_SKINBOX)
+			continue;
+		SkinBox* pSkinBox = dynamic_cast<SkinBox*>(it);
+		if (!pSkinBox)
+			continue;
+		if (pSkinBox->HasStatusImage(m_uButtonState))
+		{
+			pSkinBox->SetState(m_uButtonState);
+			pSkinBox->PaintStatusImage(pRender);
+		}	
+	}
+}
+
+CSize SkinBox::EstimateSize(CSize szAvailable)
+{
+	CSize fixedSize = m_cxyFixed;
+	if (GetFixedWidth() == DUI_LENGTH_AUTO || GetFixedHeight() == DUI_LENGTH_AUTO)
+	{
+		if (!m_bReEstimateSize)
+			return m_szEstimateSize;
+		szAvailable.cx -= m_pLayout->GetPadding().left + m_pLayout->GetPadding().right;
+		szAvailable.cy -= m_pLayout->GetPadding().top + m_pLayout->GetPadding().bottom;
+		CSize sizeByChild = m_pLayout->AjustSizeByChild(m_items, szAvailable);
+		if (GetFixedWidth() == DUI_LENGTH_AUTO) {
+			fixedSize.cx = sizeByChild.cx;
+		}
+		if (GetFixedHeight() == DUI_LENGTH_AUTO) {
+			fixedSize.cy = sizeByChild.cy;
+		}
+		m_bReEstimateSize = false;	
+		for (auto it = m_items.begin(); it != m_items.end(); it++) {
+			if (!(*it)->IsVisible()) {
+				continue;
+			}
+			if ((*it)->GetFixedWidth() == DUI_LENGTH_AUTO || (*it)->GetFixedHeight() == DUI_LENGTH_AUTO) {
+				if ((*it)->IsReEstimateSize()) {
+					m_bReEstimateSize = true;
+					break;
+				}
+			}
+		}
+		// 增加image尺寸填充
+		Image* image = GetEstimateImage();
+		if (image)
+		{
+			const auto& imageAttribute = image->imageAttribute;
+			if (imageAttribute.rcSource.left != DUI_NOSET_VALUE && imageAttribute.rcSource.top != DUI_NOSET_VALUE
+				&& imageAttribute.rcSource.right != DUI_NOSET_VALUE && imageAttribute.rcSource.bottom != DUI_NOSET_VALUE) {
+				if ((GetFixedWidth() <= 0)) {
+					SetFixedWidth(imageAttribute.rcSource.right - imageAttribute.rcSource.left);
+				}
+				if ((GetFixedHeight() <= 0)) {
+					SetFixedHeight(imageAttribute.rcSource.bottom - imageAttribute.rcSource.top);
+				}
+				return m_cxyFixed;
+			}
+			GetImage(*image);
+			if (image->imageCache) {
+				if (GetFixedWidth() == DUI_LENGTH_AUTO) {
+					int image_width = image->imageCache->nX;
+					DpiManager::GetInstance()->ScaleInt(image_width);
+					if (fixedSize.cx < image_width)
+						fixedSize.cx = image_width;
+				}
+				if (GetFixedHeight() == DUI_LENGTH_AUTO) {
+					int image_height = image->imageCache->nY;
+					DpiManager::GetInstance()->ScaleInt(image_height);
+					if (fixedSize.cy < image_height)
+						fixedSize.cy = image_height;
+				}
+			}
+		}
+		//
+		m_szEstimateSize = fixedSize;
+	}
+	return fixedSize;
+}
+
+bool SkinBox::HasStatusImage(ControlStateType stateType) const
+{
+	if (m_imageMap.GetStatusImage(kStateImageBk, stateType))
+		return true;
+	for (auto it = m_items.begin(); it != m_items.end(); it++) {
+		Control* pControl = *it;
+		if (pControl->m_imageMap.GetStatusImage(kStateImageBk, stateType))
+			return true;
+	}
+	return false;
+}
+
+const ui::Image* SkinBox::GetStatusImage(bool bDeep) const
+{
+	auto pRet = m_imageMap.GetStatusImage(kStateImageBk, m_uButtonState);
+	if (pRet)
+		return pRet;
+	else if (bDeep)
+	{
+		for (auto& it : m_items)
+		{
+			if (!it->IsVisible())
+				continue;
+			SkinBox* pSkinBox = dynamic_cast<SkinBox*>(it);
+			if (!pSkinBox)
+				continue;
+			pRet = pSkinBox->GetStatusImage(bDeep);
+			if (pRet)
+				return pRet;
+		}
+	}
+	return pRet;
 }
 
 } // namespace ui

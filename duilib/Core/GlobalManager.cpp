@@ -15,7 +15,11 @@ GlobalManager::MapStringToImagePtr GlobalManager::m_mImageHash;
 std::map<ui::string, DWORD> GlobalManager::m_mapTextColor;
 std::map<ui::string, ui::string> GlobalManager::m_mGlobalClass;
 std::map<ui::string, TFontInfo*> GlobalManager::m_mCustomFonts;
+std::map<ui::string, ui::string> GlobalManager::m_mGlobalWindow;
 ui::string GlobalManager::m_sDefaultFontId;
+
+std::map<ui::string, std::unique_ptr<SkinBox>> GlobalManager::m_mSkinBox;
+std::map<ui::string, std::weak_ptr<StateSkin>> GlobalManager::m_mSkinHash;
 
 short GlobalManager::m_H = 180;
 short GlobalManager::m_S = 100;
@@ -112,8 +116,7 @@ void GlobalManager::SetResourcePath(const ui::string& strPath)
 void GlobalManager::LoadGlobalResource()
 {
 	ui::WindowBuilder dialog_builder;
-	ui::Window paint_manager;
-	dialog_builder.Create(_T("global.xml"), CreateControlCallback(), &paint_manager);
+	dialog_builder.Create(_T("global.xml"));
 	//
 	ui::string sFile = GetResourceSvgFile();
 #ifdef _UNICODE	
@@ -204,6 +207,204 @@ void GlobalManager::RemoveAllClasss()
 	m_mGlobalClass.clear();
 }
 
+void GlobalManager::AddSkin(SkinBox* pSkinBox)
+{
+	if (pSkinBox == nullptr)
+	{
+		assert(false);
+		return;
+	}
+	auto strSkinName = pSkinBox->GetName();
+	if (m_mSkinBox.find(strSkinName) != m_mSkinBox.end())
+	{
+		assert(false);
+		return;
+	}
+	m_mSkinBox[strSkinName].reset(pSkinBox);
+}
+
+std::shared_ptr<ui::StateSkin> GlobalManager::GetStateSkin(const ui::string& strSkinName, const UiRect& rc)
+{
+	if (rc.GetWidth() < 1 || rc.GetHeight() < 1)
+	{
+		assert(false);
+		return nullptr;
+	}
+	auto itSc = m_mSkinBox.find(strSkinName);
+	if (itSc == m_mSkinBox.end())
+	{
+		assert(false);
+		return nullptr;
+	}
+	std::shared_ptr<StateSkin> sharedSkin;
+	ui::string skey = StringHelper::Printf(_T(":%s_%dx%d"), strSkinName.c_str(), rc.GetWidth(), rc.GetHeight());
+	auto itSh = m_mSkinHash.find(skey);
+	if (itSh == m_mSkinHash.end())
+	{
+		std::unique_ptr<StateSkin> data = ProductSkin(itSc->second, rc);
+		if (!data)
+			return nullptr;
+		sharedSkin.reset(data.release(), [](StateSkin* pSkin) {
+			ASSERT(pSkin);
+			if (pSkin && pSkin->IsCached()) {
+				GlobalManager::RemoveFromSkinCache(pSkin->SkinKey());
+			}
+			delete pSkin;
+			});
+		m_mSkinHash.emplace(skey, sharedSkin);
+		sharedSkin->SetCached(true);
+	}
+	else
+	{
+		sharedSkin = itSh->second.lock();
+	}
+	return sharedSkin;
+}
+
+std::unique_ptr<ui::StateSkin> GlobalManager::ProductSkin(std::unique_ptr<SkinBox>& skinBox, const UiRect& rc)
+{
+	if (!skinBox)
+	{
+		assert(false);
+		return nullptr;
+	}
+	std::unique_ptr<StateSkin> sSkin(new StateSkin);
+	sSkin->m_strName = skinBox->GetName();
+
+	sSkin->m_nX = rc.GetWidth();
+	sSkin->m_nY = rc.GetHeight();
+	assert(sSkin->m_nX > 0 && sSkin->m_nY > 0);
+	//
+	UiRect rcBox = rc;
+	rcBox.MoveTo({ 0,0 });
+	if (!(skinBox->GetPos() == rcBox))
+		skinBox->SetPos(rcBox);
+	auto pRender = skinBox->GetRenderContext();
+	static std::vector<std::pair<ControlStateType, ui::string>> vecStatus = {
+		{kControlStateNormal, _T("kControlStateNormal")},
+		{kControlStateHot, _T("kControlStateHot")},
+		{kControlStatePushed, _T("kControlStatePushed")},
+		{kControlStateDisabled, _T("kControlStateDisabled")},
+		{kControlStateFocused, _T("kControlStateFocused")} };
+	for (auto& itSta : vecStatus)
+	{
+		if (skinBox->HasStatusImage(itSta.first))
+		{
+			pRender->Resize(rc.GetWidth(), rc.GetHeight());
+			skinBox->SetState(itSta.first);
+			skinBox->PaintStatusImage(pRender);
+			auto pRootImage = skinBox->GetStatusImage(true);
+			HBITMAP hbmpCanva = pRender->DetachBitmap();
+			std::unique_ptr<ImageInfo> imageInfo(new ImageInfo);
+			imageInfo->PushBackHBitmap(hbmpCanva);
+			imageInfo->nX = sSkin->m_nX;
+			imageInfo->nY = sSkin->m_nY;
+			imageInfo->sImageFullPath = sSkin->m_strName;
+			imageInfo->sImageGroupID = itSta.second;
+			if (pRootImage)
+			{
+				imageInfo->SetAlpha(pRootImage->imageCache->IsAlpha());
+				sSkin->m_stateImageMap[itSta.first].imageAttribute = pRootImage->imageAttribute;
+			}
+			else
+				assert(false);
+			sSkin->m_stateImageMap[itSta.first].imageCache.reset(imageInfo.release());
+		}
+	}
+	return sSkin;
+}
+
+void GlobalManager::AddWindowDefine(const ui::string& sName, const ui::string& sData)
+{
+	m_mGlobalWindow.emplace(sName, sData);
+}
+
+bool GlobalManager::GetWindowDefine(const ui::string& sName, ui::string& sData)
+{
+	auto it = m_mGlobalWindow.find(sName);
+	if (it == m_mGlobalWindow.end())
+		return false;
+	sData = it->second;
+	return true;
+}
+
+bool GlobalManager::IncludeWindowControl(Box* pParentBox, const ui::string& sName, CreateControlCallback callback /*= CreateControlCallback()*/)
+{
+	Box* box = nullptr;
+	auto it = m_builderMap.find(sName);
+	if (it == m_builderMap.end()) 
+	{
+		const auto& gw = m_mGlobalWindow.find(sName);
+		if (gw == m_mGlobalWindow.end())
+		{
+			assert(false);
+			return false;
+		}
+		WindowBuilder* winBuilder = new WindowBuilder(callback);
+		if (winBuilder->LoadBuilder(gw->second.c_str()) == false)
+		{
+			assert(false);
+			delete winBuilder;
+			return false;
+		}
+		box = winBuilder->BuilderControl(pParentBox->GetWindow(), pParentBox);
+		if (box) 
+		{
+			m_builderMap[sName].reset(winBuilder);
+		}
+		else 
+		{
+			assert(false);
+			return false;
+		}
+	}
+	else 
+	{
+		box = it->second->BuilderControl(pParentBox->GetWindow(), pParentBox);
+	}
+	return box != nullptr;
+}
+
+ui::Box* GlobalManager::CreateWindowControl(const ui::string& sName, CreateControlCallback callback /*= CreateControlCallback()*/)
+{
+	Box* box = nullptr;
+	auto it = m_builderMap.find(sName);
+	if (it == m_builderMap.end())
+	{
+		const auto& gw = m_mGlobalWindow.find(sName);
+		if (gw == m_mGlobalWindow.end())
+		{
+			assert(false);
+			return false;
+		}
+		WindowBuilder* winBuilder = new WindowBuilder();
+		box = winBuilder->Create(gw->second.c_str(), callback, nullptr, nullptr);
+		if (box) {
+			m_builderMap[sName].reset(winBuilder);
+		}
+		else {
+			ASSERT(FALSE);
+			return false;
+		}
+	}
+	else
+	{
+		box = it->second->Create(callback, nullptr, nullptr, nullptr);
+	}
+	return box;
+}
+
+void GlobalManager::RemoveFromSkinCache(const ui::string& skey)
+{
+	auto it = m_mSkinHash.find(skey);
+	if (it != m_mSkinHash.end()) {
+		m_mSkinHash.erase(it);
+	}
+	else {
+		ASSERT(FALSE);
+	}
+}
+
 void GlobalManager::AddTextColor(const ui::string& strName, const ui::string& strValue)
 {
 	ui::string strColor = strValue.substr(1);
@@ -285,7 +486,7 @@ std::shared_ptr<ImageInfo> GlobalManager::GetImage(const ui::string& bitmap, con
 	}
 	static ui::string sGlobal = GlobalManager::GetResourceSvgFile();
 	std::shared_ptr<ImageInfo> sharedImage;
-	auto strImageKey = imageFullPath + sGroupID;
+	auto strImageKey = imageFullPath + sGroupID; //#´ýÍêÉÆ½«dScaleÄÉÈëkey
 	auto it = m_mImageHash.find(strImageKey);
 	if (it == m_mImageHash.end()) {
 		std::unique_ptr<ImageInfo> data;
@@ -300,7 +501,8 @@ std::shared_ptr<ImageInfo> GlobalManager::GetImage(const ui::string& bitmap, con
 			else
 				data = ImageInfo::LoadImageGroup(g_svgTreeBuilder, sGroupID, dScale);
 		}
-		if (!data) return sharedImage;
+		if (!data) 
+			return sharedImage;
 		sharedImage.reset(data.release(), &OnImageInfoDestroy);
 		m_mImageHash[strImageKey] = sharedImage;
 		sharedImage->SetCached(true);
@@ -732,6 +934,11 @@ ui::string GlobalManager::GetZipFilePath(const ui::string& path)
 		i++;
 	}
 	return file_path;
+}
+
+std::unique_ptr<lunasvg::ITreeBuilder>& GlobalManager::GetGlobalSvgTreeBuilder()
+{
+	return g_svgTreeBuilder;
 }
 
 bool GlobalManager::ImageCacheKeyCompare::operator()(const ui::string& key1, const ui::string& key2) const

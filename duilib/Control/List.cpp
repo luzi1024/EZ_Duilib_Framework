@@ -306,8 +306,8 @@ bool ListBox::Remove(Control* pControl)
 
 bool ListBox::RemoveAt(int iIndex)
 {
-	if (!ScrollableBox::RemoveAt(iIndex)) return false;
-
+	if (iIndex < 0 || !ScrollableBox::RemoveAt(iIndex)) 
+		return false;
 	for(int i = iIndex; i < GetCount(); ++i) {
 		Control* p = GetItemAt(i);
 		ListContainerElement* pListItem = dynamic_cast<ListContainerElement*>(p);

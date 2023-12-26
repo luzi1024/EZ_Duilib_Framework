@@ -47,9 +47,10 @@ enum StateImageType
 enum ControlStateType
 {
 	kControlStateNormal,	// 普通状态
-	kControlStateHot,		// 焦点状态
+	kControlStateHot,		// 鼠标焦点状态
 	kControlStatePushed,	// 按下状态
-	kControlStateDisabled	// 禁用状态
+	kControlStateDisabled,	// 禁用状态
+	kControlStateFocused	// 窗口焦点状态 (NEW)
 };
 
 enum AnimationType
@@ -212,50 +213,55 @@ struct EventArgs
 };
 
 EventType StringToEnum(const ui::string& messageType);
-
-
+//定义所有样式类型 ///////////////////////////////////////////////////////////////////////////
+#define  DUI_STYLE_CLASS                    (_T("Class"))
+#define  DUI_STYLE_FONT						(_T("Font"))
+#define  DUI_STYLE_TEXTCOLOR				(_T("TextColor"))
+#define  DUI_STYLE_SKIN						(_T("Skin"))		// (NEW) 预定义皮肤
+#define  DUI_STYLE_WINDOW					(_T("Window"))		// (NEW) 预定义窗口
 //定义所有控件类型 ///////////////////////////////////////////////////////////////////////////
-#define  DUI_CTR_CONTROL                         (_T("Control"))
-#define  DUI_CTR_LABEL                           (_T("Label"))
-#define  DUI_CTR_BUTTON                          (_T("Button"))
-#define  DUI_CTR_TEXT                            (_T("Text"))
-#define  DUI_CTR_OPTION                          (_T("Option"))
-#define  DUI_CTR_CHECKBOX                        (_T("CheckBox"))
+#define  DUI_CTR_CONTROL					(_T("Control"))
+#define  DUI_CTR_LABEL						(_T("Label"))
+#define  DUI_CTR_BUTTON						(_T("Button"))
+#define  DUI_CTR_TEXT						(_T("Text"))
+#define  DUI_CTR_OPTION						(_T("Option"))
+#define  DUI_CTR_CHECKBOX					(_T("CheckBox"))
 
-#define  DUI_CTR_LABELBOX                        (_T("LabelBox"))
-#define  DUI_CTR_BUTTONBOX                       (_T("ButtonBox"))
-#define  DUI_CTR_OPTIONBOX                       (_T("OptionBox"))
-#define  DUI_CTR_CHECKBOXBOX                     (_T("CheckBoxBox"))
+#define  DUI_CTR_LABELBOX                   (_T("LabelBox"))
+#define  DUI_CTR_BUTTONBOX                  (_T("ButtonBox"))
+#define  DUI_CTR_OPTIONBOX                  (_T("OptionBox"))
+#define  DUI_CTR_CHECKBOXBOX                (_T("CheckBoxBox"))
 
-#define  DUI_CTR_BOX							 (_T("Box"))
+#define  DUI_CTR_BOX						(_T("Box"))
 #ifdef DUI_STAND
-#define  DUI_CTR_HBOX							 (_T("HorizontalLayout"))
-#define  DUI_CTR_VBOX                            (_T("VerticalLayout"))
+#define  DUI_CTR_HBOX						(_T("HorizontalLayout"))
+#define  DUI_CTR_VBOX                       (_T("VerticalLayout"))
 #else
-#define  DUI_CTR_HBOX							 (_T("HBox"))
-#define  DUI_CTR_VBOX                            (_T("VBox"))
+#define  DUI_CTR_HBOX						(_T("HBox"))
+#define  DUI_CTR_VBOX                       (_T("VBox"))
 #endif // DUI_STAND
 
-#define  DUI_CTR_TABBOX                          (_T("TabBox"))
-#define  DUI_CTR_TILEBOX						 (_T("TileBox"))
-#define  DUI_CTR_CHILDBOX                        (_T("ChildBox"))
+#define  DUI_CTR_TABBOX                     (_T("TabBox"))
+#define  DUI_CTR_TILEBOX					(_T("TileBox"))
+#define  DUI_CTR_CHILDBOX                   (_T("ChildBox"))
+#define  DUI_CTR_SKINBOX					(_T("Skin"))
 
-#define  DUI_CTR_LISTCONTAINERELEMENT            (_T("ListContainerElement"))
-#define  DUI_CTR_LISTBOX						 (_T("ListBox"))
-#define  DUI_CTR_HLISTBOX						 (_T("HListBox"))
-#define  DUI_CTR_VLISTBOX                        (_T("VListBox"))
-#define  DUI_CTR_VIRTUALLISTBOX                  (_T("VirtualListBox"))
-#define  DUI_CTR_TILELISTBOX                     (_T("TileListBox"))
+#define  DUI_CTR_LISTCONTAINERELEMENT       (_T("ListContainerElement"))
+#define  DUI_CTR_LISTBOX					(_T("ListBox"))
+#define  DUI_CTR_HLISTBOX					(_T("HListBox"))
+#define  DUI_CTR_VLISTBOX                   (_T("VListBox"))
+#define  DUI_CTR_VIRTUALLISTBOX             (_T("VirtualListBox"))
+#define  DUI_CTR_TILELISTBOX                (_T("TileListBox"))
 
-#define  DUI_CTR_TREENODE                        (_T("TreeNode"))
-#define  DUI_CTR_TREEVIEW                        (_T("TreeView"))
+#define  DUI_CTR_TREENODE                   (_T("TreeNode"))
+#define  DUI_CTR_TREEVIEW                   (_T("TreeView"))
 
-#define  DUI_CTR_RICHEDIT                        (_T("RichEdit"))
-#define  DUI_CTR_COMBO                           (_T("Combo"))
-#define  DUI_CTR_SLIDER                          (_T("Slider"))
-#define  DUI_CTR_PROGRESS                        (_T("Progress"))
-#define  DUI_CTR_CIRCLEPROGRESS                  (_T("CircleProgress"))
-#define  DUI_CTR_SCROLLBAR                       (_T("ScrollBar"))
+#define  DUI_CTR_RICHEDIT                   (_T("RichEdit"))
+#define  DUI_CTR_COMBO                      (_T("Combo"))
+#define  DUI_CTR_SLIDER                     (_T("Slider"))
+#define  DUI_CTR_PROGRESS                   (_T("Progress"))
+#define  DUI_CTR_CIRCLEPROGRESS             (_T("CircleProgress"))
+#define  DUI_CTR_SCROLLBAR                  (_T("ScrollBar"))
 //定义Window及Global属性 ///////////////////////////////////////////////////////////////////////////
 // Window
 #define ATTR_WINDOW_size					(_T("size"))
@@ -275,6 +281,7 @@ EventType StringToEnum(const ui::string& messageType);
 //定义所有控件属性 ///////////////////////////////////////////////////////////////////////////
 // Control
 #define ATTR_CTR_class						(_T("class"))			// 设置为default将使用默认样式
+#define ATTR_CTR_skin						(_T("skin"))
 #define ATTR_CTR_halign						(_T("halign"))
 #define ATTR_CTR_valign						(_T("valign"))
 #define ATTR_CTR_margin						(_T("margin"))
@@ -282,8 +289,8 @@ EventType StringToEnum(const ui::string& messageType);
 #define ATTR_CTR_bkcolor1					(_T("bkcolor1"))
 #define ATTR_CTR_bordersize					(_T("bordersize"))
 #define ATTR_CTR_borderround				(_T("borderround"))
-#define ATTR_CTR_width						(_T("width"))
-#define ATTR_CTR_height						(_T("height"))
+#define ATTR_CTR_width						(_T("width"))			// num/auto/stretch
+#define ATTR_CTR_height						(_T("height"))			// num/auto/stretch
 #define ATTR_CTR_maxwidth					(_T("maxwidth"))
 #define ATTR_CTR_maxheight					(_T("maxheight"))
 #define ATTR_CTR_state						(_T("state"))
@@ -319,10 +326,11 @@ EventType StringToEnum(const ui::string& messageType);
 #define ATTR_CTR_hotimage					(_T("hotimage"))
 #define ATTR_CTR_pushedimage				(_T("pushedimage"))
 #define ATTR_CTR_disabledimage				(_T("disabledimage"))
-#define ATTR_CTR_forenormalimage			(_T("forenormalimage"))
-#define ATTR_CTR_forehotimage				(_T("forehotimage"))
-#define ATTR_CTR_forepushedimage			(_T("forepushedimage"))
-#define ATTR_CTR_foredisabledimage			(_T("foredisabledimage"))
+#define ATTR_CTR_focusedimage				(_T("focusedimage"))		// (NEW) 增加全控件焦点图片
+#define ATTR_CTR_forenormalimage			(_T("forenormalimage"))		// 待废弃
+#define ATTR_CTR_forehotimage				(_T("forehotimage"))		// 待废弃
+#define ATTR_CTR_forepushedimage			(_T("forepushedimage"))		// 待废弃
+#define ATTR_CTR_foredisabledimage			(_T("foredisabledimage"))	// 待废弃
 #define ATTR_CTR_fadealpha					(_T("fadealpha"))
 #define ATTR_CTR_fadehot					(_T("fadehot"))
 #define ATTR_CTR_fadewidth					(_T("fadewidth"))
@@ -342,6 +350,7 @@ EventType StringToEnum(const ui::string& messageType);
 #define ATTR_VTILELAYOUT_column				(_T("column"))
 // Box
 #define ATTR_BOX_mousechild					(_T("mousechild"))
+#define ATTR_BOX_include					(_T("include"))				// (NEW) 增加窗口引用 必须为末尾属性 待完善路径支持
 // TabBox 继承自 Box
 #define ATTR_TABBOX_selectedid				(_T("selectedid"))
 #define ATTR_TABBOX_fadeswitch				(_T("fadeswitch"))
@@ -388,14 +397,13 @@ EventType StringToEnum(const ui::string& messageType);
 // ChildBox 继承自Box
 #define ATTR_CHILDBOX_xmlfile				(_T("xmlfile"))
 // Combo 继承自Box
-#define ATTR_COMBO_dropbox					(_T("dropbox"))
-#define ATTR_COMBO_vscrollbar				(_T("vscrollbar")) // 未处理?
+#define ATTR_COMBO_dropbox					(_T("dropbox"))		// 待废弃
+#define ATTR_COMBO_vscrollbar				(_T("vscrollbar"))	// 未处理?
 #define ATTR_COMBO_dropboxsize				(_T("dropboxsize"))
 #define ATTR_COMBO_popuptop					(_T("popuptop"))
-#define ATTR_COMBO_namebox					(_T("namebox"))		// (NEW) 文本对象ID
 #define ATTR_COMBO_namelabel				(_T("namelabel"))	// (NEW) 文本对象ID
-#define ATTR_COMBO_namelayout				(_T("namelayout"))	// (NEW) 文本对象ID
-#define ATTR_COMBO_nameitem					(_T("nameitem"))	// (NEW) 文本对象ID
+#define ATTR_COMBO_namebutton				(_T("namebutton"))	// (NEW) 按钮对象ID
+#define ATTR_COMBO_namelistwnd				(_T("namelistwnd"))	// (NEW) 列表窗口ID
 // LabelTemplate 默认继承自 Control
 #define ATTR_LABEL_align					(_T("align"))
 #define ATTR_LABEL_endellipsis				(_T("endellipsis"))

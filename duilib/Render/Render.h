@@ -62,6 +62,8 @@ public:
 	virtual void DrawPath(const IPath* path, const IPen* pen) override;
 	virtual void FillPath(const IPath* path, const IBrush* brush) override;
 
+public:
+	static void DrawFunction(HDC hDC, bool bTransparent, UiRect rcDest, HDC hdcSrc, UiRect rcSrc, bool bAlphaChannel, int uFade);
 private:
 	HDC			m_hDC;
 	int			m_saveDC;

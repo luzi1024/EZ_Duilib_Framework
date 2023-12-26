@@ -96,6 +96,7 @@ public:
     bool GetAttributeValue(int iIndex, LPTSTR pstrValue, SIZE_T cchMax);
     bool GetAttributeValue(LPCTSTR pstrName, LPTSTR pstrValue, SIZE_T cchMax);
 
+    bool ToString(ui::string& sNode);
 private:
     void _MapAttributes();
 

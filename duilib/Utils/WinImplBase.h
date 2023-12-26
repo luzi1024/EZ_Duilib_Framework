@@ -310,7 +310,7 @@ public:
 	* @return void 无返回值
 	*/
 	void ToTopMost(bool forever);
-		
+
 protected:
 	/**
 	 * @brief 创建窗口时被调用，由子类实现用以获取窗口皮肤目录
@@ -331,10 +331,16 @@ protected:
 	virtual ui::string GetWindowClassName(void) const = 0 ;
 
 	/**
-	 * @brief 重载实现jit创建逻辑 (New)
-	 * @return 是否使用jit数据
+	 * @brief (NEW) 创建窗口时被调用，提供Skin数据的来源
+	 * @return skin数据
 	 */
-	virtual bool IsSkinJit() { return false; };
+	virtual ui::string GetSkinData();
+
+	/**
+	* @brief (NEW) 创建窗口时被调用，提供创建容器的逻辑
+	* @return Box* 顶层容器
+	*/
+	virtual Box* BuilderContent();
 private:
 	/**
 	 * @brief 收到窗口创建消息时被调用，请使用 InitWindow 接口来实现自定义需求
